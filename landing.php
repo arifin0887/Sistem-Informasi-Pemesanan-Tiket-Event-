@@ -1,0 +1,414 @@
+<?php
+require_once 'koneksi.php';
+
+// Ambil semua event (untuk jelajah & JS)
+$query_event = mysqli_query($conn, "
+    SELECT e.*, MIN(t.harga) as harga_mulai, v.nama_venue 
+    FROM event e 
+    LEFT JOIN tiket t ON e.id_event = t.id_event 
+    LEFT JOIN venue v ON e.id_venue = v.id_venue
+    GROUP BY e.id_event 
+    ORDER BY e.tanggal ASC
+");
+
+// Simpan data event ke array untuk digunakan di JS
+$data_event = [];
+while ($row = mysqli_fetch_assoc($query_event)) {
+    $data_event[] = $row;
+}
+
+// Event pilihan (beranda)
+$query_pilihan = mysqli_query($conn, "
+    SELECT e.*, MIN(t.harga) as harga_mulai, v.nama_venue 
+    FROM event e 
+    LEFT JOIN tiket t ON e.id_event = t.id_event 
+    LEFT JOIN venue v ON e.id_venue = v.id_venue
+    GROUP BY e.id_event 
+    ORDER BY e.tanggal ASC 
+    LIMIT 4
+");
+
+// Ambil semua kategori event unik untuk filter
+$query_event = mysqli_query($conn, "
+    SELECT 
+        e.*, 
+        MIN(t.harga) as harga_mulai, 
+        v.nama_venue,
+        GROUP_CONCAT(DISTINCT t.nama_tiket) as kategori_event
+    FROM event e 
+    LEFT JOIN tiket t ON e.id_event = t.id_event 
+    LEFT JOIN venue v ON e.id_venue = v.id_venue
+    GROUP BY e.id_event 
+    ORDER BY e.tanggal ASC
+");
+?>
+
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventKu – Platform Tiket Event Profesional</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f4f8; 
+        }
+        /* Custom Class untuk Gradien pada Button/Elemen Kunci */
+        .cta-gradient {
+            background-image: linear-gradient(to right, #E66C8A 0%, #CF2E2E 100%);
+            transition: all 0.3s ease;
+        }
+        .cta-gradient:hover {
+            background-image: linear-gradient(to right, #CF2E2E 0%, #E66C8A 100%);
+            box-shadow: 0 10px 15px -3px rgba(230, 108, 138, 0.5);
+        }
+        /* Gradien untuk Judul Teks */
+        .text-gradient {
+            background-image: linear-gradient(to right, #1D1145, #0DB5BB);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        /* Custom scrollbar untuk kategori */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="text-gray-800 flex flex-col min-h-screen">
+
+    <!-- HEADER -->
+    <header class="bg-white/95 backdrop-blur-sm shadow-sm fixed w-full z-30">
+        <div class="container mx-auto px-6 lg:px-16 py-4 flex justify-between items-center">
+            <button onclick="pindahMenu('beranda')" class="text-3xl font-extrabold text-[#1D1145] tracking-tight">
+                Event<span class="text-[#E66C8A]">Ku</span>
+            </button>
+            
+            <nav class="hidden md:flex space-x-8 text-base font-semibold">
+                <button onclick="pindahMenu('beranda')" id="nav-beranda" class="text-[#0DB5BB] border-b-2 border-[#0DB5BB] pb-1 transition-all">Beranda</button>
+                <button onclick="pindahMenu('jelajah')" id="nav-jelajah" class="text-gray-700 hover:text-[#0DB5BB] border-b-2 border-transparent hover:border-[#0DB5BB] pb-1 transition-all">Jelajah</button>
+                <button onclick="pindahMenu('tentang')" id="nav-tentang" class="text-gray-700 hover:text-[#0DB5BB] border-b-2 border-transparent hover:border-[#0DB5BB] pb-1 transition-all">Tentang</button>
+                <button onclick="pindahMenu('kontak')" id="nav-kontak" class="text-gray-700 hover:text-[#0DB5BB] border-b-2 border-transparent hover:border-[#0DB5BB] pb-1 transition-all">Hubungi Kami</button>
+            </nav>
+
+            <div class="space-x-3">
+                <a href="login.php">
+                    <button class="text-gray-800 font-semibold hover:text-[#E66C8A] hidden sm:inline transition">Masuk</button>
+                </a>
+                <a href="regis.php">
+                    <button class="cta-gradient text-white px-6 py-2.5 rounded-full font-bold shadow-lg transform hover:scale-105 transition duration-300">
+                        Daftar
+                    </button>
+                </a>
+            </div>
+        </div>
+    </header>
+    <!-- END HEADER -->
+
+    <!-- MENU HOME -->
+    <main id="menu-beranda" class="pt-16 flex-grow">
+
+        <!-- HERO SECTION -->
+        <section class="bg-cover bg-center pt-32 pb-24 min-h-[550px] flex items-center" 
+                 style="background-image: url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80'); 
+                        background-color: rgba(29, 17, 69, 0.85); 
+                        background-blend-mode: multiply;">
+            <div class="container mx-auto px-6 lg:px-16 text-center">
+                <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-6 leading-snug tracking-tight">
+                    Tiket Event Resmi. <br class="hidden sm:inline"/> Tanpa Drama, <span class="text-[#F1A49E]">Tanpa Penipuan.</span>
+                </h1>
+                <p class="text-lg md:text-xl text-gray-300 mb-10 max-w-3xl mx-auto font-light">
+                    Platform tepercaya untuk konser, konferensi, dan festival favorit Anda.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
+                    <button onclick="pindahMenu('jelajah')" class="cta-gradient text-white px-8 py-3.5 rounded-full font-bold text-lg shadow-lg">
+                        Cari Tiket Sekarang
+                    </button>
+                    <button onclick="pindahMenu('tentang')" class="bg-white/10 backdrop-blur-sm border border-white/30 text-white px-8 py-3.5 rounded-full font-bold text-lg hover:bg-white/20 transition">
+                        Pelajari Kami
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTENT -->
+        <section class="py-16 container mx-auto px-6 lg:px-16">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-center mb-12 text-[#1D1145]">
+                Event Pilihan <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#1D1145] to-[#0DB5BB]">Minggu Ini</span>
+            </h2>
+
+            <div id="gridBeranda" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <?php if (mysqli_num_rows($query_pilihan) > 0) : ?>
+                    <?php while ($row = mysqli_fetch_assoc($query_pilihan)) : ?>
+                        <div class="bg-white rounded-2xl shadow-md hover:shadow-2xl transition duration-300 overflow-hidden border border-gray-100 group">
+                            <div class="relative">
+                                <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&w=500" 
+                                    alt="<?= htmlspecialchars($row['nama_event']); ?>" 
+                                    class="w-full h-48 object-cover group-hover:scale-105 transition duration-500">
+                                <div class="absolute top-4 left-4">
+                                    <span class="bg-[#0DB5BB] text-white text-xs font-bold px-3 py-1 rounded-full uppercase shadow-lg">
+                                        Terbatas
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="p-6">
+                                <h3 class="text-lg font-bold text-[#1D1145] mb-2 line-clamp-1">
+                                    <?= htmlspecialchars($row['nama_event']); ?>
+                                </h3>
+                                
+                                <div class="flex items-center text-gray-500 text-sm mb-2">
+                                    <i class="bi bi-calendar-event me-2 text-[#0DB5BB]"></i>
+                                    <?= date('d M Y', strtotime($row['tanggal'])); ?>
+                                </div>
+                                
+                                <div class="flex items-center text-gray-500 text-sm mb-4">
+                                    <i class="bi bi-geo-alt me-2 text-[#0DB5BB]"></i>
+                                    <?= htmlspecialchars($row['nama_venue'] ?? 'TBA'); ?>
+                                </div>
+
+                                <div class="flex items-center justify-between mt-6 pt-4 border-t border-gray-50">
+                                    <div>
+                                        <p class="text-xs text-gray-400 uppercase font-semibold">Mulai dari</p>
+                                        <p class="text-lg font-extrabold text-[#1D1145]">
+                                            Rp <?= number_format($row['harga_mulai'] ?? 0, 0, ',', '.'); ?>
+                                        </p>
+                                    </div>
+                                    <a href="#" onclick="beliEvent(<?= $row['id_event']; ?>)">
+                                        <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endwhile; ?>
+                <?php else : ?>
+                    <div class="col-span-full text-center py-10 text-gray-400">
+                        <i class="bi bi-calendar-x text-5xl mb-4 d-block"></i>
+                        <p>Belum ada event pilihan tersedia.</p>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </section>
+    </main>
+    <!-- MENU END -->
+
+    <!-- MENU JELAJAH -->
+    <main id="menu-jelajah" class="pt-24 pb-16 flex-grow hidden">
+        <div class="container mx-auto px-6 lg:px-16">
+            <h2 class="text-3xl font-extrabold text-[#1D1145] mb-2">Pusat Jelajah Event</h2>
+            <p class="text-gray-500 mb-6 text-sm">Temukan event impianmu berdasarkan kata kunci atau kategori.</p>
+
+            <div class="bg-white p-2 rounded-xl shadow-lg max-w-4xl mb-8 border border-gray-100">
+                <div class="flex items-center"> 
+                    <svg class="w-6 h-6 ml-5 text-[#0DB5BB]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <input type="text" id="searchInput" oninput="filterEvent()" placeholder="Cari event berdasarkan nama atau lokasi..." class="flex-grow p-4 text-base border-none focus:ring-0 focus:outline-none placeholder-gray-500 bg-transparent">
+                </div>
+            </div>
+
+            <div id="eventGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                </div>
+        </div>
+    </main>
+    <!-- MENU END -->
+
+    <!-- MENU TENTANG -->
+    <main id="menu-tentang" class="pt-24 pb-16 flex-grow hidden">
+        <div class="container mx-auto px-6 lg:px-16">
+            <div class="max-w-4xl mx-auto text-center mb-16">
+                <h2 class="text-4xl font-extrabold text-[#1D1145] mb-4">Tentang <span class="text-[#E66C8A]">EventKu</span></h2>
+                <p class="text-lg text-gray-600 font-light">Kami adalah jembatan utama yang menghubungkan para pecinta hiburan dengan momen-momen terbaik dalam hidup mereka secara aman dan transparan.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=600&q=80" alt="Tim EventKu" class="rounded-2xl shadow-xl w-full object-cover h-80">
+                </div>
+                <div class="space-y-6">
+                    <div class="border-l-4 border-[#0DB5BB] pl-4">
+                        <h3 class="text-xl font-bold text-[#1D1145]">Visi Kami</h3>
+                        <p class="text-gray-600 mt-1">Menciptakan ekosistem pertiketan yang bersih dan bebas dari calo fiktif di Indonesia.</p>
+                    </div>
+                    <div class="border-l-4 border-[#E66C8A] pl-4">
+                        <h3 class="text-xl font-bold text-[#1D1145]">Misi Kami</h3>
+                        <p class="text-gray-600 mt-1">Menghadirkan teknologi pemindaian QR-Code berlapis yang menjamin keaslian tiket hingga ke tangan pembeli.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- MENU END -->
+
+    <!-- MENU KONTAK -->
+    <main id="menu-kontak" class="pt-24 pb-16 flex-grow hidden">
+        <div class="container mx-auto px-6 lg:px-16">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-extrabold text-[#1D1145] mb-2">Hubungi Kami</h2>
+                <p class="text-gray-500">Ada kendala atau pertanyaan? Kami siap membantu Anda 24/7.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="bg-white p-6 rounded-xl shadow-md text-center border-t-4 border-[#0DB5BB]">
+                    <div class="text-3xl mb-3">📍</div>
+                    <h3 class="font-bold text-gray-900 mb-1">Kantor Pusat</h3>
+                    <p class="text-sm text-gray-500">Jl. Sudirman No. 12, Jakarta Selatan</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md text-center border-t-4 border-[#E66C8A]">
+                    <div class="text-3xl mb-3">✉️</div>
+                    <h3 class="font-bold text-gray-900 mb-1">E-mail</h3>
+                    <p class="text-sm text-gray-500">support@eventku.id</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md text-center border-t-4 border-[#1D1145]">
+                    <div class="text-3xl mb-3">📞</div>
+                    <h3 class="font-bold text-gray-900 mb-1">WhatsApp</h3>
+                    <p class="text-sm text-gray-500">+62 812 3456 7890</p>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- MENU END -->
+
+    <!-- FOOTER -->
+    <footer class="bg-[#1D1145] text-white py-10 mt-auto">
+        <div class="container mx-auto px-6 lg:px-16 text-center">
+            <a href="#" class="text-3xl font-extrabold text-white tracking-tight">
+                Event<span class="text-[#E66C8A]">Ku</span>
+            </a>
+            <p class="text-sm text-gray-400 mt-2">Tiket resmi, pengalaman tanpa batas. Partner event tepercaya Anda.</p>
+            <div class="text-center border-t border-gray-700 pt-6 mt-6">
+                <p class="text-xs text-gray-500">© 2026 EventKu. Hak Cipta Dilindungi Undang-Undang.</p>
+            </div>
+        </div>
+    </footer>
+    <!-- FOOTER END -->
+
+    <script>
+        // DATA DARI PHP KE JS
+        let isLogin = <?= isset($_SESSION['user']) ? 'true' : 'false'; ?>;
+        // Simpan data event ke array untuk digunakan di JS
+        let databaseEvent = <?= json_encode($data_event); ?>;
+        let kategoriAktif = "Semua";
+
+        // FORMAT DATA
+        databaseEvent = databaseEvent.map(e => ({
+            id: e.id_event,
+            nama: e.nama_event,
+            lokasi: e.nama_venue ?? "TBA",
+            tanggal: new Date(e.tanggal).toLocaleDateString('id-ID'),
+            jam: "19:00",
+            harga: e.harga_mulai ?? 0,
+            kategori: e.kategori_event ? e.kategori_event.split(",") : ["Umum"],        
+            img: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4",
+        }));
+
+        // TEMPLATE CARD
+        function buatTemplateCard(event) {
+            const harga = new Intl.NumberFormat('id-ID').format(event.harga);
+            return `
+            <div class="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition">
+                <img src="${event.img}" class="w-full h-40 object-cover">
+                <div class="p-4">
+                    <h3 class="font-bold text-lg">${event.nama}</h3>
+                    <p class="text-sm text-gray-500">${event.tanggal}</p>
+                    <p class="text-sm text-gray-500">${event.lokasi}</p>
+                    <p class="font-bold mt-2 text-[#1D1145]">Rp ${harga}</p>
+                    <button onclick="beliEvent(${event.id})"
+                        class="mt-3 w-full bg-[#1D1145] text-white py-2 rounded-lg hover:bg-[#0DB5BB]">
+                        Beli Tiket
+                    </button>
+                </div>
+            </div>`;
+        }
+
+        // FILTER EVENT (FIX ERROR NULL)
+        function filterEvent() {
+            const grid = document.getElementById('eventGrid');
+            if (!grid) return;
+
+            const input = document.getElementById('searchInput');
+            const keyword = input ? input.value.toLowerCase() : "";
+
+            let hasil = databaseEvent.filter(e =>
+                (e.nama.toLowerCase().includes(keyword) || e.lokasi.toLowerCase().includes(keyword)) &&
+                (kategoriAktif === "Semua" || e.kategori.includes(kategoriAktif))
+            );
+
+            grid.innerHTML = hasil.length
+                ? hasil.map(e => buatTemplateCard(e)).join('')
+                : `<p class="text-center col-span-full text-gray-400">Tidak ada event</p>`;
+        }
+
+        // SET KATEGORI + AKTIF STYLE
+        function setKategori(kat){
+            kategoriAktif = kat;
+
+            document.querySelectorAll('.kategori-btn').forEach(btn => {
+                if(btn.innerText === kat){
+                    btn.classList.remove('bg-white','text-gray-700');
+                    btn.classList.add('bg-[#1D1145]','text-white');
+                } else {
+                    btn.classList.remove('bg-[#1D1145]','text-white');
+                    btn.classList.add('bg-white','text-gray-700');
+                }
+            });
+
+            filterEvent();
+        }
+
+        // BELI EVENT
+        function beliEvent(id){
+        if(!isLogin){
+            alert("Silahkan masuk atau daftar terlebih dahulu untuk membeli tiket!");
+            window.location.href = "login.php";
+            return;
+        }
+
+        window.location.href = "detail_event.php?id=" + id;
+        }
+
+        // NAVIGATION + ACTIVE TAB
+        function pindahMenu(menu) {
+            const menus = ['beranda','jelajah','tentang','kontak'];
+
+            menus.forEach(m => {
+                const el = document.getElementById('menu-' + m);
+                const nav = document.getElementById('nav-' + m);
+
+                if(el) el.classList.add('hidden');
+
+                if(nav){
+                    nav.classList.remove('text-[#0DB5BB]', 'border-[#0DB5BB]');
+                    nav.classList.add('text-gray-700', 'border-transparent');
+                }
+            });
+
+            // tampilkan menu aktif
+            document.getElementById('menu-' + menu).classList.remove('hidden');
+
+            // aktifkan navbar
+            const navAktif = document.getElementById('nav-' + menu);
+            if(navAktif){
+                navAktif.classList.remove('text-gray-700','border-transparent');
+                navAktif.classList.add('text-[#0DB5BB]','border-[#0DB5BB]');
+            }
+
+            window.scrollTo(0,0);
+
+            if(menu === 'jelajah') filterEvent();
+        }
+
+        // INIT (AMAN)
+        document.addEventListener("DOMContentLoaded", () => {
+            // default render jika langsung ke jelajah
+            filterEvent();
+        });
+    </script>
+
+</body>
+</html>
