@@ -287,6 +287,7 @@ $total_tiket = $data_tiket['total'] ?? 0;
             </div>
         </div>
 
+        <!-- REKAP KEHADIRAN -->
         <div class="col-md-12 col-lg-4 mb-4">
             <div class="card attendance-card shadow-lg h-100 position-relative">
                 <i class="bi bi-people bg-icon-decoration"></i>
@@ -358,16 +359,6 @@ $total_tiket = $data_tiket['total'] ?? 0;
                         <?php if(isset($_GET['page']) && $_GET['page'] == 'scan'): ?>
                             <a href="index.php" class="btn btn-sm btn-light">Tutup Scanner</a>
                         <?php endif; ?>
-                    </div>
-                    
-                    <div class="content-area">
-                        <?php
-                        if ($page == 'scan') {
-                            include "scan.php";
-                        } else {
-                            include "riwayat.php";
-                        }
-                        ?>
                     </div>
                 </div>
             </div>
