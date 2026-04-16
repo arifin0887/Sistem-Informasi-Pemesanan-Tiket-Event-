@@ -183,7 +183,7 @@ $venues = mysqli_query($conn, "SELECT * FROM venue ORDER BY nama_venue ASC");
                 </div>
                 <div class="modal-footer border-0">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" name="submit" class="btn btn-primary px-4">Update</button>
+                    <button type="submit" name="submit" class="btn btn-primary px-4">Simpan</button>
                 </div>
             </form>
         </div>
@@ -200,6 +200,8 @@ $venues = mysqli_query($conn, "SELECT * FROM venue ORDER BY nama_venue ASC");
 
     // FUNGSI UNTUK MENGISI FORM SAAT EDIT EVENT
     function editEvent(data) {
+        console.log(data);
+
         document.getElementById('id_event').value = data.id_event;
         document.getElementById('nama_event').value = data.nama_event;
         document.getElementById('id_venue').value = data.id_venue;
@@ -209,5 +211,10 @@ $venues = mysqli_query($conn, "SELECT * FROM venue ORDER BY nama_venue ASC");
             let dateFormated = data.tanggal.replace(" ", "T").substring(0, 16);
             document.getElementById('tanggal').value = dateFormated;
         }
+
+        var modal = new bootstrap.Modal(document.getElementById('formModal'));
+        modal.show();
+
+        document.getElementById('formModalLabel').innerText = 'Edit Event';
     }
 </script>

@@ -19,7 +19,12 @@ if (isset($_POST['submit'])) {
         $query = mysqli_query($conn, "INSERT INTO tiket (nama_tiket, harga, kuota, id_event) VALUES ('$nama_tiket', '$harga', '$kuota', '$id_event')");
         $status = $query ? "added" : "failed";
     }
-    header("Location: index.php?page=tiket&status=$status");
+    echo "<script>
+        alert('Tiket berhasil disimpan!');
+        window.location='index.php?page=tiket';
+    </script>";
+
+    // header("Location: index.php?page=tiket&status=$status");
     exit;
 }
 
@@ -28,7 +33,13 @@ if (isset($_POST['delete'])) {
     $id_tiket = mysqli_real_escape_string($conn, $_POST['id_tiket']);
     $query = mysqli_query($conn, "DELETE FROM tiket WHERE id_tiket='$id_tiket'");
     $status = $query ? "deleted" : "failed";
-    header("Location: index.php?page=tiket&status=$status");
+
+    echo "<script>
+        alert('Tiket berhasil dihapus!');
+        window.location='index.php?page=tiket';
+    </script>";
+
+    // header("Location: index.php?page=tiket&status=$status");
     exit;
 }
 
@@ -164,7 +175,7 @@ $events = mysqli_query($conn, "SELECT id_event, nama_event FROM event ORDER BY n
 
                     <div class="mb-3">
                         <label class="form-label fw-bold">Nama/Kategori Tiket</label>
-                        <input type="text" class="form-control" id="nama_tiket" name="nama_tiket" placeholder="Contoh: VIP, Early Bird, Reguler" required>
+                        <input type="text" class="form-control" id="nama_tiket" name="nama_tiket" placeholder="Contoh: Music, Dance, Comedy" required>
                     </div>
 
                     <div class="row">

@@ -18,7 +18,12 @@ if (isset($_POST['submit'])) {
         $query = mysqli_query($conn, "INSERT INTO venue (nama_venue, alamat, kapasitas) VALUES ('$nama_venue', '$alamat', '$kapasitas')");
         $status = $query ? "added" : "failed";
     }
-    header("Location: index.php?page=venue&status=$status");
+    echo "<script>
+        alert('Data venue berhasil disimpan!');
+        window.location='index.php?page=venue';
+    </script>";
+
+    // header("Location: index.php?page=venue&status=$status");
     exit;
 }
 

@@ -36,7 +36,13 @@ if (isset($_POST['submit'])) {
         $query = mysqli_query($conn, "INSERT INTO voucher (kode_voucher, potongan, kuota, status) VALUES ('$kode_voucher', $potongan, $kuota, '$status')");
         $res = $query ? "added" : "failed";
     }
-    header("Location: index.php?page=voucher&status=$res");
+
+    echo "<script>
+        alert('Data voucher berhasil disimpan!');
+        window.location='index.php?page=voucher';
+    </script>";
+
+    // header("Location: index.php?page=voucher&status=$res");
     exit;
 }
 

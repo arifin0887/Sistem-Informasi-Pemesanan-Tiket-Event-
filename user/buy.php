@@ -53,7 +53,10 @@ if (isset($_POST['proses_buy'])) {
             'kode_voucher' => ''
         ];
 
-        header("Location: index.php?page=checkout");
+        echo "<script>
+            alert('Tiket berhasil ditambahkan ke keranjang!');
+            window.location='index.php?page=checkout';
+        </script>";
         exit;
     }
 }
