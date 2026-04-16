@@ -44,6 +44,10 @@ while ($row = mysqli_fetch_assoc($result)) {
         ];
     }
 }
+
+// AMBIL DATA VOUCHER AKTIF TERBARU
+$query_voucher = mysqli_query($conn, "SELECT * FROM voucher WHERE status='aktif' LIMIT 1");
+$v = mysqli_fetch_assoc($query_voucher);
 ?>
 
 <style>
@@ -124,12 +128,31 @@ while ($row = mysqli_fetch_assoc($result)) {
     .btn-close-white { 
         filter: brightness(0) invert(1); 
     }
+
+    .promo-banner {
+        background: linear-gradient(45deg, #1D1145, #0DB5BB);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        transition: 0.3s;
+    }
+
+    .promo-banner:hover {
+        transform: scale(1.01);
+    }
 </style>
 
-<div class="pagetitle">
-    <h1 style="color: var(--navy);">Eksplorasi Event</h1>
-    <nav><ol class="breadcrumb"><li class="breadcrumb-item">User</li><li class="breadcrumb-item active">Event</li></ol></nav>
+<?php if($v): ?>
+<div class="promo-banner mb-4 p-4 rounded-4 text-white d-flex justify-content-between align-items-center">
+    <div>
+        <h5 class="fw-bold mb-1">🎉 Promo Spesial!</h5>
+        <p class="mb-0 small">
+            Gunakan kode <b><?= $v['kode_voucher'] ?></b> untuk diskon Rp<?= $v['potongan'] ?> pada pembelian tiket! <b>Kuota Terbatas</b>, segera manfaatkan sebelum habis!
+        </p>
+    </div>
+    <button class="btn btn-light fw-bold rounded-pill px-4" onclick="copyVoucher('<?= $v['kode_voucher'] ?>')">
+        Gunakan
+    </button>
 </div>
+<?php endif; ?>
 
 <section class="section">
     <div class="card search-card mb-4 shadow-sm">
@@ -258,5 +281,11 @@ while ($row = mysqli_fetch_assoc($result)) {
 
         modalBody.innerHTML = tiketHtml;
         new bootstrap.Modal(document.getElementById('eventModal')).show();
+    }
+
+    // FUNGSI UNTUK MENYALIN KODE VOUCHER KE CLIPBOARD
+    function copyVoucher(kode) {
+        navigator.clipboard.writeText(kode);
+        alert("Kode voucher berhasil disalin: " + kode);
     }
 </script>
