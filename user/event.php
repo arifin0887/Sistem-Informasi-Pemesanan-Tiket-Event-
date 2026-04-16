@@ -46,7 +46,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 }
 
 // AMBIL DATA VOUCHER AKTIF TERBARU
-$query_voucher = mysqli_query($conn, "SELECT * FROM voucher WHERE status='aktif' LIMIT 1");
+$query_voucher = mysqli_query($conn, "SELECT * FROM voucher WHERE status='aktif' AND kuota > 0 ORDER BY id_voucher DESC LIMIT 1");
 $v = mysqli_fetch_assoc($query_voucher);
 ?>
 
@@ -60,14 +60,30 @@ $v = mysqli_fetch_assoc($query_voucher);
     .search-card { 
         border: none; 
         border-radius: 15px; 
-        background: var(--navy); 
         color: white; 
+        background: linear-gradient(135deg, #1d1145 0%, #2d1b6b 100%);
+        border-radius: 20px; 
     }
 
     .search-card .form-control { 
-        border-radius: 10px; 
         border: none; 
         padding: 12px 20px; 
+        border-radius: 0 12px 12px 0 !important;
+    }
+
+    .btn-find-event {
+        background: var(--pink);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 11px;
+        transition: 0.3s;
+    }
+
+    .btn-find-event:hover {
+        background: #c25470;
+        color: white;
+        transform: scale(1.02);
     }
     
     .event-card { 
@@ -147,6 +163,11 @@ $v = mysqli_fetch_assoc($query_voucher);
         cursor: pointer;
         transition: all 0.3s ease;
         word-wrap: break-word; /* Biar kalau kepanjangan tidak hancur */
+        display: -webkit-box;
+        -webkit-line-clamp: 2; /* Maksimal 2 baris */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        min-height: 3.5rem;
     }
 
     .display-title:hover {
@@ -163,6 +184,11 @@ $v = mysqli_fetch_assoc($query_voucher);
         flex-shrink: 0; /* Mencegah box tanggal menyusut */
     }
 
+    .event-card.expired {
+        opacity: 0.7;
+        filter: grayscale(0.5);
+    }
+
     .my-minus-1 {
         margin-top: -3px;
         margin-bottom: -3px;
@@ -171,6 +197,11 @@ $v = mysqli_fetch_assoc($query_voucher);
     .text-pink {
         color: #ff4081;
     }
+
+    .input-group-text {
+        border-radius: 12px 0 0 12px !important;
+    }
+
 </style>
 
 <?php if($v): ?>

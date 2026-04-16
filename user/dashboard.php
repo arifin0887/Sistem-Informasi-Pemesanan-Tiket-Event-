@@ -19,7 +19,7 @@ $query = "SELECT
           JOIN event e ON t.id_event = e.id_event
           JOIN venue v ON e.id_venue = v.id_venue
           WHERE o.id_user = ?
-          ORDER BY e.tanggal ASC";
+          ORDER BY o.tanggal_order ASC";
 
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $id_user);
