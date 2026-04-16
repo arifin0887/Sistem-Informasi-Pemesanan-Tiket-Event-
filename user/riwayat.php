@@ -9,6 +9,23 @@ if (!isset($_SESSION['user']['id'])) {
 // ID USER DARI SESSION
 $id_user = (int)$_SESSION['user']['id'];
 
+// PROSES CANCEL TIKET
+if (isset($_POST['submit_cancel'])) {
+    $id = (int)$_POST['id_transaksi'];
+    // Tambahkan pengecekan id_user agar user tidak bisa cancel pesanan orang lain lewat inspect element
+    $check_owner = mysqli_query($conn, "SELECT id_order FROM orders WHERE id_order=$id AND id_user=$id_user");
+    
+    if (mysqli_num_rows($check_owner) > 0) {
+        // Update status jadi cancelled di database
+        $update = mysqli_query($conn, "UPDATE orders SET status='cancel' WHERE id_order=$id");
+        
+        if ($update) {
+            echo "<script>alert('Pesanan berhasil dibatalkan.'); window.location='index.php?page=riwayat';</script>";
+        }
+    }
+    exit;
+}
+
 // QUERY UNTUK MENGAMBIL SEMUA ORDER YANG DILAKUKAN OLEH USER INI BESERTA DETAILNYA
 $query = "SELECT 
             o.id_order, o.tanggal_order, o.total, o.status,
@@ -180,15 +197,24 @@ while ($row = mysqli_fetch_assoc($result)) {
                                     <h3 class="fw-bold text-dark mb-3">Rp <?= number_format($data['info']['total'], 0, ',', '.') ?></h3>
                                     
                                     <?php if ($status == 'pending'): ?>
-                                        <a href="index.php?page=payment&id_order=<?= $id_order ?>" class="btn btn-primary w-100 rounded-pill fw-bold shadow-sm">
+                                        <a href="index.php?page=payment&id_order=<?= $id_order ?>" class="btn btn-primary w-100 rounded-pill fw-bold shadow-sm mb-2">
                                             <i class="bi bi-wallet2 me-2"></i>Bayar Sekarang
                                         </a>
+                                        <button class="btn btn-outline-danger w-100 rounded-pill fw-bold" 
+                                                onclick="cancelTiket(<?= $id_order; ?>)">
+                                            Batalkan Pesanan
+                                        </button>
+
                                     <?php elseif ($status == 'paid'): ?>
                                         <button class="btn btn-outline-success w-100 rounded-pill fw-bold" data-bs-toggle="modal" data-bs-target="#modalTiket<?= $id_order ?>">
                                             <i class="bi bi-qr-code me-2"></i>Lihat E-Ticket
                                         </button>
+                                        <p class="text-muted small mt-2 text-center">Pesanan lunas tidak dapat dibatalkan.</p>
+
                                     <?php else: ?>
-                                        <button class="btn btn-light w-100 rounded-pill disabled">Pesanan Hangus</button>
+                                        <button class="btn btn-secondary w-100 rounded-pill fw-bold" disabled>
+                                            Sudah Dibatalkan
+                                        </button>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -196,6 +222,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                     </div>
                 </div>
 
+                <!-- MODAL E-TICKET UNTUK SETIAP ORDER YANG STATUSNYA 'PAID' -->
                 <div class="modal fade" id="modalTiket<?= $id_order ?>" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content" style="border-radius: 25px; border: none;">
@@ -247,7 +274,38 @@ while ($row = mysqli_fetch_assoc($result)) {
                         </div>
                     </div>
                 </div>
+
+                <!-- MODAL CANCEL TIKET -->
+                <div class="modal fade" id="modalCancel" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content" style="border-radius: 15px;">
+                            <form method="POST">
+                                <div class="modal-header border-0">
+                                    <h5 class="modal-title fw-bold">Konfirmasi Pembatalan</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <i class="bi bi-exclamation-circle text-danger" style="font-size: 3rem;"></i>
+                                    <p class="mt-3">Apakah Anda yakin ingin membatalkan pesanan <strong>#<?= str_pad($id_order, 6, '0', STR_PAD_LEFT) ?></strong>?</p>
+                                    <input type="hidden" name="id_transaksi" id="id_transaksi">
+                                </div>
+                                <div class="modal-footer border-0">
+                                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
+                                    <button type="submit" name="submit_cancel" class="btn btn-danger rounded-pill px-4"> Ya, Batalkan</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
             <?php endforeach; ?>
         </div>
     <?php endif; ?>
 </section>
+
+<script>
+    function cancelTiket(id) {
+        document.getElementById('id_transaksi').value = id;
+        new bootstrap.Modal(document.getElementById('modalCancel')).show();
+    }
+</script>
