@@ -59,6 +59,49 @@ if (isset($_POST['submit_cancel'])) {
     exit;
 }
 
+// AUTO CANCEL ORDER PENDING > 24 JAM (TANPA KOLOM TAMBAHAN)
+$auto_expire = mysqli_query($conn, "
+    SELECT o.id_order
+    FROM orders o
+    WHERE o.status = 'pending'
+    AND TIMESTAMPDIFF(HOUR, o.tanggal_order, NOW()) >= 24
+");
+
+while ($row = mysqli_fetch_assoc($auto_expire)) {
+    $id_order = (int)$row['id_order'];
+
+    mysqli_begin_transaction($conn);
+
+    try {
+        // ambil detail order
+        $detail = mysqli_query($conn, "SELECT id_tiket, qty FROM order_detail WHERE id_order=$id_order");
+
+        while ($d = mysqli_fetch_assoc($detail)) {
+            $id_tiket = (int)$d['id_tiket'];
+            $qty = (int)$d['qty'];
+
+            // KEMBALIKAN STOK / KUOTA
+            mysqli_query($conn, "
+                UPDATE tiket 
+                SET kuota = kuota + $qty 
+                WHERE id_tiket = $id_tiket
+            ");
+        }
+
+        // update status jadi expired/cancel
+        mysqli_query($conn, "
+            UPDATE orders 
+            SET status = 'cancelled' 
+            WHERE id_order = $id_order
+        ");
+
+        mysqli_commit($conn);
+
+    } catch (Exception $e) {
+        mysqli_rollback($conn);
+    }
+}
+
 // QUERY UNTUK MENGAMBIL SEMUA ORDER YANG DILAKUKAN OLEH USER INI BESERTA DETAILNYA
 $query = "SELECT 
             o.id_order, o.tanggal_order, o.total, o.status,
@@ -71,6 +114,7 @@ $query = "SELECT
           JOIN event e ON t.id_event = e.id_event
           JOIN venue v ON e.id_venue = v.id_venue
           WHERE o.id_user = $id_user
+          AND o.status IN ('pending', 'paid')
           ORDER BY o.tanggal_order DESC";
 
 $result = mysqli_query($conn, $query);
