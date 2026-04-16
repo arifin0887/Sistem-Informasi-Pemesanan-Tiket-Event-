@@ -70,17 +70,6 @@ if (isset($_GET['status'])) {
 $vouchers = mysqli_query($conn, "SELECT * FROM voucher ORDER BY id_voucher DESC");
 ?>
 
-<style>
-    .card { border: none; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
-    .card-title { color: #1d1145; font-weight: 700; }
-    .btn-primary { background-color: #1d1145; border: none; }
-    .btn-primary:hover { background-color: #e66c8a; }
-    .voucher-code { font-family: 'Courier New', monospace; font-weight: 700; color: #1d1145; background: #f0f0f5; padding: 4px 8px; border-radius: 4px; border: 1px dashed #ccc; }
-    .status-active { color: #28a745; background: #e8f5e9; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
-    .status-inactive { color: #dc3545; background: #ffebee; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
-    .modal-header { background-color: #1d1145; color: #fff; border-radius: 12px 12px 0 0; }
-</style>
-
 <div class="pagetitle">
     <h1>Manajemen Voucher</h1>
     <nav>

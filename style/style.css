@@ -1,0 +1,287 @@
+/* ============================================== */
+/* =============== ROOT THEME =================== */
+/* ============================================== */
+:root {
+    --primary: #1d1145;
+    --secondary: #e66c8a;
+    --accent: #0DB5BB;
+
+    --success: #2e7d32;
+    --warning: #f39c12;
+    --danger: #dc3545;
+
+    --bg-light: #f8f9fa;
+    --soft-bg: #f6f9ff;
+
+    --text-dark: #1d1145;
+    --text-muted: #6c757d;
+
+    --radius: 12px;
+    --radius-lg: 20px;
+
+    --shadow: 0 5px 20px rgba(0,0,0,0.05);
+    --shadow-hover: 0 10px 25px rgba(29,17,69,0.12);
+}
+
+/* ============================================== */
+/* ================= GLOBAL ===================== */
+/* ============================================== */
+.card {
+    border: none;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    transition: 0.3s;
+}
+
+.card:hover {
+    box-shadow: var(--shadow-hover);
+}
+
+.card-title {
+    color: var(--primary);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+}
+
+/* ============================================== */
+/* ================= BUTTON ===================== */
+/* ============================================== */
+.btn-primary {
+    background: var(--primary);
+    border: none;
+}
+.btn-primary:hover {
+    background: var(--secondary);
+}
+
+.btn-warning {
+    background: var(--warning);
+    border: none;
+    color: #fff;
+}
+.btn-warning:hover {
+    background: #e67e22;
+}
+
+/* ============================================== */
+/* ================= TABLE ====================== */
+/* ============================================== */
+.table thead th {
+    background: var(--bg-light);
+    color: var(--primary);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: none;
+}
+
+.table tbody td {
+    border-bottom: 1px solid #f1f1f1;
+    padding: 12px;
+    vertical-align: middle;
+}
+
+/* ============================================== */
+/* ================= BADGE ====================== */
+/* ============================================== */
+.badge {
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* STATUS GLOBAL */
+.status-paid { background: #e8f5e9; color: var(--success); }
+.status-pending { background: #fff8e1; color: #f57f17; }
+.status-cancelled { background: #ffebee; color: var(--danger); }
+
+/* ============================================== */
+/* ================= DASHBOARD ================== */
+/* ============================================== */
+.info-card:hover {
+    transform: translateY(-5px);
+}
+
+.card-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 26px;
+}
+
+/* warna dashboard */
+.sales-card .card-icon {
+    color: var(--primary);
+    background: #eef1ff;
+}
+.revenue-card .card-icon {
+    color: var(--accent);
+    background: #e0f8f9;
+}
+.customers-card .card-icon {
+    color: #ff9f43;
+    background: #fff5ed;
+}
+
+/* ============================================== */
+/* ================= UTILITIES ================== */
+/* ============================================== */
+.text-pink { color: var(--secondary); }
+.text-muted { color: var(--text-muted); }
+
+.rounded-lg { border-radius: var(--radius-lg); }
+
+/* ============================================== */
+/* ================= ADMIN ====================== */
+/* ============================================== */
+
+/* TRANSAKSI */
+.order-id {
+    font-family: 'Courier New', monospace;
+    color: var(--secondary);
+    font-weight: bold;
+}
+
+/* VOUCHER */
+.voucher-code {
+    font-family: monospace;
+    font-weight: bold;
+    color: var(--primary);
+    background: #f0f0f5;
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px dashed #ccc;
+}
+
+.status-active { background: #e8f5e9; color: #28a745; }
+.status-inactive { background: #ffebee; color: var(--danger); }
+
+/* CANCEL */
+.card-cancel {
+    border-radius: var(--radius-lg);
+    background: linear-gradient(to bottom right, #fff, #fffafa);
+}
+
+.table-cancel thead th {
+    background: #fef2f2;
+    color: #991b1b;
+}
+
+.cancel-qty-circle {
+    background: #fee2e2;
+    color: #dc2626;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ============================================== */
+/* ================= MODAL ====================== */
+/* ============================================== */
+.modal-header {
+    background: var(--primary);
+    color: #fff;
+}
+
+.modal-content {
+    border-radius: var(--radius);
+    border: none;
+}
+
+/* ============================================== */
+/* ================= USER ======================= */
+/* ============================================== */
+
+/* ==== CARD TIKET ==== */
+.card-ticket {
+    border-radius: var(--radius-lg);
+    position: relative;
+    overflow: visible;
+}
+
+.card-ticket::before,
+.card-ticket::after {
+    content: "";
+    position: absolute;
+    top: 70%;
+    width: 24px;
+    height: 24px;
+    background: var(--soft-bg);
+    border-radius: 50%;
+}
+
+.card-ticket::before { left: -12px; }
+.card-ticket::after { right: -12px; }
+
+.ticket-header {
+    background: var(--primary);
+    color: white;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    padding: 15px 20px;
+}
+
+.ticket-body {
+    padding: 20px;
+    border: 1px solid #edf2f7;
+    border-top: none;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+/* ==== EVENT CARD ==== */
+.event-card {
+    border-radius: var(--radius-lg);
+    transition: 0.3s;
+}
+
+.event-card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-hover);
+}
+
+.event-date-badge {
+    background: #fff;
+    border: 1px dashed #ddd;
+    border-radius: 14px;
+    padding: 10px;
+}
+
+/* ==== BUTTON EVENT ==== */
+.btn-book {
+    background: var(--primary);
+    color: white;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+.btn-book:hover {
+    background: var(--secondary);
+}
+
+/* ==== SEARCH ==== */
+.search-card {
+    background: linear-gradient(135deg, var(--primary), #2d1b6b);
+    border-radius: var(--radius-lg);
+}
+
+/* ============================================== */
+/* ================= PRINT ====================== */
+/* ============================================== */
+@media print {
+    .sidebar, .navbar, .btn, nav, form {
+        display: none !important;
+    }
+
+    .card {
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+    }
+
+    body {
+        font-size: 12px;
+        background: #fff;
+    }
+}

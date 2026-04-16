@@ -50,19 +50,6 @@ if (isset($_GET['status'])) {
 $venues = mysqli_query($conn, "SELECT * FROM venue ORDER BY id_venue DESC");
 ?>
 
-<style>
-    .card { border: none; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
-    .card-title { color: #1d1145; font-weight: 700; }
-    .btn-primary { background-color: #1d1145; border: none; }
-    .btn-primary:hover { background-color: #e66c8a; }
-    .btn-warning { color: #fff; background-color: #f39c12; border: none; }
-    .btn-warning:hover { background-color: #e67e22; color: #fff; }
-    .table thead th { background-color: #f8f9fa; color: #1d1145; border-bottom: 2px solid #eee; }
-    .modal-header { background-color: #1d1145; color: #fff; border-radius: 12px 12px 0 0; }
-    .modal-content { border-radius: 12px; border: none; }
-    .btn-close { filter: invert(1); }
-</style>
-
 <div class="pagetitle">
     <h1>Manajemen Venue</h1>
     <nav>

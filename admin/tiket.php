@@ -58,18 +58,6 @@ $tickets = mysqli_query($conn, "SELECT t.*, e.nama_event FROM tiket t JOIN event
 $events = mysqli_query($conn, "SELECT id_event, nama_event FROM event ORDER BY nama_event ASC");
 ?>
 
-<style>
-    .card { border: none; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
-    .card-title { color: #1d1145; font-weight: 700; }
-    .btn-primary { background-color: #1d1145; border: none; }
-    .btn-primary:hover { background-color: #e66c8a; }
-    .table thead th { background-color: #f8f9fa; color: #1d1145; border-bottom: 2px solid #eee; }
-    .badge-price { background-color: #fef1f4; color: #e66c8a; font-weight: 700; padding: 5px 10px; border-radius: 6px; }
-    .modal-header { background-color: #1d1145; color: #fff; border-radius: 12px 12px 0 0; }
-    .modal-content { border-radius: 12px; border: none; }
-    .event-name { font-size: 0.85rem; color: #6c757d; display: block; }
-</style>
-
 <div class="pagetitle">
     <h1>Manajemen Tiket</h1>
     <nav>

@@ -92,15 +92,6 @@ if (isset($_POST['proses_buy'])) {
     </div>
 </section>
 
-<style>
-    .buy-card { border-radius: 20px; overflow: hidden; }
-    .input-step { display: flex; border: 1px solid #ddd; border-radius: 10px; overflow: hidden; width: 130px; }
-    .input-step button { border: none; background: #f8f9fa; width: 40px; transition: 0.2s; }
-    .input-step button:hover { background: #e9ecef; }
-    .input-step input { border: none; text-align: center; width: 50px; font-weight: bold; }
-    .summary-box { background: #f8faff; border-radius: 15px; padding: 20px; border: 1px solid #eef2ff; }
-</style>
-
 <!-- <div class="row g-4 mt-2">
     <div class="col-lg-7">
         <div class="card buy-card shadow-sm border-0 h-100">

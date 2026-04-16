@@ -131,65 +131,6 @@ while ($row = mysqli_fetch_assoc($result)) {
 }
 ?>
 
-<style>
-    :root { 
-        --event-navy: #1a237e; 
-        --event-accent: #ff4081; 
-    }
-
-    .ticket-card { 
-        border: none; border-radius: 20px; 
-        background: #fff; transition: 0.3s;
-        border-left: 6px solid var(--event-navy);
-    }
-
-    .ticket-card:hover { 
-        transform: scale(1.01); 
-        box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important; 
-    }
-
-    .status-badge { 
-        border-radius: 50px; 
-        padding: 5px 15px; 
-        font-weight: 600; 
-        font-size: 0.75rem; 
-    }
-    
-    .status-pending { 
-        background: #fff3e0; 
-        color: #ef6c00; 
-    }
-
-    .status-paid { 
-        background: #e8f5e9; 
-        color: #2e7d32; 
-    }
-
-    .status-cancelled { 
-        background: #ffebee; 
-        color: #c62828; 
-    }
-
-    .event-info-box { 
-        background: #f8f9fa; 
-        border-radius: 12px; 
-        padding: 15px; 
-        margin-bottom: 10px; 
-    }
-
-    .order-id { 
-        font-family: 'Courier New', Courier, monospace; 
-        color: var(--event-navy); 
-        letter-spacing: 1px; 
-    }
-
-    .qr-box { 
-        border: 2px dashed #dee2e6; 
-        padding: 10px; 
-        border-radius: 15px; 
-        display: inline-block; 
-    }
-</style>
 
 <div class="pagetitle">
     <h1>Tiket Saya</h1>

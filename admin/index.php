@@ -31,6 +31,7 @@ session_start();
 
         <!-- Template Main CSS File -->
         <link href="../template/NiceAdmin/assets/css/style.css" rel="stylesheet">
+        <link href="../style/style.css" rel="stylesheet">
 
         <style id="apexcharts-css">
             @keyframes opaque {

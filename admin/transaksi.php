@@ -38,21 +38,6 @@ $sql_transaksi = "SELECT o.*, u.nama, u.email
 $res_transaksi = mysqli_query($conn, $sql_transaksi);
 ?>
 
-<style>
-    .card { border: none; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
-    .card-title { color: #1d1145; font-weight: 700; }
-    .table thead th { background-color: #f8f9fa; color: #1d1145; border-bottom: 2px solid #eee; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
-    .order-id { font-family: 'Monaco', 'Consolas', monospace; color: #e66c8a; font-weight: bold; }
-    
-    /* Status Badges Custom */
-    .badge-status { padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 0.75rem; display: inline-flex; align-items: center; }
-    .status-paid { background-color: #e8f5e9; color: #2e7d32; }
-    .status-pending { background-color: #fff8e1; color: #f57f17; }
-    .status-cancelled { background-color: #ffebee; color: #c62828; }
-    
-    .btn-action { width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; margin: 0 2px; }
-</style>
-
 <div class="pagetitle">
     <h1>Data Transaksi</h1>
     <nav>
@@ -88,6 +73,7 @@ $res_transaksi = mysqli_query($conn, $sql_transaksi);
                         <table class="table table-hover align-middle">
                             <thead>
                                 <tr>
+                                    <th>No</th>
                                     <th>ID</th>
                                     <th>Pelanggan</th>
                                     <th>Waktu Transaksi</th>
@@ -97,8 +83,10 @@ $res_transaksi = mysqli_query($conn, $sql_transaksi);
                                 </tr>
                             </thead>
                             <tbody>
+                                <?php $no = 1; ?>
                                 <?php while($row = mysqli_fetch_assoc($res_transaksi)): ?>
                                 <tr>
+                                    <td><?= $no++; ?></td>
                                     <td><span class="order-id">#<?= $row['id_order']; ?></span></td>
                                     <td>
                                         <div class="fw-bold text-dark"><?= htmlspecialchars($row['nama']); ?></div>

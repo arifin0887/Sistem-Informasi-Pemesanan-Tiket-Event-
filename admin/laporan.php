@@ -62,64 +62,6 @@ while($row = mysqli_fetch_assoc($query_laporan)) {
 $jumlah_transaksi = count($data_rows);
 ?>
 
-<style>
-    .card-cancel {
-        border: none;
-        border-radius: 20px;
-        overflow: hidden;
-        background: linear-gradient(to bottom right, #ffffff, #fffafa);
-    }
-
-    .header-cancel {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding-bottom: 15px;
-        border-bottom: 2px solid #fee2e2; /* Red-100 */
-        margin-bottom: 20px;
-    }
-
-    .table-cancel thead th {
-        background-color: #fef2f2 !important; /* Red-50 */
-        color: #991b1b !important; /* Red-800 */
-        text-transform: uppercase;
-        font-size: 0.75rem;
-        letter-spacing: 0.05em;
-        font-weight: 700;
-        padding: 15px;
-        border: none;
-    }
-
-    .table-cancel tbody td {
-        padding: 15px;
-        color: #4b5563;
-        border-bottom: 1px solid #f3f4f6;
-    }
-
-    .badge-id {
-        background: #f3f4f6;
-        color: #1f2937;
-        padding: 5px 10px;
-        border-radius: 8px;
-        font-family: 'Monaco', 'Consolas', monospace;
-        font-size: 0.85rem;
-    }
-
-    .cancel-qty-circle {
-        background: #fee2e2;
-        color: #dc2626;
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        margin: 0 auto;
-        font-weight: bold;
-        font-size: 0.85rem;
-    }
-</style>
-
 <div class="pagetitle mb-4">
     <h1 style="color: #1D1145; font-weight: 700;">Laporan Penjualan</h1>
     <nav>
@@ -346,28 +288,3 @@ $jumlah_transaksi = count($data_rows);
         </div>
     </div>
 </section>
-
-<style>
-    /* UI Adjustments */
-    .filter-box input:focus {
-        box-shadow: none;
-        border: 1px solid #0DB5BB;
-    }
-    .table thead th { border: none; }
-    .table tbody td { border-bottom: 1px solid #f2f2f2; padding: 1rem 0.75rem; }
-    
-    /* Print Setup */
-    @media print {
-        .sidebar, .navbar, .btn, .pagetitle nav, form, .filter-box, .dropdown {
-            display: none !important;
-        }
-        .card { border: none !important; box-shadow: none !important; }
-        .row { display: flex !important; }
-        .col-md-4 { width: 33.33% !important; float: left; }
-        .card-body { padding: 0 !important; }
-        body { background-color: white !important; font-size: 12px; }
-        .text-white { color: black !important; }
-        .card.text-white { background: white !important; border: 1px solid #ddd !important; }
-        .card.text-white * { color: black !important; }
-    }
-</style>

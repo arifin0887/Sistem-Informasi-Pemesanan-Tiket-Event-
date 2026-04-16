@@ -119,13 +119,3 @@ if (empty($tickets)) {
         });
     });
 </script>
-
-<style>
-    .dashed { border-top: 2px dashed #eee; opacity: 1; margin: 20px 0; }
-    .qrcode img { margin: 0 auto; } 
-    @media print {
-        .no-print, nav, footer, .btn { display: none !important; }
-        body { background: white !important; }
-        .card { break-inside: avoid; border: 1px solid #eee !important; margin-bottom: 50px !important; }
-    }
-</style>

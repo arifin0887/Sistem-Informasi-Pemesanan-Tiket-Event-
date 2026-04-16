@@ -37,55 +37,6 @@ $sql_recent = "SELECT o.id_order, u.nama, e.nama_event, o.total, o.status
 $res_recent = mysqli_query($conn, $sql_recent);
 ?>
 
-<style>
-  <styl>
-    /* Custom Info Cards */
-    .info-card {
-        border: none;
-        border-radius: 16px;
-        transition: all 0.3s ease;
-    }
-    .info-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(29, 17, 69, 0.1) !important;
-    }
-    .card-icon {
-        width: 64px;
-        height: 64px;
-        font-size: 28px;
-        line-height: 0;
-    }
-    
-    /* Warna Khusus Dashboard */
-    .sales-card .card-icon { color: #1D1145; background: #eef1ff; }
-    .revenue-card .card-icon { color: #0DB5BB; background: #e0f8f9; }
-    .customers-card .card-icon { color: #ff9f43; background: #fff5ed; }
-    
-    .card-title {
-        font-weight: 700 !important;
-        color: #1D1145 !important;
-        text-transform: uppercase;
-        font-size: 14px !important;
-        letter-spacing: 0.5px;
-    }
-    .card-title span { color: #899bbd; font-weight: 400; font-size: 12px; }
-    
-    h6 { font-size: 24px !important; font-weight: 800 !important; color: #1D1145; margin: 0; }
-    
-    /* Recent Sales Table */
-    .recent-sales { border: none; border-radius: 16px; }
-    .table thead { background: #f8f9fa; }
-    .table thead th { 
-        border: none; 
-        font-size: 13px; 
-        color: #1D1145; 
-        font-weight: 600; 
-        padding: 15px;
-    }
-    .table tbody td { padding: 15px; vertical-align: middle; border-bottom: 1px solid #f2f4f7; }
-    .badge { padding: 8px 12px; border-radius: 8px; font-weight: 600; }
-</style>
-
 <div class="pagetitle">
   <h1>Admin Dashboard</h1>
   <nav>

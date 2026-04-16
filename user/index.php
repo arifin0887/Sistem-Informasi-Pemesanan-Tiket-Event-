@@ -42,6 +42,7 @@ function generateTicketCode($id_event) {
 
         <!-- Template Main CSS File -->
         <link href="../template/NiceAdmin/assets/css/style.css" rel="stylesheet">
+        <link href="../style/style.css" rel="stylesheet">
 
         <!-- =======================================================
         * Template Name: NiceAdmin

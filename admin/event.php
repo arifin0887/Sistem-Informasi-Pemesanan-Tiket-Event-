@@ -54,18 +54,6 @@ $events = mysqli_query($conn, "SELECT e.*, v.nama_venue FROM event e JOIN venue 
 $venues = mysqli_query($conn, "SELECT * FROM venue ORDER BY nama_venue ASC");
 ?>
 
-<style>
-    .card { border: none; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
-    .card-title { color: #1d1145; font-weight: 700; }
-    .btn-primary { background-color: #1d1145; border: none; }
-    .btn-primary:hover { background-color: #e66c8a; }
-    .table thead th { background-color: #f8f9fa; color: #1d1145; }
-    .modal-header { background-color: #1d1145; color: #fff; border-radius: 12px 12px 0 0; }
-    .modal-content { border-radius: 12px; border: none; }
-    .event-date { font-weight: 600; color: #1d1145; }
-    .venue-tag { font-size: 0.85rem; color: #6c757d; }
-</style>
-
 <div class="pagetitle">
     <h1>Manajemen Event</h1>
     <nav>
