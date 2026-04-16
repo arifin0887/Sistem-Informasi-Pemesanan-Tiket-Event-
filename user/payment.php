@@ -10,7 +10,10 @@ $id_order = (int)$_GET['id_order'];
 $id_user = (int)$_SESSION['user']['id'];
 
 // AMBIL DATA ORDER UNTUK USER 
-$query_order = mysqli_query($conn, "SELECT * FROM orders WHERE id_order = $id_order AND id_user = $id_user");
+$query_order = mysqli_query($conn, "SELECT o.*, v.potongan 
+    FROM orders o 
+    LEFT JOIN voucher v ON o.id_voucher = v.id_voucher 
+    WHERE o.id_order = $id_order AND o.id_user = $id_user");
 $order = mysqli_fetch_assoc($query_order);
 
 // JIKA ORDER TIDAK DITEMUKAN ATAU BUKAN MILIK USER, TAMPILKAN ERROR
@@ -18,7 +21,7 @@ if (!$order) {
     echo "<div class='alert alert-danger'>Order tidak ditemukan.</div>"; exit;
 }
 
-// AMBIL DATA TIKET YANG DIBELI DALAM ORDER INI BESERTA NAMA EVENT, TANGGAL, DAN VENUE
+// AMBIL DATA TIKET YANG DIBELI DALAM ORDER BESERTA NAMA EVENT, TANGGAL, DAN VENUE
 $tikets = mysqli_query($conn, "SELECT od.*, t.nama_tiket, e.nama_event, e.tanggal, v.nama_venue, t.id_event 
     FROM order_detail od 
     JOIN tiket t ON od.id_tiket = t.id_tiket 
@@ -70,7 +73,7 @@ if (isset($_POST['proses_bayar'])) {
                     <?php if ($message): ?>
                         <div class="alert alert-success border-0 shadow-sm mb-4">
                             <i class="bi bi-check-circle-fill me-2"></i> <?php echo $message; ?>
-                            <br><a href="index.php?page=my_tickets" class="btn btn-sm btn-light mt-2 text-success fw-bold">Lihat E-Tiket Saya</a>
+                            <br><a href="index.php?page=e-tiket&id=<?php echo $id_order; ?>" class="btn btn-sm btn-light mt-2 text-success fw-bold">Lihat E-Tiket Saya</a>
                         </div>
                     <?php endif; ?>
 
@@ -84,16 +87,34 @@ if (isset($_POST['proses_bayar'])) {
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php while($t = mysqli_fetch_assoc($tikets)): ?>
+                                <?php 
+                                $total_item = 0;
+                                while($t = mysqli_fetch_assoc($tikets)): 
+                                    $total_item += $t['subtotal'];
+                                ?>
                                 <tr>
                                     <td>
                                         <span class="fw-bold d-block"><?php echo $t['nama_event']; ?></span>
-                                        <small class="text-muted"><?php echo $t['nama_tiket']; ?> @ <?php echo $t['nama_venue']; ?></small>
+                                        <small class="text-muted"><?php echo $t['nama_tiket']; ?></small>
                                     </td>
                                     <td class="text-center"><?php echo $t['qty']; ?></td>
-                                    <td class="text-end fw-bold">Rp <?php echo number_format($t['subtotal'],0,',','.'); ?></td>
+                                    <td class="text-end">Rp <?php echo number_format($t['subtotal'], 0, ',', '.'); ?></td>
                                 </tr>
                                 <?php endwhile; ?>
+
+                                <?php if ($order['potongan'] > 0): ?>
+                                <tr class="table-light">
+                                    <td colspan="2" class="text-end fw-bold text-danger">Potongan (<?php echo $order['kode_voucher'] ?? 'Discount'; ?>)</td>
+                                    <td class="text-end fw-bold text-danger">- Rp <?php echo number_format($order['potongan'], 0, ',', '.'); ?></td>
+                                </tr>
+                                <?php endif; ?>
+
+                                <tr class="table-primary">
+                                    <td colspan="2" class="text-end fw-bold text-uppercase">Total Bayar</td>
+                                    <td class="text-end fw-bold" style="font-size: 1.1rem;">
+                                        Rp <?php echo number_format($order['total'], 0, ',', '.'); ?>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
