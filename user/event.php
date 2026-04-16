@@ -138,6 +138,39 @@ $v = mysqli_fetch_assoc($query_voucher);
     .promo-banner:hover {
         transform: scale(1.01);
     }
+
+    .display-title {
+        font-size: 1.75rem; /* Ukuran lebih besar dan tegas */
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        color: #1a237e; /* Navy */
+        cursor: pointer;
+        transition: all 0.3s ease;
+        word-wrap: break-word; /* Biar kalau kepanjangan tidak hancur */
+    }
+
+    .display-title:hover {
+        color: #ff4081; /* Pink accent */
+    }
+
+    .event-date-badge {
+        background: #fdfdfd;
+        min-width: 80px;
+        text-align: center;
+        padding: 12px 8px;
+        border-radius: 18px;
+        border: 1px dashed #ddd;
+        flex-shrink: 0; /* Mencegah box tanggal menyusut */
+    }
+
+    .my-minus-1 {
+        margin-top: -3px;
+        margin-bottom: -3px;
+    }
+
+    .text-pink {
+        color: #ff4081;
+    }
 </style>
 
 <?php if($v): ?>
@@ -145,7 +178,7 @@ $v = mysqli_fetch_assoc($query_voucher);
     <div>
         <h5 class="fw-bold mb-1">🎉 Promo Spesial!</h5>
         <p class="mb-0 small">
-            Gunakan kode <b><?= $v['kode_voucher'] ?></b> untuk diskon Rp<?= $v['potongan'] ?> pada pembelian tiket! <b>Kuota Terbatas</b>, segera manfaatkan sebelum habis!
+            Gunakan kode <b><?= $v['kode_voucher'] ?></b> untuk diskon Rp<?= number_format($v['potongan'], 0, ',', '.') ?> pada pembelian tiket! <b>Kuota Terbatas</b>, segera manfaatkan sebelum habis!
         </p>
     </div>
     <button class="btn btn-light fw-bold rounded-pill px-4" onclick="copyVoucher('<?= $v['kode_voucher'] ?>')">
@@ -188,24 +221,26 @@ $v = mysqli_fetch_assoc($query_voucher);
                 $total_kuota = array_sum(array_column($event['tikets'], 'kuota'));
             ?>
                 <div class="col-xl-4 col-md-6 mb-4">
-                    <div class="card h-100 event-card shadow-sm">
-                        <div class="card-body p-4">
-                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                <div class="event-date-badge">
-                                    <span class="d-block small text-uppercase"><?= date('M', strtotime($event['tanggal'])) ?></span>
-                                    <span class="fs-4"><?= date('d', strtotime($event['tanggal'])) ?></span>
-                                    <span class="d-block small text-uppercase"><?= date('Y', strtotime($event['tanggal'])) ?></span>
+                    <div class="card h-100 event-card shadow-sm border-0" style="border-radius: 20px;">
+                        <div class="card-body p-4 position-relative"> <span class="badge rounded-pill <?= $isExpired ? 'bg-secondary' : 'bg-success' ?> position-absolute" 
+                                style="top: 20px; right: 20px; font-size: 0.7rem; z-index: 10;">
+                                <?= $isExpired ? 'Selesai' : 'Tersedia' ?>
+                            </span>
+
+                            <div class="d-flex align-items-center mb-4 pe-5"> <div class="event-date-badge me-3">
+                                    <span class="d-block small text-uppercase fw-bold text-muted"><?= date('M', strtotime($event['tanggal'])) ?></span>
+                                    <span class="fs-2 d-block fw-bold my-minus-1" style="color: var(--event-navy);"><?= date('d', strtotime($event['tanggal'])) ?></span>
+                                    <span class="d-block small text-uppercase text-muted"><?= date('Y', strtotime($event['tanggal'])) ?></span>
                                 </div>
-                                <span class="badge rounded-pill <?= $isExpired ? 'bg-secondary' : 'bg-success' ?> shadow-sm">
-                                    <?= $isExpired ? 'Selesai' : 'Tersedia' ?>
-                                </span>
+                                
+                                <div class="flex-grow-1">
+                                    <h2 class="fw-bold mb-0 display-title" onclick='showDetail(<?= json_encode($event) ?>)'>
+                                        <?= htmlspecialchars($event['nama_event']) ?>
+                                    </h2>
+                                </div>
                             </div>
 
-                            <h5 class="fw-bold mb-2" style="color: var(--navy); cursor: pointer;" onclick='showDetail(<?= json_encode($event) ?>)'>
-                                <?= htmlspecialchars($event['nama_event']) ?>
-                            </h5>
-                            
-                            <div class="text-muted small mb-3">
+                            <div class="text-muted small mb-3 ps-1">
                                 <p class="mb-1"><i class="bi bi-geo-alt-fill text-pink me-2"></i><?= htmlspecialchars($event['nama_venue']) ?></p>
                                 <p class="mb-0"><i class="bi bi-clock-fill text-pink me-2"></i><?= date('H:i', strtotime($event['tanggal'])) ?> WIB</p>
                             </div>
@@ -213,15 +248,16 @@ $v = mysqli_fetch_assoc($query_voucher);
                             <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
                                 <div>
                                     <small class="text-muted d-block" style="font-size: 0.7rem;">Mulai dari</small>
-                                    <span class="price-tag">Rp <?= number_format($min_price, 0, ',', '.') ?></span>
+                                    <span class="price-tag fs-5 fw-bold" style="color: var(--event-accent);">Rp <?= number_format($min_price, 0, ',', '.') ?></span>
                                 </div>
-                                <button class="btn btn-book btn-sm shadow-sm" onclick='showDetail(<?= json_encode($event) ?>)'>
+                                <button class="btn btn-book btn-sm shadow-sm px-4 rounded-pill fw-bold" onclick='showDetail(<?= json_encode($event) ?>)'>
                                     Beli Tiket
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
+
             <?php endforeach; ?>
         <?php endif; ?>
     </div>
@@ -252,8 +288,8 @@ $v = mysqli_fetch_assoc($query_voucher);
         if (event.tikets.length > 0) {
             tiketHtml = `
                 <div class="mb-4">
-                    <h4 class="fw-bold mb-1" style="color: var(--navy);">${event.nama_event}</h4>
-                    <p class="text-muted small"><i class="bi bi-geo-alt me-1"></i> ${event.nama_venue} | <i class="bi bi-calendar-check me-1"></i> ${event.tanggal}</p>
+                    <h4 class="fw-bold mb-1" style="color: var(--navy);">${event.nama_event} - ${event.tanggal}</h4>
+                    <p class="text-muted small"><i class="bi bi-geo-alt me-1"></i> ${event.nama_venue}</p>
                 </div>
                 <div class="list-group list-group-flush border rounded-3 overflow-hidden">
             `;

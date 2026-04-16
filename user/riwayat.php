@@ -154,11 +154,15 @@ while ($row = mysqli_fetch_assoc($result)) {
 
 <section class="section">
     <?php if (empty($orders)): ?>
-        <div class="text-center py-5 shadow-sm bg-white rounded-4">
-            <i class="bi bi-ticket-detailed text-muted" style="font-size: 4rem;"></i>
-            <h4 class="mt-3 fw-bold">Belum Ada Tiket</h4>
-            <p class="text-muted">Sepertinya Anda belum melakukan pemesanan tiket apapun.</p>
-            <a href="index.php?page=event" class="btn btn-primary rounded-pill px-4">Cari Event Seru</a>
+        <div class="col-12 text-center py-5">
+            <div class="card border-0 shadow-sm p-5" style="border-radius: 20px;">
+                <img src="assets/img/empty-ticket.svg" alt="Empty" style="width: 120px; opacity: 0.5;" class="mx-auto mb-3">
+                <h4 class="fw-bold" style="color: #1d1145;">Belum Ada Tiket</h4>
+                <p class="text-muted">Sepertinya Anda belum memiliki rencana seru. <br>Ayo cari event menarik untuk akhir pekan Anda!</p>
+                <a href="index.php?page=event" class="btn btn-primary px-4 py-2 mt-2" style="background-color: #1d1145; border: none; border-radius: 10px;">
+                    Cari Event Sekarang
+                </a>
+            </div>
         </div>
     <?php else: ?>
         <div class="row">
