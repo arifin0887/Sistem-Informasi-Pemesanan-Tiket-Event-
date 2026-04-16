@@ -12,16 +12,49 @@ $id_user = (int)$_SESSION['user']['id'];
 // PROSES CANCEL TIKET
 if (isset($_POST['submit_cancel'])) {
     $id = (int)$_POST['id_transaksi'];
-    // Tambahkan pengecekan id_user agar user tidak bisa cancel pesanan orang lain lewat inspect element
-    $check_owner = mysqli_query($conn, "SELECT id_order FROM orders WHERE id_order=$id AND id_user=$id_user");
     
-    if (mysqli_num_rows($check_owner) > 0) {
-        // Update status jadi cancelled di database
-        $update = mysqli_query($conn, "UPDATE orders SET status='cancel' WHERE id_order=$id");
-        
-        if ($update) {
+    // Pastikan session user ID benar-benar ada
+    if (!isset($_SESSION['user']['id'])) {
+        echo "<script>alert('Sesi habis, silakan login kembali.'); window.location='login.php';</script>";
+        exit;
+    }
+    $id_user = (int)$_SESSION['user']['id'];
+
+    // 1. Cek kepemilikan dan pastikan status saat ini adalah 'pending'
+    $stmt = mysqli_prepare($conn, "SELECT id_order FROM orders WHERE id_order=? AND id_user=? AND status='pending'");
+    mysqli_stmt_bind_param($stmt, "ii", $id, $id_user);
+    mysqli_stmt_execute($stmt);
+    $check_result = mysqli_stmt_get_result($stmt);
+    
+    if (mysqli_num_rows($check_result) > 0) {
+        mysqli_begin_transaction($conn);
+
+        try {
+            // 2. Ambil detail tiket
+            $query_detail = mysqli_query($conn, "SELECT id_tiket, qty FROM order_detail WHERE id_order=$id");
+            
+            while ($item = mysqli_fetch_assoc($query_detail)) {
+                $id_tiket = $item['id_tiket'];
+                $qty = $item['qty'];
+                
+                // 3. Kembalikan stok
+                mysqli_query($conn, "UPDATE tiket SET kuota = kuota + $qty WHERE id_tiket = $id_tiket");
+            }
+
+            // 4. Update status order
+            mysqli_query($conn, "UPDATE orders SET status='cancel' WHERE id_order=$id");
+
+            mysqli_commit($conn);
             echo "<script>alert('Pesanan berhasil dibatalkan.'); window.location='index.php?page=riwayat';</script>";
+
+        } catch (Exception $e) {
+            mysqli_rollback($conn);
+            // Debug: Uncomment baris di bawah ini jika ingin melihat error aslinya
+            // die($e->getMessage()); 
+            echo "<script>alert('Gagal membatalkan pesanan: " . $e->getMessage() . "');</script>";
         }
+    } else {
+        echo "<script>alert('Pesanan tidak valid atau sudah dibatalkan sebelumnya.');</script>";
     }
     exit;
 }
@@ -304,8 +337,9 @@ while ($row = mysqli_fetch_assoc($result)) {
 </section>
 
 <script>
-    function cancelTiket(id) {
-        document.getElementById('id_transaksi').value = id;
-        new bootstrap.Modal(document.getElementById('modalCancel')).show();
-    }
+   function cancelTiket(id) {
+    document.getElementById('id_transaksi').value = id;
+    let modal = new bootstrap.Modal(document.getElementById('modalCancel'));
+    modal.show();
+}
 </script>
