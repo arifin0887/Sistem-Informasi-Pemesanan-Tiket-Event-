@@ -257,7 +257,7 @@ $query_event = mysqli_query($conn, "
                 <div class="bg-white p-6 rounded-xl shadow-md text-center border-t-4 border-[#0DB5BB]">
                     <div class="text-3xl mb-3">📍</div>
                     <h3 class="font-bold text-gray-900 mb-1">Kantor Pusat</h3>
-                    <p class="text-sm text-gray-500">Jl. Sudirman No. 12, Jakarta Selatan</p>
+                    <p class="text-sm text-gray-500">Jl. A Yani No 135A Magelang Utara, Kota Magelang</p>
                 </div>
                 <div class="bg-white p-6 rounded-xl shadow-md text-center border-t-4 border-[#E66C8A]">
                     <div class="text-3xl mb-3">✉️</div>
@@ -300,7 +300,7 @@ $query_event = mysqli_query($conn, "
             id: e.id_event,
             nama: e.nama_event,
             lokasi: e.nama_venue ?? "TBA",
-            tanggal: new Date(e.tanggal).toLocaleDateString('id-ID'),
+            tanggal: `${new Date(e.tanggal).getDate()} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][new Date(e.tanggal).getMonth()]} ${new Date(e.tanggal).getFullYear()}`,
             jam: "19:00",
             harga: e.harga_mulai ?? 0,
             kategori: e.kategori_event ? e.kategori_event.split(",") : ["Umum"],        
@@ -315,7 +315,7 @@ $query_event = mysqli_query($conn, "
                 <img src="${event.img}" class="w-full h-40 object-cover">
                 <div class="p-4">
                     <h3 class="font-bold text-lg">${event.nama}</h3>
-                    <p class="text-sm text-gray-500">${event.tanggal}</p>
+                    <p class="text-sm text-gray-500">${event.tanggal} | ${event.jam}</p>
                     <p class="text-sm text-gray-500">${event.lokasi}</p>
                     <p class="font-bold mt-2 text-[#1D1145]">Rp ${harga}</p>
                     <button onclick="beliEvent(${event.id})"
@@ -342,23 +342,6 @@ $query_event = mysqli_query($conn, "
             grid.innerHTML = hasil.length
                 ? hasil.map(e => buatTemplateCard(e)).join('')
                 : `<p class="text-center col-span-full text-gray-400">Tidak ada event</p>`;
-        }
-
-        // SET KATEGORI + AKTIF STYLE
-        function setKategori(kat){
-            kategoriAktif = kat;
-
-            document.querySelectorAll('.kategori-btn').forEach(btn => {
-                if(btn.innerText === kat){
-                    btn.classList.remove('bg-white','text-gray-700');
-                    btn.classList.add('bg-[#1D1145]','text-white');
-                } else {
-                    btn.classList.remove('bg-[#1D1145]','text-white');
-                    btn.classList.add('bg-white','text-gray-700');
-                }
-            });
-
-            filterEvent();
         }
 
         // BELI EVENT
