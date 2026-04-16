@@ -249,12 +249,12 @@ $total_tiket = $data_tiket['total'] ?? 0;
                             <p class="text-muted mb-4">Scan tiket peserta menggunakan kamera perangkat atau hubungkan alat scanner laser.</p>
                             
                             <div class="row g-3">
-                                <div class="col-auto">
+                                <!-- <div class="col-auto">
                                     <a href="?page=scan" class="btn btn-camera p-0 rounded-4 d-flex flex-column align-items-center justify-content-center text-white" style="width: 110px; height: 110px;">
                                         <i class="bi bi-camera-fill fs-2 mb-1"></i>
                                         <span class="fw-bold" style="font-size: 0.75rem;">KAMERA HP</span>
                                     </a>
-                                </div>
+                                </div> -->
 
                                 <div class="col">
                                     <div class="scanner-container h-100 d-flex flex-column justify-content-center">
@@ -265,10 +265,10 @@ $total_tiket = $data_tiket['total'] ?? 0;
                                             <div class="flex-grow-1">
                                                 <label class="small fw-bold text-uppercase text-muted mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px;">Scanner Kasir / Manual</label>
                                                 <form id="formScannerManual" class="d-flex align-items-center">
-                                                    <input type="text" id="manual_kode" class="form-control p-0 border-0 bg-transparent shadow-none" placeholder="Siap scan tiket..." autofocus autocomplete="off">
-                                                    <button type="submit" class="btn btn-primary btn-sm rounded-pill px-3 ms-2 shadow-sm">
-                                                        Validasi
-                                                    </button>
+                                                    <input type="text" id="manual_kode"
+                                                        class="form-control p-0 border-0 bg-transparent shadow-none"
+                                                        placeholder="Siap scan tiket..."
+                                                        autocomplete="off">
                                                 </form>
                                             </div>
                                         </div>
@@ -288,64 +288,65 @@ $total_tiket = $data_tiket['total'] ?? 0;
         </div>
 
         <div class="col-md-12 col-lg-4 mb-4">
-    <div class="card attendance-card shadow-lg h-100 position-relative">
-        <i class="bi bi-people bg-icon-decoration"></i>
-        
-        <div class="card-body p-4 p-xl-5">
-            <div class="d-flex justify-content-between align-items-start mb-4">
-                <div>
-                    <h5 class="card-title text-white fw-bold mb-1" style="letter-spacing: 0.5px;">Kehadiran</h5>
-                    <span class="capacity-badge text-uppercase">Real-time Data</span>
-                </div>
-                <div class="text-white-50">
-                    <i class="bi bi-broadcast fs-4"></i>
-                </div>
-            </div>
-
-            <div class="py-3">
-                <div class="d-flex align-items-baseline">
-                    <h1 class="display-3 fw-bold mb-0 glow-text"><?= $total_checkin; ?></h1>
-                    <span class="ms-2 text-white-50 fs-4">/ <?= $total_tiket; ?></span>
-                </div>
-                <p class="text-white-50 small mt-1">Peserta telah masuk ke venue</p>
-            </div>
-
-            <div class="mt-4">
-                <?php $persen = ($total_tiket > 0) ? ($total_checkin / $total_tiket) * 100 : 0; ?>
-                <div class="d-flex justify-content-between mb-2">
-                    <span class="text-white-50 small">Okupansi</span>
-                    <span class="text-white fw-bold small"><?= round($persen, 1) ?>%</span>
-                </div>
+            <div class="card attendance-card shadow-lg h-100 position-relative">
+                <i class="bi bi-people bg-icon-decoration"></i>
                 
-                <div class="progress progress-custom">
-                    <div class="progress-bar progress-bar-glow" 
-                         role="progressbar" 
-                         style="width: <?= $persen ?>%" 
-                         aria-valuenow="<?= $persen ?>" 
-                         aria-valuemin="0" 
-                         aria-valuemax="100">
+                <div class="card-body p-4 p-xl-5">
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+                        <div>
+                            <h5 class="card-title text-white fw-bold mb-1" style="letter-spacing: 0.5px;">Kehadiran</h5>
+                            <span class="capacity-badge text-uppercase">Real-time Data</span>
+                        </div>
+                        <div class="text-white-50">
+                            <i class="bi bi-broadcast fs-4"></i>
+                        </div>
                     </div>
-                </div>
-            </div>
 
-            <div class="mt-4 pt-2 border-top border-secondary border-opacity-25">
-                <div class="d-flex align-items-center">
-                    <div class="flex-shrink-0">
-                        <i class="bi bi-check2-circle text-primary fs-4"></i>
+                    <div class="py-3">
+                        <div class="d-flex align-items-baseline">
+                            <h1 class="display-3 fw-bold mb-0 glow-text"><?= $total_checkin; ?></h1>
+                            <span class="ms-2 text-white-50 fs-4">/ <?= $total_tiket; ?></span>
+                        </div>
+                        <p class="text-white-50 small mt-1">Peserta telah masuk ke venue</p>
                     </div>
-                    <div class="ms-3">
-                        <p class="mb-0 text-white-50" style="font-size: 0.75rem;">Status Gate</p>
-                        <p class="mb-0 text-white fw-bold small">Pintu Masuk Terbuka</p>
+
+                    <div class="mt-4">
+                        <?php $persen = ($total_tiket > 0) ? ($total_checkin / $total_tiket) * 100 : 0; ?>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-white-50 small">Okupansi</span>
+                            <span class="text-white fw-bold small"><?= round($persen, 1) ?>%</span>
+                        </div>
+                        
+                        <div class="progress progress-custom">
+                            <div class="progress-bar progress-bar-glow" 
+                                role="progressbar" 
+                                style="width: <?= $persen ?>%" 
+                                aria-valuenow="<?= $persen ?>" 
+                                aria-valuemin="0" 
+                                aria-valuemax="100">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-2 border-top border-secondary border-opacity-25">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <i class="bi bi-check2-circle text-primary fs-4"></i>
+                            </div>
+                            <div class="ms-3">
+                                <p class="mb-0 text-white-50" style="font-size: 0.75rem;">Status Gate</p>
+                                <p class="mb-0 text-white fw-bold small">Pintu Masuk Terbuka</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
     </div>
 
-    <div class="row">
+    <!-- SCAN KAMERA -->
+    <!-- <div class="row">
         <div class="col-12">
             <div class="card border-0 shadow-sm" style="border-radius: 20px;">
                 <div class="card-body p-4">
@@ -371,63 +372,74 @@ $total_tiket = $data_tiket['total'] ?? 0;
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
+
 </section>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const formManual = document.getElementById('formScannerManual');
-        const inputManual = document.getElementById('manual_kode');
+    document.addEventListener('DOMContentLoaded', function () {
+    const inputManual = document.getElementById('manual_kode');
 
-        // Fokus otomatis ke input agar siap discan kapan saja
-        inputManual.focus();
-        document.addEventListener('click', () => inputManual.focus());
+    inputManual.focus();
 
-        formManual.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const kode = inputManual.value.trim();
-            
-            if (kode === "") return;
+    // selalu fokus (scanner mode)
+    document.addEventListener('click', () => inputManual.focus());
 
-            // Tampilkan loading sebentar
-            Swal.fire({
-                title: 'Memvalidasi...',
-                didOpen: () => { Swal.showLoading() },
-                allowOutsideClick: false
-            });
+    let scanBuffer = "";
+    let scanTimeout;
 
-            // Kirim ke file proses_checkin yang sudah kamu buat sebelumnya
-            fetch('proses_checkin.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: 'kode_tiket=' + encodeURIComponent(kode)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Check-in Berhasil',
-                        text: data.message,
-                        timer: 1500,
-                        showConfirmButton: false
-                    }).then(() => {
-                        location.reload(); // Refresh untuk update statistik
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal',
-                        text: data.message
-                    });
-                    inputManual.value = ""; // Bersihkan input untuk scan ulang
-                }
-            })
-            .catch(error => {
-                console.error(error);
-                Swal.fire('Error', 'Gagal menghubungi server', 'error');
-            });
-        });
+    inputManual.addEventListener('input', function (e) {
+        clearTimeout(scanTimeout);
+
+        scanBuffer = e.target.value;
+
+        // scanner biasanya kirim ENTER di akhir
+        scanTimeout = setTimeout(() => {
+            const kode = scanBuffer.trim();
+
+            if (kode.length < 3) return;
+
+            prosesCheckin(kode);
+
+            inputManual.value = "";
+            scanBuffer = "";
+        }, 300); // delay kecil untuk deteksi selesai scan
     });
+
+    function prosesCheckin(kode) {
+        Swal.fire({
+            title: 'Memvalidasi...',
+            didOpen: () => { Swal.showLoading() },
+            allowOutsideClick: false
+        });
+
+        fetch('proses_checkin.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'kode_tiket=' + encodeURIComponent(kode)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Check-in Berhasil',
+                    text: data.message,
+                    timer: 1200,
+                    showConfirmButton: false
+                }).then(() => location.reload());
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: data.message
+                });
+            }
+        })
+        .catch(() => {
+            Swal.fire('Error', 'Server tidak merespon', 'error');
+        });
+    }
+});
 </script>
