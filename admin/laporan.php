@@ -26,6 +26,30 @@ $query_laporan = mysqli_query($conn, "
     ORDER BY o.tanggal_order DESC
 ");
 
+// QUERY DATA CANCEL
+$query_cancel = mysqli_query($conn, "
+    SELECT 
+        o.id_order,
+        o.tanggal_order,
+        u.nama AS nama_pembeli,
+        SUM(od.qty) as total_tiket
+    FROM orders o
+    JOIN users u ON o.id_user = u.id_user
+    JOIN order_detail od ON o.id_order = od.id_order
+    WHERE DATE(o.tanggal_order) BETWEEN '$tgl_mulai' AND '$tgl_selesai'
+    AND o.status = 'cancel'
+    GROUP BY o.id_order
+");
+
+// HITUNG TOTAL CANCEL
+$total_cancel = 0;
+$data_cancel = [];
+
+while($row = mysqli_fetch_assoc($query_cancel)) {
+    $data_cancel[] = $row;
+    $total_cancel += $row['total_tiket'];
+}
+
 // Pre-calculate untuk statistik di atas
 $data_rows = [];
 $total_pendapatan = 0;
@@ -37,6 +61,64 @@ while($row = mysqli_fetch_assoc($query_laporan)) {
 }
 $jumlah_transaksi = count($data_rows);
 ?>
+
+<style>
+    .card-cancel {
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        background: linear-gradient(to bottom right, #ffffff, #fffafa);
+    }
+
+    .header-cancel {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #fee2e2; /* Red-100 */
+        margin-bottom: 20px;
+    }
+
+    .table-cancel thead th {
+        background-color: #fef2f2 !important; /* Red-50 */
+        color: #991b1b !important; /* Red-800 */
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+        font-weight: 700;
+        padding: 15px;
+        border: none;
+    }
+
+    .table-cancel tbody td {
+        padding: 15px;
+        color: #4b5563;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .badge-id {
+        background: #f3f4f6;
+        color: #1f2937;
+        padding: 5px 10px;
+        border-radius: 8px;
+        font-family: 'Monaco', 'Consolas', monospace;
+        font-size: 0.85rem;
+    }
+
+    .cancel-qty-circle {
+        background: #fee2e2;
+        color: #dc2626;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        margin: 0 auto;
+        font-weight: bold;
+        font-size: 0.85rem;
+    }
+</style>
 
 <div class="pagetitle mb-4">
     <h1 style="color: #1D1145; font-weight: 700;">Laporan Penjualan</h1>
@@ -50,6 +132,22 @@ $jumlah_transaksi = count($data_rows);
 
 <section class="section">
     <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card border-0 shadow-sm text-white" style="background: linear-gradient(45deg, #0DB5BB, #0ca4aa); border-radius: 15px;">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase mb-1 small opacity-75">Total Omzet</h6>
+                            <h2 class="mb-0 fw-bold">Rp <?= number_format($total_pendapatan, 0, ',', '.') ?></h2>
+                        </div>
+                        <div class="icon-shape bg-white bg-opacity-10 p-3 rounded-circle">
+                            <i class="bi bi-cash-stack fs-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="col-md-4">
             <div class="card border-0 shadow-sm text-white" style="background: linear-gradient(45deg, #1D1145, #2a1a5e); border-radius: 15px;">
                 <div class="card-body p-4">
@@ -65,21 +163,7 @@ $jumlah_transaksi = count($data_rows);
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm text-white" style="background: linear-gradient(45deg, #0DB5BB, #0ca4aa); border-radius: 15px;">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-uppercase mb-1 small opacity-75">Total Omzet</h6>
-                            <h2 class="mb-0 fw-bold">Rp <?= number_format($total_pendapatan, 0, ',', '.') ?></h2>
-                        </div>
-                        <div class="icon-shape bg-white bg-opacity-10 p-3 rounded-circle">
-                            <i class="bi bi-cash-stack fs-3"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        
         <div class="col-md-4">
             <div class="card border-0 shadow-sm bg-white" style="border-radius: 15px; border-left: 5px solid #1D1145 !important;">
                 <div class="card-body p-4">
@@ -92,6 +176,22 @@ $jumlah_transaksi = count($data_rows);
                         </div>
                         <div class="icon-shape bg-light p-3 rounded-circle text-primary">
                             <i class="bi bi-graph-up-arrow fs-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm text-white" style="background: linear-gradient(45deg, #dc3545, #b02a37); border-radius: 15px;">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase mb-1 small opacity-75">Tiket Dibatalkan</h6>
+                            <h2 class="mb-0 fw-bold"><?= number_format($total_cancel) ?> <span class="fs-6 fw-normal">Pcs</span></h2>
+                        </div>
+                        <div class="icon-shape bg-white bg-opacity-10 p-3 rounded-circle">
+                            <i class="bi bi-x-circle fs-3"></i>
                         </div>
                     </div>
                 </div>
@@ -175,6 +275,72 @@ $jumlah_transaksi = count($data_rows);
                             </tbody>
                         </table>
                     </div>
+
+                    <div class="card card-cancel shadow-sm mt-4">
+                        <div class="card-body py-4">
+                            
+                            <div class="header-cancel">
+                                <div class="icon-box bg-danger text-white rounded-3 p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                    <i class="bi bi-cart-x-fill fs-5"></i>
+                                </div>
+                                <div>
+                                    <h5 class="fw-bold mb-0 text-dark">Data Pembatalan Tiket</h5>
+                                    <small class="text-muted">Daftar transaksi yang dibatalkan oleh pengguna atau sistem</small>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table table-cancel align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th width="5%">No</th>
+                                            <th width="15%">ID Order</th>
+                                            <th>Pembeli</th>
+                                            <th>Tanggal Pemesanan</th>
+                                            <th class="text-center">Jumlah</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if(count($data_cancel) > 0): ?>
+                                            <?php $no = 1; foreach($data_cancel as $row): ?>
+                                            <tr>
+                                                <td><span class="text-muted small"><?= $no++ ?></span></td>
+                                                <td><span class="badge-id">#<?= str_pad($row['id_order'], 5, '0', STR_PAD_LEFT) ?></span></td>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="avatar-sm me-3 bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 35px; height: 35px; border: 1px solid #e5e7eb;">
+                                                            <i class="bi bi-person text-secondary"></i>
+                                                        </div>
+                                                        <div class="fw-semibold text-dark"><?= htmlspecialchars($row['nama_pembeli']) ?></div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="small">
+                                                        <div class="text-dark"><?= date('d M Y', strtotime($row['tanggal_order'])) ?></div>
+                                                        <div class="text-muted" style="font-size: 0.75rem;"><?= date('H:i', strtotime($row['tanggal_order'])) ?> WIB</div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="cancel-qty-circle shadow-sm">
+                                                        <?= $row['total_tiket'] ?>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <tr>
+                                                <td colspan="5" class="text-center py-5">
+                                                    <img src="assets/img/empty-state.svg" alt="No data" style="width: 80px; opacity: 0.5;">
+                                                    <p class="text-muted mt-3 mb-0">Bersih! Tidak ada riwayat pembatalan.</p>
+                                                </td>
+                                            </tr>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
