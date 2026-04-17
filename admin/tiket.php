@@ -11,6 +11,45 @@ if (isset($_POST['submit'])) {
     $id_event = mysqli_real_escape_string($conn, $_POST['id_event']);
     $id_tiket = !empty($_POST['id_tiket']) ? mysqli_real_escape_string($conn, $_POST['id_tiket']) : null;
 
+    // AMBIL KAPASITAS VENUE DARI EVENT
+    $get_kapasitas = mysqli_query($conn, "
+        SELECT v.kapasitas 
+        FROM event e
+        JOIN venue v ON e.id_venue = v.id_venue
+        WHERE e.id_event = '$id_event'
+    ");
+
+    $data_kapasitas = mysqli_fetch_assoc($get_kapasitas);
+    $kapasitas = $data_kapasitas['kapasitas'] ?? 0;
+
+    // HITUNG TOTAL KUOTA TIKET YANG SUDAH ADA DI EVENT INI
+    if ($id_tiket) {
+        // kalau update, jangan hitung tiket yang sedang diedit
+        $get_total = mysqli_query($conn, "
+            SELECT SUM(kuota) as total 
+            FROM tiket 
+            WHERE id_event = '$id_event' AND id_tiket != '$id_tiket'
+        ");
+    } else {
+        $get_total = mysqli_query($conn, "
+            SELECT SUM(kuota) as total 
+            FROM tiket 
+            WHERE id_event = '$id_event'
+        ");
+    }
+
+    $data_total = mysqli_fetch_assoc($get_total);
+    $total_kuota = $data_total['total'] ?? 0;
+
+    // CEK APAKAH MELEBIHI KAPASITAS
+    if (($total_kuota + $kuota) > $kapasitas) {
+        echo "<script>
+            alert('Kuota tiket melebihi kapasitas venue! Maksimal kapasitas: $kapasitas');
+            window.history.back();
+        </script>";
+        exit;
+    }
+
     // LOGIC UPDATE JIKA ID TIKET ADA, INSERT JIKA TIDAK ADA
     if ($id_tiket) {
         $query = mysqli_query($conn, "UPDATE tiket SET nama_tiket='$nama_tiket', harga='$harga', kuota='$kuota', id_event='$id_event' WHERE id_tiket='$id_tiket'");
@@ -55,7 +94,12 @@ if (isset($_GET['status'])) {
 
 //  GET DATA UNTUK TAMPILAN 
 $tickets = mysqli_query($conn, "SELECT t.*, e.nama_event FROM tiket t JOIN event e ON t.id_event = e.id_event ORDER BY e.nama_event ASC, t.harga ASC");
-$events = mysqli_query($conn, "SELECT id_event, nama_event FROM event ORDER BY nama_event ASC");
+// $events = mysqli_query($conn, "SELECT id_event, nama_event FROM event ORDER BY nama_event ASC");
+$events = mysqli_query($conn, "
+    SELECT e.id_event, e.nama_event, v.kapasitas 
+    FROM event e 
+    JOIN venue v ON e.id_venue = v.id_venue
+");
 ?>
 
 <div class="pagetitle">
@@ -156,7 +200,11 @@ $events = mysqli_query($conn, "SELECT id_event, nama_event FROM event ORDER BY n
                             <option value="">-- Pilih Event --</option>
                             <?php mysqli_data_seek($events, 0); ?>
                             <?php while($e = mysqli_fetch_assoc($events)): ?>
-                                <option value="<?= $e['id_event']; ?>"><?= htmlspecialchars($e['nama_event']); ?></option>
+                                <option 
+                                    value="<?= $e['id_event']; ?>" 
+                                    data-kapasitas="<?= $e['kapasitas']; ?>">
+                                    <?= htmlspecialchars($e['nama_event']); ?>
+                                </option>                            
                             <?php endwhile; ?>
                         </select>
                     </div>
@@ -213,4 +261,23 @@ $events = mysqli_query($conn, "SELECT id_event, nama_event FROM event ORDER BY n
         var modal = new bootstrap.Modal(document.getElementById('formModal'));
         modal.show();
     }
+
+    //VALIDASI KUOTA DI FRONTEND AGAR TIDAK MELEBIHI KAPASITAS VENUE
+    let kapasitas = 0;
+
+    // ambil kapasitas saat pilih event
+    document.getElementById('id_event').addEventListener('change', function() {
+        let selected = this.options[this.selectedIndex];
+        kapasitas = parseInt(selected.getAttribute('data-kapasitas')) || 0;
+    });
+
+    // validasi kuota
+    document.getElementById('kuota').addEventListener('input', function() {
+        let val = parseInt(this.value) || 0;
+
+        if (kapasitas > 0 && val > kapasitas) {
+            this.value = kapasitas;
+            alert("Kuota melebihi kapasitas venue!");
+        }
+    });
 </script>
