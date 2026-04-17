@@ -85,30 +85,75 @@ $query_event = mysqli_query($conn, "
 <body class="text-gray-800 flex flex-col min-h-screen">
 
     <!-- HEADER -->
-    <header class="bg-white/95 backdrop-blur-sm shadow-sm fixed w-full z-30">
-        <div class="container mx-auto px-6 lg:px-16 py-4 flex justify-between items-center">
-            <button onclick="pindahMenu('beranda')" class="text-3xl font-extrabold text-[#1D1145] tracking-tight">
+    <header class="glass-nav fixed w-full z-30">
+        <div class="container mx-auto px-4 lg:px-16 py-4 flex justify-between items-center">
+
+            <!-- LOGO -->
+            <button onclick="pindahMenu('beranda')" class="text-2xl lg:text-3xl font-extrabold text-[#1D1145]">
                 Event<span class="text-[#E66C8A]">Ku</span>
             </button>
-            
+
+            <!-- MENU DESKTOP -->
             <nav class="hidden md:flex space-x-8 text-base font-semibold">
-                <button onclick="pindahMenu('beranda')" id="nav-beranda" class="text-[#0DB5BB] border-b-2 border-[#0DB5BB] pb-1 transition-all">Beranda</button>
-                <button onclick="pindahMenu('jelajah')" id="nav-jelajah" class="text-gray-700 hover:text-[#0DB5BB] border-b-2 border-transparent hover:border-[#0DB5BB] pb-1 transition-all">Jelajah</button>
-                <button onclick="pindahMenu('tentang')" id="nav-tentang" class="text-gray-700 hover:text-[#0DB5BB] border-b-2 border-transparent hover:border-[#0DB5BB] pb-1 transition-all">Tentang</button>
-                <button onclick="pindahMenu('kontak')" id="nav-kontak" class="text-gray-700 hover:text-[#0DB5BB] border-b-2 border-transparent hover:border-[#0DB5BB] pb-1 transition-all">Hubungi Kami</button>
+                <button onclick="pindahMenu('beranda')" id="nav-beranda">Beranda</button>
+                <button onclick="pindahMenu('jelajah')" id="nav-jelajah">Jelajah</button>
+                <button onclick="pindahMenu('tentang')" id="nav-tentang">Tentang</button>
+                <button onclick="pindahMenu('kontak')" id="nav-kontak">Kontak</button>
             </nav>
 
-            <div class="space-x-3">
+            <!-- BUTTON -->
+            <div class="hidden md:flex items-center space-x-3">
                 <a href="login.php">
-                    <button class="text-gray-800 font-semibold hover:text-[#E66C8A] hidden sm:inline transition">Masuk</button>
+                    <button class="text-gray-800 font-semibold hover:text-[#E66C8A] transition">
+                        Masuk
+                    </button>
                 </a>
                 <a href="regis.php">
-                    <button class="cta-gradient text-gray hover:text-[#E66C8A] px-6 py-2.5 rounded-full font-bold shadow-lg transform hover:scale-105 transition duration-300">
+                    <button class="cta-gradient bg-[#E66C8A] text-white px-6 py-2.5 rounded-full font-bold shadow-lg transform hover:scale-105 transition duration-300">
                         Daftar
                     </button>
                 </a>
             </div>
+
+            <!-- HAMBURGER -->
+            <button class="md:hidden text-2xl" onclick="toggleMenu()">
+                <i class="bi bi-list"></i>
+            </button>
         </div>
+
+        <!-- MOBILE MENU -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white px-6 pb-6 pt-2 space-y-3 shadow-lg">
+
+            <!-- NAV MENU -->
+            <button onclick="pindahMenu('beranda')" class="block w-full text-left py-2 border-b">Beranda</button>
+            <button onclick="pindahMenu('jelajah')" class="block w-full text-left py-2 border-b">Jelajah</button>
+            <button onclick="pindahMenu('tentang')" class="block w-full text-left py-2 border-b">Tentang</button>
+            <button onclick="pindahMenu('kontak')" class="block w-full text-left py-2">Kontak</button>
+
+            <!-- DIVIDER -->
+            <div class="border-t my-3"></div>
+
+            <!-- LOGIN & DAFTAR -->
+            <div class="flex flex-col gap-3">
+                
+                <!-- LOGIN -->
+                <a href="login.php">
+                    <button class="w-full border border-[#1D1145] text-[#1D1145] py-2 rounded-xl font-semibold hover:bg-[#1D1145] hover:text-white transition">
+                        Masuk
+                    </button>
+                </a>
+
+                <!-- DAFTAR -->
+                <a href="regis.php">
+                    <button class="w-full bg-gradient-to-r from-[#E66C8A] to-[#CF2E2E] text-white py-2 rounded-xl font-bold shadow-md hover:opacity-90 transition">
+                        Daftar
+                    </button>
+                </a>
+
+            </div>
+
+        </div>
+
     </header>
     <!-- END HEADER -->
 
@@ -116,7 +161,7 @@ $query_event = mysqli_query($conn, "
     <main id="menu-beranda" class="pt-16 flex-grow">
 
         <!-- HERO SECTION -->
-        <section class="relative pt-32 pb-24 overflow-hidden">
+        <section class="relative pt-24 md:pt-32 pb-16 md:pb-24 overflow-hidden">
             <div class="absolute inset-0 z-0">
                 <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30" class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-[#1D1145]/90"></div>
@@ -126,10 +171,10 @@ $query_event = mysqli_query($conn, "
                 <span class="inline-block py-1 px-3 rounded-full bg-[#E66C8A]/20 text-[#E66C8A] font-semibold text-sm mb-4">
                     #1 Tiket Event Terpercaya
                 </span>
-                <h1 class="text-5xl md:text-7xl font-extrabold text-white mb-6 leading-tight">
+                <h1 class="text-3xl md:text-5xl lg:text-7xl font-extrabold text-white mb-4 leading-tight">
                     Amankan Tiketmu, <br/> <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#0DB5BB] to-white">Rasakan Pengalaman Nyata.</span>
                 </h1>
-                <p class="text-xl text-gray-300 mb-10 max-w-2xl mx-auto font-light">
+                <p class="text-sm md:text-lg text-gray-300 mb-6 max-w-xl mx-auto">
                     Platform pemesanan tiket resmi untuk event terbaik. Cepat, aman, dan tanpa calo.
                 </p>
                 <div class="flex justify-center gap-4">
@@ -146,7 +191,7 @@ $query_event = mysqli_query($conn, "
                 Event Pilihan <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#1D1145] to-[#0DB5BB]">Minggu Ini</span>
             </h2>
 
-            <div id="gridBeranda" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div id="gridBeranda" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                 <?php if (mysqli_num_rows($query_pilihan) > 0) : ?>
                     <?php while ($row = mysqli_fetch_assoc($query_pilihan)) : ?>
                         <div class="bg-white rounded-2xl shadow-md hover:shadow-2xl transition duration-300 overflow-hidden border border-gray-100 group">
@@ -228,7 +273,7 @@ $query_event = mysqli_query($conn, "
                 </div>
             </div>
 
-            <div id="eventGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <div id="eventGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
                 <?php if (mysqli_num_rows($query_event) > 0) : ?>
                     <?php while ($row = mysqli_fetch_assoc($query_event)) : ?>
                         
@@ -342,7 +387,7 @@ $query_event = mysqli_query($conn, "
     <!-- MENU END -->
 
     <!-- FOOTER -->
-    <footer class="bg-[#1D1145] text-white py-10 mt-auto">
+    <footer class="bg-[#1D1145] text-white py-8 md:py-10 mt-auto text-center">
         <div class="container mx-auto px-6 lg:px-16 text-center">
             <a href="#" class="text-3xl font-extrabold text-white tracking-tight">
                 Event<span class="text-[#E66C8A]">Ku</span>
@@ -479,6 +524,11 @@ $query_event = mysqli_query($conn, "
             // default render jika langsung ke jelajah
             filterEvent();
         });
+
+        // TOGGLE MOBILE MENU
+        function toggleMenu(){
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        }
     </script>
 
 </body>
