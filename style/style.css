@@ -1,6 +1,4 @@
-/* ============================================== */
-/* =============== ROOT THEME =================== */
-/* ============================================== */
+/* ROOT THEME */
 :root {
     --primary: #1d1145;
     --secondary: #e66c8a;
@@ -23,9 +21,7 @@
     --shadow-hover: 0 10px 25px rgba(29,17,69,0.12);
 }
 
-/* ============================================== */
-/* ================= GLOBAL ===================== */
-/* ============================================== */
+/* GLOBAL */
 .card {
     border: none;
     border-radius: var(--radius);
@@ -45,9 +41,7 @@
     letter-spacing: 0.5px;
 }
 
-/* ============================================== */
-/* ================= BUTTON ===================== */
-/* ============================================== */
+/* BUTTON */
 .btn-primary {
     background: var(--primary);
     border: none;
@@ -65,9 +59,7 @@
     background: #e67e22;
 }
 
-/* ============================================== */
-/* ================= TABLE ====================== */
-/* ============================================== */
+/* TABLE */
 .table thead th {
     background: var(--bg-light);
     color: var(--primary);
@@ -83,9 +75,7 @@
     vertical-align: middle;
 }
 
-/* ============================================== */
-/* ================= BADGE ====================== */
-/* ============================================== */
+/* BADGE */
 .badge {
     border-radius: 8px;
     padding: 6px 10px;
@@ -98,9 +88,7 @@
 .status-pending { background: #fff8e1; color: #f57f17; }
 .status-cancelled { background: #ffebee; color: var(--danger); }
 
-/* ============================================== */
-/* ================= DASHBOARD ================== */
-/* ============================================== */
+/* DASHBOARD */
 .info-card:hover {
     transform: translateY(-5px);
 }
@@ -125,17 +113,13 @@
     background: #fff5ed;
 }
 
-/* ============================================== */
-/* ================= UTILITIES ================== */
-/* ============================================== */
+/* UTILITIES */
 .text-pink { color: var(--secondary); }
 .text-muted { color: var(--text-muted); }
 
 .rounded-lg { border-radius: var(--radius-lg); }
 
-/* ============================================== */
-/* ================= ADMIN ====================== */
-/* ============================================== */
+/* ADMIN */
 
 /* TRANSAKSI */
 .order-id {
@@ -180,9 +164,7 @@
     justify-content: center;
 }
 
-/* ============================================== */
-/* ================= MODAL ====================== */
-/* ============================================== */
+/* MODAL */
 .modal-header {
     background: var(--primary);
     color: #fff;
@@ -193,11 +175,9 @@
     border: none;
 }
 
-/* ============================================== */
-/* ================= USER ======================= */
-/* ============================================== */
+/*  USER */
 
-/* ==== CARD TIKET ==== */
+/* CARD TIKET */
 .card-ticket {
     border-radius: var(--radius-lg);
     position: relative;
@@ -232,7 +212,7 @@
     border-radius: 0 0 var(--radius-lg) var(--radius-lg);
 }
 
-/* ==== EVENT CARD ==== */
+/* EVENT CARD */
 .event-card {
     border-radius: var(--radius-lg);
     transition: 0.3s;
@@ -250,7 +230,7 @@
     padding: 10px;
 }
 
-/* ==== BUTTON EVENT ==== */
+/* BUTTON EVENT */
 .btn-book {
     background: var(--primary);
     color: white;
@@ -261,15 +241,13 @@
     background: var(--secondary);
 }
 
-/* ==== SEARCH ==== */
+/* SEARCH */
 .search-card {
     background: linear-gradient(135deg, var(--primary), #2d1b6b);
     border-radius: var(--radius-lg);
 }
 
-/* ============================================== */
-/* ================= PRINT ====================== */
-/* ============================================== */
+/* PRINT */
 @media print {
     .sidebar, .navbar, .btn, nav, form {
         display: none !important;
@@ -284,4 +262,136 @@
         font-size: 12px;
         background: #fff;
     }
+}
+
+/* RESPONSIVE MOBILE */
+@media (max-width: 768px) {
+
+    body {
+        font-size: 14px;
+    }
+
+    .container {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    .card {
+        border-radius: 10px;
+        padding: 10px;
+    }
+
+    .card-title {
+        font-size: 12px;
+    }
+
+    .btn {
+        font-size: 13px;
+        padding: 6px 10px;
+    }
+
+    .table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .table thead {
+        display: none; 
+    }
+
+    .table tbody tr {
+        display: block;
+        margin-bottom: 10px;
+        border-radius: 10px;
+        box-shadow: var(--shadow);
+        padding: 10px;
+        background: #fff;
+    }
+
+    .table tbody td {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 10px;
+        font-size: 13px;
+        border: none;
+        border-bottom: 1px dashed #eee;
+    }
+
+    .table tbody td:last-child {
+        border-bottom: none;
+    }
+
+    .badge {
+        font-size: 10px;
+        padding: 4px 6px;
+    }
+
+    .card-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 20px;
+    }
+
+    .info-card {
+        text-align: center;
+    }
+
+    .event-card {
+        border-radius: 14px;
+    }
+
+    .event-card h5,
+    .event-card h3 {
+        font-size: 14px;
+    }
+
+    .ticket-header {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .ticket-body {
+        padding: 12px;
+        font-size: 13px;
+    }
+
+    input, select, textarea {
+        font-size: 14px !important;
+    }
+
+    .modal-dialog {
+        margin: 10px;
+    }
+
+    .modal-content {
+        border-radius: 10px;
+    }
+
+    .d-flex {
+        flex-direction: column !important;
+        gap: 10px;
+    }
+
+    .row > [class*="col-"] {
+        margin-bottom: 10px;
+    }
+
+    .sidebar {
+        position: fixed;
+        width: 220px;
+        left: -220px;
+        transition: 0.3s;
+        z-index: 999;
+    }
+
+    .sidebar.active {
+        left: 0;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+    }
+
 }

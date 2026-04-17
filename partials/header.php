@@ -119,7 +119,11 @@ if(!isset($_SESSION)){
       <a href="index.php" class="logo d-flex align-items-center">
         <span class="d-none d-lg-block">EventKu</span>
       </a>
-      </div>
+    </div>
+
+    <button onclick="toggleSidebar()" class="btn btn-primary d-md-none">
+        <i class="bi bi-list"></i>
+    </button>
 
     <nav class="header-nav ms-auto">
       <ul class="d-flex align-items-center">

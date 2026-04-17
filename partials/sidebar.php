@@ -78,67 +78,118 @@
 .sidebar-nav .nav-link::after {
   display: none;
 }
+
+/* SIDEBAR RESPONSIVE */
+@media (max-width: 768px) {
+
+  .sidebar {
+    left: -260px;
+    width: 260px;
+    transition: 0.3s;
+  }
+
+  .sidebar.active {
+    left: 0;
+  }
+
+  /* OVERLAY */
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    z-index: 995;
+    display: none;
+  }
+
+  .sidebar-overlay.active {
+    display: block;
+  }
+}
 </style>
 
 <aside id="sidebar" class="sidebar">
+  <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-  <ul class="sidebar-nav" id="sidebar-nav">
+    <ul class="sidebar-nav" id="sidebar-nav">
 
-    <li class="nav-item">
-      <a class="nav-link 
-        <?php echo (!isset($_GET['page']) || $_GET['page'] == 'admin') ? '' : 'collapsed'; ?>" href="index.php?page=admin">
-        <i class="bi bi-grid-fill"></i>
-        <span>Dashboard</span>
-      </a>
-    </li>
+      <li class="nav-item">
+        <a class="nav-link 
+          <?php echo (!isset($_GET['page']) || $_GET['page'] == 'admin') ? '' : 'collapsed'; ?>" href="index.php?page=admin">
+          <i class="bi bi-grid-fill"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
 
-    <li class="nav-heading">Manajemen Event</li>
+      <li class="nav-heading">Manajemen Event</li>
 
-    <li class="nav-item">
-      <a class="nav-link <?php echo (isset($_GET['page']) && $_GET['page'] == 'venue') ? '' : 'collapsed'; ?>" href="index.php?page=venue">
-        <i class="bi bi-building"></i>
-        <span>Venue</span>
-      </a>
-    </li>
+      <li class="nav-item">
+        <a class="nav-link <?php echo (isset($_GET['page']) && $_GET['page'] == 'venue') ? '' : 'collapsed'; ?>" href="index.php?page=venue">
+          <i class="bi bi-building"></i>
+          <span>Venue</span>
+        </a>
+      </li>
 
-    <li class="nav-item">
-      <a class="nav-link <?php echo (isset($_GET['page']) && $_GET['page'] == 'event') ? '' : 'collapsed'; ?>" href="index.php?page=event">
-        <i class="bi bi-calendar-event"></i>
-        <span>Event</span>
-      </a>
-    </li>
+      <li class="nav-item">
+        <a class="nav-link <?php echo (isset($_GET['page']) && $_GET['page'] == 'event') ? '' : 'collapsed'; ?>" href="index.php?page=event">
+          <i class="bi bi-calendar-event"></i>
+          <span>Event</span>
+        </a>
+      </li>
 
-    <li class="nav-item">
-      <a class="nav-link <?php echo (isset($_GET['page']) && $_GET['page'] == 'tiket') ? '' : 'collapsed'; ?>" href="index.php?page=tiket">
-        <i class="bi bi-ticket-perforated"></i>
-        <span>Manajemen Tiket</span>
-      </a>
-    </li>
+      <li class="nav-item">
+        <a class="nav-link <?php echo (isset($_GET['page']) && $_GET['page'] == 'tiket') ? '' : 'collapsed'; ?>" href="index.php?page=tiket">
+          <i class="bi bi-ticket-perforated"></i>
+          <span>Manajemen Tiket</span>
+        </a>
+      </li>
 
-    <li class="nav-heading">Keuangan</li>
+      <li class="nav-heading">Keuangan</li>
 
-    <li class="nav-item">
-      <a class="nav-link <?php echo (isset($_GET['page']) && $_GET['page'] == 'voucher') ? '' : 'collapsed'; ?>" href="index.php?page=voucher">
-        <i class="bi bi-gift"></i>
-        <span>Promo & Voucher</span>
-      </a>
-    </li>
+      <li class="nav-item">
+        <a class="nav-link <?php echo (isset($_GET['page']) && $_GET['page'] == 'voucher') ? '' : 'collapsed'; ?>" href="index.php?page=voucher">
+          <i class="bi bi-gift"></i>
+          <span>Promo & Voucher</span>
+        </a>
+      </li>
 
-    <li class="nav-item">
-      <a class="nav-link <?php echo (isset($_GET['page']) && $_GET['page'] == 'transaksi' || $_GET['page'] == 'detail_transaksi') ? '' : 'collapsed'; ?>" href="index.php?page=transaksi">
-        <i class="bi bi-receipt-cutoff"></i>
-        <span>Riwayat Transaksi</span>
-      </a>
-    </li>
+      <li class="nav-item">
+        <a class="nav-link <?php echo (isset($_GET['page']) && $_GET['page'] == 'transaksi' || $_GET['page'] == 'detail_transaksi') ? '' : 'collapsed'; ?>" href="index.php?page=transaksi">
+          <i class="bi bi-receipt-cutoff"></i>
+          <span>Riwayat Transaksi</span>
+        </a>
+      </li>
 
-    <li class="nav-heading">Laporan</li>
+      <li class="nav-heading">Laporan</li>
 
-    <li class="nav-item">
-      <a class="nav-link <?php echo (isset($_GET['page']) && $_GET['page'] == 'laporan') ? '' : 'collapsed'; ?>" href="index.php?page=laporan">
-        <i class="bi bi-bar-chart-line"></i>
-        <span>Laporan Penjualan</span>
-      </a> 
+      <li class="nav-item">
+        <a class="nav-link <?php echo (isset($_GET['page']) && $_GET['page'] == 'laporan') ? '' : 'collapsed'; ?>" href="index.php?page=laporan">
+          <i class="bi bi-bar-chart-line"></i>
+          <span>Laporan Penjualan</span>
+        </a> 
 
-  </ul>
+    </ul>
 
-</aside>```
+  </div>
+
+</aside>
+
+<script>
+  function toggleSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("sidebarOverlay");
+
+    sidebar.classList.toggle("active");
+    overlay.classList.toggle("active");
+}
+
+document.querySelectorAll('#sidebar .nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+        if (window.innerWidth < 768) {
+            toggleSidebar();
+        }
+    });
+});
+</script>
