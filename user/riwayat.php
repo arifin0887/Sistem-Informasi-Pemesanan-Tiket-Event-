@@ -112,7 +112,7 @@ while ($row = mysqli_fetch_assoc($auto_expire)) {
     }
 }
 
-// QUERY UNTUK MENGAMBIL SEMUA ORDER YANG DILAKUKAN OLEH USER INI BESERTA DETAILNYA
+// QUERY UNTUK MENGAMBIL SEMUA ORDER 30 HARI TERAKHIR
 $query = "SELECT 
             o.id_order, o.tanggal_order, o.total, o.status,
             od.id_detail, 
@@ -125,6 +125,7 @@ $query = "SELECT
           JOIN venue v ON e.id_venue = v.id_venue
           WHERE o.id_user = $id_user
           AND o.status IN ('pending', 'paid')
+          AND o.tanggal_order >= NOW() - INTERVAL 30 DAY
           ORDER BY o.tanggal_order DESC";
 
 $result = mysqli_query($conn, $query);
