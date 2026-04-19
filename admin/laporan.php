@@ -13,16 +13,25 @@ $query_laporan = mysqli_query($conn, "
         u.nama AS nama_pembeli, 
         o.total, 
         o.status,
+        e.nama_event,
+        t.nama_tiket,
         COUNT(od.id_detail) as jumlah_item,
-        SUM(od.qty) as total_tiket,
-        GROUP_CONCAT(CONCAT(t.nama_tiket, ' (', od.qty, ')') SEPARATOR ', ') as rincian_tiket
+        SUM(od.qty) as total_tiket
     FROM orders o
     JOIN users u ON o.id_user = u.id_user
     JOIN order_detail od ON o.id_order = od.id_order
     JOIN tiket t ON od.id_tiket = t.id_tiket
+    JOIN event e ON t.id_event = e.id_event
     WHERE DATE(o.tanggal_order) BETWEEN '$tgl_mulai' AND '$tgl_selesai'
     AND o.status = 'paid'
-    GROUP BY o.id_order
+    GROUP BY 
+        o.id_order, 
+        o.tanggal_order, 
+        u.nama, 
+        o.total, 
+        o.status, 
+        e.nama_event,
+        t.nama_tiket
     ORDER BY o.tanggal_order DESC
 ");
 
@@ -31,14 +40,25 @@ $query_cancel = mysqli_query($conn, "
     SELECT 
         o.id_order,
         o.tanggal_order,
+        o.status,
+        e.nama_event,
+        t.nama_tiket,
         u.nama AS nama_pembeli,
         SUM(od.qty) as total_tiket
     FROM orders o
     JOIN users u ON o.id_user = u.id_user
     JOIN order_detail od ON o.id_order = od.id_order
+    JOIN tiket t ON od.id_tiket = t.id_tiket
+    JOIN event e ON t.id_event = e.id_event
     WHERE DATE(o.tanggal_order) BETWEEN '$tgl_mulai' AND '$tgl_selesai'
     AND o.status = 'cancel'
-    GROUP BY o.id_order
+    GROUP BY 
+        o.id_order, 
+        o.tanggal_order, 
+        o.status,
+        e.nama_event, 
+        u.nama,
+        t.nama_tiket
 ");
 
 // HITUNG TOTAL CANCEL
@@ -74,6 +94,7 @@ $jumlah_transaksi = count($data_rows);
 
 <section class="section">
     <div class="row mb-4">
+
         <div class="col-md-12">
             <div class="card border-0 shadow-sm text-white" style="background: linear-gradient(45deg, #0DB5BB, #0ca4aa); border-radius: 15px;">
                 <div class="card-body p-4">
@@ -145,6 +166,7 @@ $jumlah_transaksi = count($data_rows);
         <div class="col-lg-12">
             <div class="card border-0 shadow-sm" style="border-radius: 15px;">
                 <div class="card-body py-4">
+
                     <form method="GET" action="index.php" class="row g-3 mb-4 align-items-end filter-box p-3 rounded-3 mb-4" style="background: #f8f9fa;">
                         <input type="hidden" name="page" value="laporan">
                         <div class="col-md-3">
@@ -178,9 +200,10 @@ $jumlah_transaksi = count($data_rows);
                             <thead style="background-color: #f8f9fa;">
                                 <tr>
                                     <th class="text-center py-3" style="color: #1D1145; font-weight: 600; width: 50px;">NO</th>
-                                    <th class="py-3" style="color: #1D1145; font-weight: 600;">INFO TRANSAKSI</th>
+                                    <th class="py-3" style="color: #1D1145; font-weight: 600;">ID TRANSAKSI</th>
                                     <th class="py-3" style="color: #1D1145; font-weight: 600;">PEMBELI</th>
-                                    <th class="py-3" style="color: #1D1145; font-weight: 600;">RINCIAN TIKET</th>
+                                    <th class="py-3" style="color: #1D1145; font-weight: 600;">EVENT</th>
+                                    <th class="py-3" style="color: #1D1145; font-weight: 600;">TIKET</th>
                                     <th class="text-center py-3" style="color: #1D1145; font-weight: 600;">QTY</th>
                                     <th class="text-end py-3" style="color: #1D1145; font-weight: 600;">SUBTOTAL</th>
                                 </tr>
@@ -196,11 +219,13 @@ $jumlah_transaksi = count($data_rows);
                                         </td>
                                         <td>
                                             <div class="fw-bold text-dark"><?= htmlspecialchars($row['nama_pembeli']) ?></div>
-                                            <span class="badge bg-success-subtle text-success small">Verified Paid</span>
+                                            <span class="badge bg-success-subtle text-success small">Verified <?= htmlspecialchars($row['status']) ?></span>
                                         </td>
                                         <td>
+                                            <div class="text-dark small fw-medium"><?= htmlspecialchars($row['nama_event']) ?></div>
+                                        <td>
                                             <div class="p-2 bg-light rounded text-dark small border-start border-3 border-info">
-                                                <?= htmlspecialchars($row['rincian_tiket']) ?>
+                                                <?= htmlspecialchars($row['nama_tiket']) ?>
                                             </div>
                                         </td>
                                         <td class="text-center fw-bold text-dark"><?= $row['total_tiket'] ?></td>
@@ -222,9 +247,6 @@ $jumlah_transaksi = count($data_rows);
                         <div class="card-body py-4">
                             
                             <div class="header-cancel">
-                                <div class="icon-box bg-danger text-white rounded-3 p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                    <i class="bi bi-cart-x-fill fs-5"></i>
-                                </div>
                                 <div>
                                     <h5 class="fw-bold mb-0 text-dark">Data Pembatalan Tiket</h5>
                                     <small class="text-muted">Daftar transaksi yang dibatalkan oleh pengguna atau sistem</small>
@@ -232,54 +254,57 @@ $jumlah_transaksi = count($data_rows);
                             </div>
 
                             <div class="table-responsive">
-                                <table class="table table-cancel align-middle">
+                                <table class="table table-hover align-middle">
                                     <thead>
                                         <tr>
-                                            <th width="5%">No</th>
-                                            <th width="15%">ID Order</th>
-                                            <th>Pembeli</th>
-                                            <th>Tanggal Pemesanan</th>
-                                            <th class="text-center">Jumlah</th>
+                                            <th class="text-center py-3" style="color: #1D1145; font-weight: 600; width: 50px;">NO</th>
+                                            <th class="py-3" style="color: #1D1145; font-weight: 600;">ID TRANSAKSI</th>
+                                            <th class="py-3" style="color: #1D1145; font-weight: 600;">PEMBELI</th>
+                                            <th class="py-3" style="color: #1D1145; font-weight: 600;">EVENT</th>
+                                            <th class="py-3" style="color: #1D1145; font-weight: 600;">TIKET</th>
+                                            <th class="text-center py-3" style="color: #1D1145; font-weight: 600;">QTY</th>
+                                            <th class="text-end py-3" style="color: #1D1145; font-weight: 600;">STATUS</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php if(count($data_cancel) > 0): ?>
                                             <?php $no = 1; foreach($data_cancel as $row): ?>
                                             <tr>
-                                                <td><span class="text-muted small"><?= $no++ ?></span></td>
-                                                <td><span class="badge-id">#<?= str_pad($row['id_order'], 5, '0', STR_PAD_LEFT) ?></span></td>
+                                                <td class="text-center text-muted"><?= $no++ ?></td>
                                                 <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="avatar-sm me-3 bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 35px; height: 35px; border: 1px solid #e5e7eb;">
-                                                            <i class="bi bi-person text-secondary"></i>
-                                                        </div>
-                                                        <div class="fw-semibold text-dark"><?= htmlspecialchars($row['nama_pembeli']) ?></div>
-                                                    </div>
+                                                    <div class="fw-bold text-dark">#<?= $row['id_order'] ?></div>
+                                                    <div class="small text-muted"><?= date('d/m/Y - H:i', strtotime($row['tanggal_order'])) ?> WIB</div>
                                                 </td>
                                                 <td>
-                                                    <div class="small">
-                                                        <div class="text-dark"><?= date('d M Y', strtotime($row['tanggal_order'])) ?></div>
-                                                        <div class="text-muted" style="font-size: 0.75rem;"><?= date('H:i', strtotime($row['tanggal_order'])) ?> WIB</div>
-                                                    </div>
+                                                    <div class="fw-bold text-dark"><?= htmlspecialchars($row['nama_pembeli']) ?></div>
+                                                    <span class="badge bg-danger-subtle text-danger small"><?= htmlspecialchars($row['status']) ?>led order</span>
                                                 </td>
                                                 <td>
-                                                    <div class="cancel-qty-circle shadow-sm">
-                                                        <?= $row['total_tiket'] ?>
+                                                    <div class="text-dark small fw-medium"><?= htmlspecialchars($row['nama_event']) ?></div>
+                                                </td>
+                                                <td>
+                                                    <div class="p-2 bg-light rounded text-dark small border-start border-3 border-danger">
+                                                        <?= htmlspecialchars($row['nama_tiket']) ?>
                                                     </div>
+                                                </td>
+                                                <td class="text-center fw-bold text-dark"><?= $row['total_tiket'] ?></td>
+                                                <td class="text-end">
+                                                    <span class="text-danger fw-bold small"><?= htmlspecialchars($row['status']) ?></span>
                                                 </td>
                                             </tr>
                                             <?php endforeach; ?>
                                         <?php else: ?>
                                             <tr>
-                                                <td colspan="5" class="text-center py-5">
+                                                <td colspan="7" class="text-center py-5">
                                                     <img src="assets/img/empty-state.svg" alt="No data" style="width: 80px; opacity: 0.5;">
-                                                    <p class="text-muted mt-3 mb-0">Bersih! Tidak ada riwayat pembatalan.</p>
+                                                    <p class="text-muted mt-3 mb-0 italic">Bersih! Tidak ada riwayat pembatalan ditemukan.</p>
                                                 </td>
                                             </tr>
                                         <?php endif; ?>
                                     </tbody>
                                 </table>
                             </div>
+
                         </div>
                     </div>
 
