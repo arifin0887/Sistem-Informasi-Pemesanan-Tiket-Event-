@@ -1,16 +1,13 @@
 <style>
   .header {
     background-color: #ffffff;
-    box-shadow: 0px 2px 20px rgba(1, 41, 112, 0.05); 
-    padding-left: 20px;
+    box-shadow: 0px 2px 20px rgba(1, 41, 112, 0.05);
     height: 70px;
-    transition: all 0.5s;
-    z-index: 997;
-  }
+    padding: 0 20px;
 
-  .header .logo img {
-    max-height: 35px;
-    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
   .header .logo span {
@@ -18,45 +15,6 @@
     font-weight: 700;
     color: #1d1145; 
     font-family: "Poppins", sans-serif;
-  }
-
-  .search-bar {
-    min-width: 360px;
-    padding: 0 20px;
-  }
-
-  .search-form {
-    width: 100%;
-  }
-
-  .search-form input {
-    border: 0;
-    font-size: 14px;
-    color: #012970;
-    border: 1px solid rgba(1, 41, 112, 0.1);
-    padding: 8px 15px;
-    border-radius: 50px 0 0 50px;
-    width: 100%;
-    transition: 0.3s;
-  }
-
-  .search-form input:focus {
-    box-shadow: none;
-    border: 1px solid #e66c8a; 
-    outline: none;
-  }
-
-  .search-form button {
-    border: 0;
-    padding: 8px 15px;
-    background: #1d1145;
-    color: #fff;
-    border-radius: 0 50px 50px 0;
-    transition: 0.3s;
-  }
-
-  .search-form button:hover {
-    background: #e66c8a;
   }
 
   .header-nav .nav-profile {
@@ -104,6 +62,110 @@
   .dropdown-item:hover i {
     color: #e66c8a;
   }
+
+  .header-nav .dropdown-menu {
+    display: none;
+    position: absolute;
+    inset: 0px 0px auto auto;
+    margin: 0px;
+    z-index: 1001;
+    border: none;
+    box-shadow: 0 5px 30px rgba(70, 79, 181, 0.15);
+    transition: all 0.3s;
+  }
+
+  .header-nav .dropdown-menu.show {
+    display: block;
+  }
+
+  .dropdown-menu-end {
+    right: 0;
+    left: auto;
+  }
+
+  .left-area {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .header-nav {
+    margin-left: auto;
+  }
+
+  .header-nav ul {
+    display: flex;
+    align-items: center;
+    margin: 0;
+  }
+
+/* HEADER MOBILE FIX */
+@media (max-width: 768px) {
+
+  .header {
+    height: 60px;
+    padding: 0 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* LEFT AREA (hamburger + logo) */
+  .header .left-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* HAMBURGER */
+  .header .btn {
+    padding: 4px 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .header .btn i {
+    font-size: 22px;
+  }
+
+  /* LOGO */
+  .header .logo span {
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  /* RIGHT AREA (PROFILE) */
+  .header-nav {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+  }
+
+  .header-nav ul {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .header-nav .nav-profile span {
+    display: none; /* hide nama */
+  }
+
+  .header-nav .nav-link {
+    padding: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .rounded-circle {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+}
 </style>
 
 <!-- HEADER UNTUK SEMUA HALAMAN, MENAMPILKAN NAMA USER DAN ROLE DARI SESSION, SERTA NAVIGASI LOGOUT -->
@@ -113,57 +175,63 @@ if(!isset($_SESSION)){
 }
 ?>
 
-<header id="header" class="header fixed-top d-flex align-items-center">
+<header id="header" class="header fixed-top">
 
-    <div class="d-flex align-items-center justify-content-between">
-      <a href="index.php" class="logo d-flex align-items-center">
-        <span class="d-none d-lg-block">EventKu</span>
-      </a>
-    </div>
+  <!-- LEFT -->
+  <div class="left-area">
 
-    <button onclick="toggleSidebar()" class="btn btn-primary d-md-none">
-        <i class="bi bi-list"></i>
+    <!-- HAMBURGER -->
+    <button onclick="toggleSidebar()" class="btn d-md-none">
+      <i class="bi bi-list"></i>
     </button>
 
-    <nav class="header-nav ms-auto">
-      <ul class="d-flex align-items-center">
+    <!-- LOGO -->
+    <a href="index.php" class="logo text-decoration-none">
+      <span class="fw-bold text-dark">
+        Event<span style="color:#E66C8A;">Ku</span>
+      </span>
+    </a>
 
-        <li class="nav-item d-block d-lg-none">
-          <a class="nav-link nav-icon search-bar-toggle" href="#">
-            <i class="bi bi-search" style="font-size: 1.2rem; color: #1d1145;"></i>
-          </a>
-        </li>
+  </div>
 
-        <li class="nav-item dropdown pe-3">
-          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 35px; height: 35px; border: 1px solid #ddd;">
-              <i class="bi bi-person-fill" style="color: #1d1145;"></i>
-            </div>
-            <span class="d-none d-md-block dropdown-toggle ps-2">
-              <?php echo isset($_SESSION['user']['nama']) ? htmlspecialchars($_SESSION['user']['nama']) : 'User'; ?>
-            </span>
-          </a>
+  <!-- RIGHT -->
+  <nav class="header-nav">
+      <ul class="d-flex align-items-center mb-0">
 
-          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-            <li class="dropdown-header">
-              <h6><?php echo isset($_SESSION['user']['nama']) ? htmlspecialchars($_SESSION['user']['nama']) : 'User'; ?></h6>
-              <span class="badge bg-info-light text-primary"><?php echo isset($_SESSION['user']['role']) ? htmlspecialchars(ucfirst($_SESSION['user']['role'])) : 'User'; ?></span>
-            </li>
-            <li><hr class="dropdown-divider"></li>
+          <li class="nav-item dropdown">
+              <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" 
+                data-bs-toggle="dropdown" 
+                data-bs-offset="0,15"
+                aria-expanded="false">
+                  
+                  <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" 
+                      style="width: 35px; height: 35px; border: 1px solid #ddd;">
+                      <i class="bi bi-person-fill text-dark"></i>
+                  </div>
 
-            <hr class="dropdown-divider"></li>
-
-            <li>
-              <a class="dropdown-item d-flex align-items-center text-danger" href="../logout.php">
-                <i class="bi bi-box-arrow-right text-danger"></i>
-                <span>Sign Out</span>
+                  <span class="d-none d-md-block dropdown-toggle ps-2">
+                      <?= htmlspecialchars($_SESSION['user']['nama'] ?? 'User'); ?>
+                  </span>
               </a>
-            </li>
 
-          </ul>
-        </li>
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                  <li class="dropdown-header">
+                      <h6><?= htmlspecialchars($_SESSION['user']['nama'] ?? 'User'); ?></h6>
+                      <span class="badge bg-info-light text-primary">
+                          <?= ucfirst($_SESSION['user']['role'] ?? 'User'); ?>
+                      </span>
+                  </li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li>
+                      <a class="dropdown-item d-flex align-items-center text-danger" href="../logout.php">
+                          <i class="bi bi-box-arrow-right text-danger"></i>
+                          <span>Sign Out</span>
+                      </a>
+                  </li>
+              </ul>
+          </li>
 
       </ul>
-    </nav>
+  </nav>
 
 </header>
