@@ -1,34 +1,7 @@
 <?php
 require_once 'koneksi.php';
 
-// Ambil semua event (untuk jelajah & JS)
-$query_event = mysqli_query($conn, "
-    SELECT e.*, MIN(t.harga) as harga_mulai, v.nama_venue 
-    FROM event e 
-    LEFT JOIN tiket t ON e.id_event = t.id_event 
-    LEFT JOIN venue v ON e.id_venue = v.id_venue
-    GROUP BY e.id_event 
-    ORDER BY e.tanggal ASC
-");
-
-// Simpan data event ke array untuk digunakan di JS
-$data_event = [];
-while ($row = mysqli_fetch_assoc($query_event)) {
-    $data_event[] = $row;
-}
-
-// Event pilihan (beranda)
-$query_pilihan = mysqli_query($conn, "
-    SELECT e.*, MIN(t.harga) as harga_mulai, v.nama_venue 
-    FROM event e 
-    LEFT JOIN tiket t ON e.id_event = t.id_event 
-    LEFT JOIN venue v ON e.id_venue = v.id_venue
-    GROUP BY e.id_event 
-    ORDER BY e.tanggal ASC 
-    LIMIT 4
-");
-
-// Ambil semua kategori event unik untuk filter
+// AMBIL SEMUA EVENT (UNTUK JS)
 $query_event = mysqli_query($conn, "
     SELECT 
         e.*, 
@@ -38,6 +11,43 @@ $query_event = mysqli_query($conn, "
     FROM event e 
     LEFT JOIN tiket t ON e.id_event = t.id_event 
     LEFT JOIN venue v ON e.id_venue = v.id_venue
+    WHERE e.tanggal >= NOW()
+    GROUP BY e.id_event 
+    ORDER BY e.tanggal ASC
+");
+
+// SIMPAN KE ARRAY UNTUK JS
+$data_event = [];
+while ($row = mysqli_fetch_assoc($query_event)) {
+    $data_event[] = $row;
+}
+
+// EVENT PILIHAN (BERANDA)
+$query_pilihan = mysqli_query($conn, "
+    SELECT 
+        e.*, 
+        MIN(t.harga) as harga_mulai, 
+        v.nama_venue 
+    FROM event e 
+    LEFT JOIN tiket t ON e.id_event = t.id_event 
+    LEFT JOIN venue v ON e.id_venue = v.id_venue
+    WHERE e.tanggal >= NOW() 
+    GROUP BY e.id_event 
+    ORDER BY e.tanggal ASC 
+    LIMIT 4
+");
+
+// AMBIL EVENT UNTUK GRID JELAJAH
+$query_jelajah = mysqli_query($conn, "
+    SELECT 
+        e.*, 
+        MIN(t.harga) as harga_mulai, 
+        v.nama_venue,
+        GROUP_CONCAT(DISTINCT t.nama_tiket) as kategori_event
+    FROM event e 
+    LEFT JOIN tiket t ON e.id_event = t.id_event 
+    LEFT JOIN venue v ON e.id_venue = v.id_venue
+    WHERE e.tanggal >= NOW() 
     GROUP BY e.id_event 
     ORDER BY e.tanggal ASC
 ");

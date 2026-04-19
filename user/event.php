@@ -3,28 +3,41 @@
 // SEARCH PARAMETER
 $search = isset($_GET['search']) ? mysqli_real_escape_string($conn, trim($_GET['search'])) : '';
 
-// QUERY UNTUK MENGAMBIL DATA EVENT BESERTA TIKETNYA, DENGAN FILTER PENCARIAN JIKA ADA
+// BASE QUERY
 $query = "SELECT 
-            e.id_event, e.nama_event, e.tanggal, e.id_venue,
-            v.nama_venue, v.alamat,
-            t.id_tiket, t.nama_tiket, t.harga, t.kuota
+            e.id_event, 
+            e.nama_event, 
+            e.tanggal, 
+            e.id_venue,
+            v.nama_venue, 
+            v.alamat,
+            t.id_tiket, 
+            t.nama_tiket, 
+            t.harga, 
+            t.kuota
           FROM event e 
           JOIN venue v ON e.id_venue = v.id_venue 
-          LEFT JOIN tiket t ON e.id_event = t.id_event ";
+          LEFT JOIN tiket t ON e.id_event = t.id_event
+          WHERE e.tanggal >= NOW()"; 
 
-// TAMBAHKAN KONDISI PENCARIAN JIKA PARAMETER SEARCH TIDAK KOSONG
+// TAMBAHKAN SEARCH
 if ($search != '') {
-    $query .= " WHERE e.nama_event LIKE '%$search%' OR v.nama_venue LIKE '%$search%' ";
+    $query .= " AND (
+                    e.nama_event LIKE '%$search%' 
+                    OR v.nama_venue LIKE '%$search%'
+                )";
 }
 
-// QUERY DENGAN SORTING BERDASARKAN TANGGAL EVENT TERDEKAT DAN HARGA TERMURAH
+// SORTING
 $query .= " ORDER BY e.tanggal ASC, t.harga ASC";
+
 $result = mysqli_query($conn, $query);
 
 // GROUPING DATA EVENT
 $events = [];
 while ($row = mysqli_fetch_assoc($result)) {
     $eid = $row['id_event'];
+
     if (!isset($events[$eid])) {
         $events[$eid] = [
             'id_event'   => $row['id_event'],
@@ -35,6 +48,7 @@ while ($row = mysqli_fetch_assoc($result)) {
             'tikets'     => []
         ];
     }
+
     if ($row['id_tiket']) {
         $events[$eid]['tikets'][] = [
             'id_tiket'   => $row['id_tiket'],
@@ -45,8 +59,14 @@ while ($row = mysqli_fetch_assoc($result)) {
     }
 }
 
-// AMBIL DATA VOUCHER AKTIF TERBARU
-$query_voucher = mysqli_query($conn, "SELECT * FROM voucher WHERE status='aktif' AND kuota > 0 ORDER BY id_voucher DESC LIMIT 1");
+// AMBIL VOUCHER AKTIF
+$query_voucher = mysqli_query($conn, "
+    SELECT * FROM voucher 
+    WHERE status='aktif' AND kuota > 0 
+    ORDER BY id_voucher DESC 
+    LIMIT 1
+");
+
 $v = mysqli_fetch_assoc($query_voucher);
 ?>
 
