@@ -2,16 +2,25 @@
 
 // CEK LOGIN
 if (!isset($_SESSION['user']) || !isset($_SESSION['user']['id'])) {
-    echo "<div class='alert alert-danger shadow-sm border-0'><i class='bi bi-exclamation-triangle me-2'></i>Silakan login untuk melihat tiket Anda.</div>";
+    echo "<div class='alert alert-danger shadow-sm border-0'>
+            <i class='bi bi-exclamation-triangle me-2'></i>
+            Silakan login untuk melihat tiket Anda.
+          </div>";
     exit;
 }
 
 $id_user = (int)$_SESSION['user']['id'];
 
-// QUERY UNTUK MENGAMBIL DATA TIKET USER BESERTA NAMA EVENT, TANGGAL, DAN VENUE
+// QUERY RIWAYAT TIKET (FILTER EVENT BELUM LEWAT)
 $query = "SELECT 
-            o.id_order, o.tanggal_order, o.total, o.status, 
-            od.qty, t.nama_tiket, e.nama_event, e.tanggal AS tanggal_event,
+            o.id_order, 
+            o.tanggal_order, 
+            o.total, 
+            o.status, 
+            od.qty, 
+            t.nama_tiket, 
+            e.nama_event, 
+            e.tanggal AS tanggal_event,
             v.nama_venue
           FROM orders o
           JOIN order_detail od ON o.id_order = od.id_order
@@ -19,12 +28,14 @@ $query = "SELECT
           JOIN event e ON t.id_event = e.id_event
           JOIN venue v ON e.id_venue = v.id_venue
           WHERE o.id_user = ?
+          AND e.tanggal >= NOW() 
           ORDER BY o.tanggal_order ASC";
 
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $id_user);
 $stmt->execute();
 $result = $stmt->get_result();
+
 ?>
 
 <div class="pagetitle">
