@@ -59,13 +59,17 @@ if (isset($_POST['submit_cancel'])) {
     exit;
 }
 
-// AUTO CANCEL ORDER PENDING > 24 JAM (TANPA KOLOM TAMBAHAN)
+// AUTO CANCEL ORDER > 24 JAM
 $auto_expire = mysqli_query($conn, "
-    SELECT o.id_order
-    FROM orders o
-    WHERE o.status = 'pending'
-    AND TIMESTAMPDIFF(HOUR, o.tanggal_order, NOW()) >= 24
+    SELECT id_order 
+    FROM orders 
+    WHERE status = 'pending'
+    AND tanggal_order <= NOW() - INTERVAL 24 HOUR
 ");
+
+if (!$auto_expire) {
+    die("Query error: " . mysqli_error($conn));
+}
 
 while ($row = mysqli_fetch_assoc($auto_expire)) {
     $id_order = (int)$row['id_order'];
@@ -73,14 +77,18 @@ while ($row = mysqli_fetch_assoc($auto_expire)) {
     mysqli_begin_transaction($conn);
 
     try {
-        // ambil detail order
-        $detail = mysqli_query($conn, "SELECT id_tiket, qty FROM order_detail WHERE id_order=$id_order");
+        // Ambil detail order
+        $detail = mysqli_query($conn, "
+            SELECT id_tiket, qty 
+            FROM order_detail 
+            WHERE id_order = $id_order
+        ");
 
         while ($d = mysqli_fetch_assoc($detail)) {
             $id_tiket = (int)$d['id_tiket'];
             $qty = (int)$d['qty'];
 
-            // KEMBALIKAN STOK / KUOTA
+            // Kembalikan stok
             mysqli_query($conn, "
                 UPDATE tiket 
                 SET kuota = kuota + $qty 
@@ -88,7 +96,7 @@ while ($row = mysqli_fetch_assoc($auto_expire)) {
             ");
         }
 
-        // update status jadi expired/cancel
+        // Update status
         mysqli_query($conn, "
             UPDATE orders 
             SET status = 'cancelled' 
