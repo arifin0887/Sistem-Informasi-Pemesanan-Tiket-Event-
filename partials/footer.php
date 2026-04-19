@@ -55,24 +55,68 @@
     .footer-brand span {
         color: #e66c8a;
     }
+
+    /* CSS RESPONSIVE UNTUK MOBILE */
+    @media (max-width: 768px) {
+        .footer {
+            padding: 40px 0 20px; 
+            text-align: center; 
+        }
+
+        .footer h5 {
+            margin-bottom: 15px;
+            margin-top: 20px;
+        }
+
+        .footer .footer-brand {
+            margin-top: 0; 
+        }
+
+        .footer p.pe-lg-5 {
+            padding-right: 0 !important; 
+        }
+
+        .footer ul li a:hover {
+            transform: none; 
+        }
+
+        .footer .contact-info p {
+            justify-content: center;
+            display: flex;
+            align-items: center;
+        }
+
+        .footer hr {
+            margin: 30px 0 20px;
+        }
+
+        .footer-bottom .col-md-6 {
+            margin-bottom: 10px;
+        }
+
+        .footer-bottom a {
+            display: inline-block;
+            margin: 5px 10px; 
+        }
+    }
 </style>
 
 <footer id="footer" class="footer">
     <div class="container">
         <div class="row">
-            <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+            <div class="col-lg-4 col-md-12 mb-4 mb-lg-0">
                 <h5 class="fw-bold footer-brand">Event<span>Ku</span></h5>
                 <p class="text-muted small pe-lg-5">
                     Platform terpercaya untuk pemesanan tiket event terbaik dengan harga kompetitif dan layanan prima. Nikmati pengalaman kemudahan akses event favorit Anda hanya dalam satu genggaman.
                 </p>
                 <div class="mt-4">
-                    <a href="#" class="me-3 text-muted"><i class="bi bi-facebook"></i></a>
-                    <a href="#" class="me-3 text-muted"><i class="bi bi-instagram"></i></a>
-                    <a href="#" class="me-3 text-muted"><i class="bi bi-twitter-x"></i></a>
+                    <a href="#" class="me-3 text-muted fs-5"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="me-3 text-muted fs-5"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="me-3 text-muted fs-5"><i class="bi bi-twitter-x"></i></a>
                 </div>
             </div>
 
-            <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+            <div class="col-lg-4 col-6 mb-4 mb-lg-0">
                 <h5 class="fw-bold">Menu Cepat</h5>
                 <ul class="list-unstyled small">
                     <li><a href="index.php" class="text-decoration-none text-muted">Beranda</a></li>
@@ -82,17 +126,17 @@
                 </ul>
             </div>
 
-            <div class="col-lg-4 col-md-12">
+            <div class="col-lg-4 col-6 mb-4 mb-lg-0">
                 <h5 class="fw-bold">Kontak Kami</h5>
                 <div class="contact-info small">
                     <p class="text-muted mb-2">
-                        <i class="bi bi-envelope-fill"></i> info@eventku.com
+                        <i class="bi bi-envelope-fill"></i> <span class="d-block d-sm-inline">info@eventku.com</span>
                     </p>
                     <p class="text-muted mb-2">
-                        <i class="bi bi-telephone-fill"></i> +62 123 4567 8900
+                        <i class="bi bi-telephone-fill"></i> <span class="d-block d-sm-inline">+62 123 4567 8900</span>
                     </p>
                     <p class="text-muted mb-0">
-                        <i class="bi bi-geo-alt-fill"></i> Magelang, Jawa Tengah, Indonesia
+                        <i class="bi bi-geo-alt-fill"></i> <span class="d-block d-sm-inline">Magelang, Jawa Tengah</span>
                     </p>
                 </div>
             </div>
@@ -105,9 +149,9 @@
                 <p class="mb-0">&copy; 2026 <strong>EventKu</strong>. Semua hak dilindungi.</p>
             </div>
             <div class="col-md-6 text-center text-md-end">
-                <a href="#" class="text-muted text-decoration-none small me-4">Kebijakan Privasi</a>
-                <a href="#" class="text-muted text-decoration-none small me-4">Syarat & Ketentuan</a>
-                <a href="#" class="text-muted text-decoration-none small">FAQ</a>
+                <a href="#" class="text-muted text-decoration-none small mx-2 mx-md-0 ms-md-4">Kebijakan Privasi</a>
+                <a href="#" class="text-muted text-decoration-none small mx-2 mx-md-0 ms-md-4">Syarat & Ketentuan</a>
+                <a href="#" class="text-muted text-decoration-none small mx-2 mx-md-0 ms-md-4">FAQ</a>
             </div>
         </div>
     </div>
