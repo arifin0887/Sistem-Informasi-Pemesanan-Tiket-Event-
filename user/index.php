@@ -2,15 +2,15 @@
 require_once '../koneksi.php';
 session_start();
 
-function generateTicketCode($id_event) {
-    // Format: EVT-ID-RANDOM (Contoh: E12-A7B2X)
-    $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    $randomString = '';
-    for ($i = 0; $i < 5; $i++) {
-        $randomString .= $characters[rand(0, strlen($characters) - 1)];
-    }
-    return "E" . $id_event . "-" . $randomString;
-}
+// function generateTicketCode($id_event) {
+//     // Format: EVT-ID-RANDOM (Contoh: E12-A7B2X)
+//     $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+//     $randomString = '';
+//     for ($i = 0; $i < 5; $i++) {
+//         $randomString .= $characters[rand(0, strlen($characters) - 1)];
+//     }
+//     return "E" . $id_event . "-" . $randomString;
+// }
 
 ?>
 

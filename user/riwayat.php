@@ -13,14 +13,14 @@ $id_user = (int)$_SESSION['user']['id'];
 if (isset($_POST['submit_cancel'])) {
     $id = (int)$_POST['id_transaksi'];
     
-    // Pastikan session user ID benar-benar ada
+    // CEK SESSION USER DAN VALIDASI KEPEMILIKAN ORDER
     if (!isset($_SESSION['user']['id'])) {
         echo "<script>alert('Sesi habis, silakan login kembali.'); window.location='login.php';</script>";
         exit;
     }
     $id_user = (int)$_SESSION['user']['id'];
 
-    // 1. Cek kepemilikan dan pastikan status saat ini adalah 'pending'
+    // CEK STATUS ORDER DAN KEPEMILIKAN USER DENGAN PREPARED STATEMENT UNTUK MENCEGAH SQL INJECTION
     $stmt = mysqli_prepare($conn, "SELECT id_order FROM orders WHERE id_order=? AND id_user=? AND status='pending'");
     mysqli_stmt_bind_param($stmt, "ii", $id, $id_user);
     mysqli_stmt_execute($stmt);
@@ -30,27 +30,26 @@ if (isset($_POST['submit_cancel'])) {
         mysqli_begin_transaction($conn);
 
         try {
-            // 2. Ambil detail tiket
+            // AMBIL DETAIL ORDER UNTUK MENDAPATKAN ID TIKET DAN QTY YANG DIBELI
             $query_detail = mysqli_query($conn, "SELECT id_tiket, qty FROM order_detail WHERE id_order=$id");
             
             while ($item = mysqli_fetch_assoc($query_detail)) {
                 $id_tiket = $item['id_tiket'];
                 $qty = $item['qty'];
                 
-                // 3. Kembalikan stok
+                // KEMBALIKAN STOK TIKET
                 mysqli_query($conn, "UPDATE tiket SET kuota = kuota + $qty WHERE id_tiket = $id_tiket");
             }
 
-            // 4. Update status order
+            // UPDATE STATUS ORDER MENJADI 'cancel'
             mysqli_query($conn, "UPDATE orders SET status='cancel' WHERE id_order=$id");
 
             mysqli_commit($conn);
             echo "<script>alert('Pesanan berhasil dibatalkan.'); window.location='index.php?page=riwayat';</script>";
 
         } catch (Exception $e) {
+            // JIKA TERJADI ERROR, ROLLBACK TRANSAKSI
             mysqli_rollback($conn);
-            // Debug: Uncomment baris di bawah ini jika ingin melihat error aslinya
-            // die($e->getMessage()); 
             echo "<script>alert('Gagal membatalkan pesanan: " . $e->getMessage() . "');</script>";
         }
     } else {
@@ -67,28 +66,31 @@ $auto_expire = mysqli_query($conn, "
     AND tanggal_order <= NOW() - INTERVAL 24 HOUR
 ");
 
+// JIKA QUERY GAGAL, TAMPILKAN ERROR
 if (!$auto_expire) {
     die("Query error: " . mysqli_error($conn));
 }
 
+// PROSES AUTO CANCEL DAN KEMBALIKAN STOK UNTUK SETIAP ORDER YANG EXPIRED
 while ($row = mysqli_fetch_assoc($auto_expire)) {
     $id_order = (int)$row['id_order'];
 
     mysqli_begin_transaction($conn);
 
     try {
-        // Ambil detail order
+        // AMBIL DETAIL ORDER UNTUK MENDAPATKAN ID TIKET DAN QTY YANG DIBELI
         $detail = mysqli_query($conn, "
             SELECT id_tiket, qty 
             FROM order_detail 
             WHERE id_order = $id_order
         ");
 
+        // KEMBALIKAN STOK TIKET UNTUK SETIAP ITEM YANG DIBELI
         while ($d = mysqli_fetch_assoc($detail)) {
             $id_tiket = (int)$d['id_tiket'];
             $qty = (int)$d['qty'];
 
-            // Kembalikan stok
+            // KEMBALIKAN STOK TIKET
             mysqli_query($conn, "
                 UPDATE tiket 
                 SET kuota = kuota + $qty 
@@ -96,7 +98,7 @@ while ($row = mysqli_fetch_assoc($auto_expire)) {
             ");
         }
 
-        // Update status
+        // UPDATE STATUS ORDER MENJADI 'cancel'
         mysqli_query($conn, "
             UPDATE orders 
             SET status = 'cancelled' 
@@ -165,6 +167,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                 $statusClass = "status-$status";
                 $statusLabel = ($status == 'pending' ? 'Menunggu Pembayaran' : ($status == 'paid' ? 'Lunas' : 'Dibatalkan'));
             ?>
+                <!-- CARD ORDER -->
                 <div class="col-12 mb-4">
                     <div class="card ticket-card shadow-sm">
                         <div class="card-body p-4">
@@ -179,6 +182,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                                 </div>
                             </div>
 
+                            <!-- DETAIL ORDER -->
                             <div class="row">
                                 <div class="col-lg-8">
                                     <?php foreach ($data['items'] as $item): ?>
@@ -198,9 +202,10 @@ while ($row = mysqli_fetch_assoc($result)) {
                                             </div>
 
                                             <?php if ($status == 'paid'): ?>
-                                                <div class="bg-white mx-3 mb-3 p-3 rounded border">
-                                                    <p class="small fw-bold text-muted mb-2"><i class="bi bi-qr-code-scan me-1"></i> Kode Attendee:</p>
-                                                    <div class="row g-2">
+                                                <div class="bg-white mx-3 mb-3 p-3 rounded">
+                                                    <!-- <p class="small fw-bold text-muted mb-2">
+                                                        <i class="bi bi-qr-code-scan me-1"></i> Kode Tiket:</p> -->
+                                                    <!-- <div class="row g-2">
                                                         <?php 
                                                             $id_det = $item['id_detail'];
                                                             $q_att = mysqli_query($conn, "SELECT kode_tiket, status_checkin FROM attendee WHERE id_detail = $id_det");
@@ -215,7 +220,8 @@ while ($row = mysqli_fetch_assoc($result)) {
                                                                 </div>
                                                             </div>
                                                         <?php endwhile; ?>
-                                                    </div>
+                                                    </div> -->
+
                                                 </div>
                                             <?php endif; ?>
                                         </div>
@@ -237,7 +243,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 
                                     <?php elseif ($status == 'paid'): ?>
                                         <button class="btn btn-outline-success w-100 rounded-pill fw-bold" data-bs-toggle="modal" data-bs-target="#modalTiket<?= $id_order ?>">
-                                            <i class="bi bi-qr-code me-2"></i>Lihat E-Ticket
+                                            <i class="bi bi-qr-code me-2"></i>Lihat Kode E-Tiket
                                         </button>
                                         <p class="text-muted small mt-2 text-center">Pesanan lunas tidak dapat dibatalkan.</p>
 
@@ -248,6 +254,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                                     <?php endif; ?>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -260,19 +267,15 @@ while ($row = mysqli_fetch_assoc($result)) {
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body p-4 text-center">
-                                <div class="qr-box mb-3 bg-white">
-                                    <!-- GENERATE QR CODE DENGAN DATA ORDER ID (BISA DIGANTI DENGAN KODE TIKET UNIK JIKA INGIN LEBIH RINCI) -->
-                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=ORDER-<?= $id_order ?>" 
-                                         alt="QR Code" class="img-fluid">
-                                </div>
+
                                 <h5 class="fw-bold mb-1">E-Ticket Resmi</h5>
-                                <p class="text-muted small mb-4">Tunjukkan QR Code ini ke petugas untuk Check-in.</p>
+                                <p class="text-muted small mb-4">Tunjukkan kode E-Tiket ini ke petugas untuk Check-in.</p>
                                 
                                 <div class="text-start bg-light p-3 rounded-4">
                                     <?php foreach ($data['items'] as $item): ?>
                                         <div class="mb-3 border-bottom pb-2">
-                                            <label class="small text-muted d-block">Event & Tiket</label>
-                                            <span class="fw-bold d-block text-navy"><?= htmlspecialchars($item['nama_event']) ?></span>
+                                            <label class="small text-muted d-block text-center">Event & Tiket</label>
+                                            <span class="fw-bold d-block text-navy text-center"><?= htmlspecialchars($item['nama_event']) ?></span>
                                             <span class="badge bg-primary"><?= $item['nama_tiket'] ?> (<?= $item['qty'] ?>x)</span>
                                             
                                             <div class="mt-2">
@@ -334,6 +337,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 </section>
 
 <script>
+    // FUNGSI UNTUK MEMUNCULKAN MODAL KONFIRMASI CANCEL
    function cancelTiket(id) {
     document.getElementById('id_transaksi').value = id;
     let modal = new bootstrap.Modal(document.getElementById('modalCancel'));
