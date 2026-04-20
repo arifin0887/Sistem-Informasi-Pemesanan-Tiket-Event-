@@ -143,6 +143,171 @@ while ($row = mysqli_fetch_assoc($result)) {
 ?>
 
 
+<style>
+/* Custom styles untuk modal e-tiket */
+.ticket-card {
+    border-radius: 15px;
+    border: none;
+    transition: transform 0.2s ease;
+}
+
+.ticket-card:hover {
+    transform: translateY(-2px);
+}
+
+.status-badge {
+    font-size: 0.75rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+}
+
+.status-pending {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.status-paid {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.status-cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.event-info-box {
+    border-radius: 12px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 1px solid #dee2e6;
+}
+
+.ticket-code-badge {
+    border: 1px solid #dee2e6 !important;
+    transition: all 0.2s ease;
+}
+
+.ticket-code-badge:hover {
+    transform: scale(1.02);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.qr-box {
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border: 2px solid #e9ecef;
+}
+
+.ticket-quantity {
+    font-size: 1.1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.event-ticket-item {
+    transition: all 0.2s ease;
+}
+
+.event-ticket-item:hover {
+    background-color: rgba(255,255,255,0.5);
+    border-radius: 8px;
+    padding: 8px;
+    margin: -8px;
+}
+
+.qr-codes-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    max-width: 100%;
+}
+
+.qr-item {
+    text-align: center;
+    min-width: 180px;
+}
+
+.qr-item .qr-box {
+    margin-bottom: 8px;
+}
+
+.qr-item code {
+    font-size: 0.85rem;
+    word-break: break-all;
+}
+
+/* Responsive untuk multiple QR codes */
+@media (max-width: 768px) {
+    .qr-codes-container {
+        gap: 15px;
+    }
+
+    .qr-item {
+        min-width: 150px;
+    }
+
+    .qr-item .qr-box img {
+        width: 120px !important;
+        height: 120px !important;
+    }
+}
+
+/* Print styles */
+@media print {
+    .modal-header,
+    .modal-footer,
+    .btn-close {
+        display: none !important;
+    }
+
+    .modal-content {
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    .modal-body {
+        padding: 20px !important;
+    }
+
+    body * {
+        visibility: hidden;
+    }
+
+    .modal-content,
+    .modal-content * {
+        visibility: visible;
+    }
+
+    .modal-content {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        max-width: none;
+    }
+
+    .qr-codes-container {
+        flex-direction: row !important;
+        justify-content: space-around !important;
+        gap: 10px !important;
+    }
+
+    .qr-item {
+        page-break-inside: avoid;
+        margin-bottom: 15px !important;
+    }
+
+    .qr-item .qr-box img {
+        width: 120px !important;
+        height: 120px !important;
+    }
+}
+</style>
+
+
 <div class="pagetitle">
     <h1>Tiket Saya</h1>
     <p class="text-muted">Kelola semua pesanan dan tiket event Anda di sini.</p>
@@ -246,48 +411,123 @@ while ($row = mysqli_fetch_assoc($result)) {
 
                 <!-- MODAL E-TICKET UNTUK SETIAP ORDER YANG STATUSNYA 'PAID' -->
                 <div class="modal fade" id="modalTiket<?= $id_order ?>" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content" style="border-radius: 25px; border: none;">
-                            <div class="modal-header border-0 pb-0">
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                            <div class="modal-header text-white" style="border-radius: 20px 20px 0 0;">
+                                <h5 class="modal-title fw-bold mb-0">
+                                    <i class="bi bi-ticket-perforated-fill me-2"></i>E-Ticket Event
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <div class="modal-body p-4 text-center">
 
-                                <h5 class="fw-bold mb-1">E-Ticket Resmi</h5>
-                                <p class="text-muted small mb-4">Tunjukkan kode E-Tiket ini ke petugas untuk Check-in.</p>
-                                
-                                <div class="text-start bg-light p-3 rounded-4">
-                                    <?php foreach ($data['items'] as $item): ?>
-                                        <div class="mb-3 border-bottom pb-2">
-                                            <label class="small text-muted d-block text-center">Event & Tiket</label>
-                                            <span class="fw-bold d-block text-navy text-center"><?= htmlspecialchars($item['nama_event']) ?></span>
-                                            <span class="badge bg-primary"><?= $item['nama_tiket'] ?> (<?= $item['qty'] ?>x)</span>
-                                            
-                                            <div class="mt-2">
-                                                <label class="small text-muted d-block mb-1">Kode Tiket:</label>
-                                                <?php 
-                                                // AMBIL KODE TIKET UNTUK DETAIL
-                                                    $id_det_m = $item['id_detail'];
-                                                    $q_att_m = mysqli_query($conn, "SELECT kode_tiket FROM attendee WHERE id_detail = $id_det_m");
-                                                    while($att_m = mysqli_fetch_assoc($q_att_m)):
-                                                ?>
-                                                    <div class="bg-white border p-1 px-2 rounded mb-1 small d-flex justify-content-between">
-                                                        <code class="fw-bold"><?= $att_m['kode_tiket'] ?></code>
-                                                        <i class="bi bi-check2-circle text-success"></i>
+                            <div class="modal-body p-4">
+                                <!-- Header Info -->
+                                <div class="text-center mb-4">
+                                    <h5 class="fw-bold text-primary mb-3">E-Ticket Resmi</h5>
+                                    <p class="text-muted small mb-4">Order #<?= str_pad($id_order, 6, '0', STR_PAD_LEFT) ?> • Tunjukkan QR Code ke petugas untuk Check-in</p>
+
+                                    <!-- QR Codes untuk semua kode tiket -->
+                                    <div class="qr-codes-container">
+                                        <?php
+                                        $ticket_codes = [];
+                                        foreach ($data['items'] as $item) {
+                                            $id_det_qr = $item['id_detail'];
+                                            $q_att_qr = mysqli_query($conn, "SELECT kode_tiket FROM attendee WHERE id_detail = $id_det_qr");
+                                            while($att_qr = mysqli_fetch_assoc($q_att_qr)) {
+                                                $ticket_codes[] = $att_qr['kode_tiket'];
+                                            }
+                                        }
+
+                                        if (!empty($ticket_codes)):
+                                            foreach ($ticket_codes as $index => $ticket_code):
+                                        ?>
+                                            <div class="qr-item mb-3">
+                                                <div class="qr-box p-3 bg-white rounded-3 shadow-sm d-inline-block">
+                                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=<?= urlencode($ticket_code) ?>" 
+                                                         alt="QR Code" class="img-fluid">
+                                                </div>
+                                                <div class="mt-2">
+                                                    <small class="text-muted d-block">Kode Tiket</small>
+                                                    <code class="fw-bold text-primary bg-light px-2 py-1 rounded"><?= $ticket_code ?></code>
+                                                </div>
+                                            </div>
+                                        <?php
+                                            endforeach;
+                                        else:
+                                        ?>
+                                            <div class="qr-box mb-3 p-3 bg-white rounded-3 shadow-sm d-inline-block">
+                                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ORDER-<?= $id_order ?>" 
+                                                     alt="QR Code" class="img-fluid">
+                                            </div>
+                                            <p class="text-muted small">QR Code Order (Belum ada kode tiket)</p>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+
+                                <!-- Event Details -->
+                                <div class="bg-light p-3 rounded-3 mb-3">
+                                    <?php foreach ($data['items'] as $index => $item): ?>
+                                        <div class="event-ticket-item <?= $index > 0 ? 'border-top pt-3 mt-3' : '' ?>">
+                                            <div class="row align-items-center">
+                                                <div class="col">
+                                                    <h6 class="fw-bold mb-1 text-primary"><?= htmlspecialchars($item['nama_event']) ?></h6>
+                                                    <p class="mb-1 small text-muted">
+                                                        <i class="bi bi-tag me-1"></i><?= htmlspecialchars($item['nama_tiket']) ?> 
+                                                        • <i class="bi bi-calendar-event me-1"></i><?= date('d M Y H:i', strtotime($item['tanggal'])) ?>
+                                                        • <i class="bi bi-geo-alt me-1"></i><?= htmlspecialchars($item['nama_venue']) ?>
+                                                    </p>
+                                                    <div class="ticket-codes">
+                                                        <small class="text-muted d-block mb-1">Kode Tiket:</small>
+                                                        <div class="d-flex flex-wrap gap-2">
+                                                            <?php 
+                                                            $id_det_m = $item['id_detail'];
+                                                            $q_att_m = mysqli_query($conn, "SELECT kode_tiket, status_checkin FROM attendee WHERE id_detail = $id_det_m");
+                                                            while($att_m = mysqli_fetch_assoc($q_att_m)):
+                                                            ?>
+                                                                <div class="ticket-code-badge bg-white border px-2 py-1 rounded-pill small d-flex align-items-center">
+                                                                    <code class="fw-bold text-primary me-2"><?= $att_m['kode_tiket'] ?></code>
+                                                                    <span class="badge <?= $att_m['status_checkin'] == 'sudah' ? 'bg-success' : 'bg-secondary' ?>" style="font-size: 0.6rem;">
+                                                                        <i class="bi bi-<?= $att_m['status_checkin'] == 'sudah' ? 'check-circle' : 'circle' ?>"></i>
+                                                                    </span>
+                                                                </div>
+                                                            <?php endwhile; ?>
+                                                        </div>
+
                                                     </div>
-                                                <?php endwhile; ?>
+                                                </div>
                                             </div>
                                         </div>
                                     <?php endforeach; ?>
-                                    <div class="text-center mt-2 small text-muted">
-                                        <i class="bi bi-info-circle me-1"></i> Tiket berlaku untuk 1x penggunaan.
+                                </div>
+
+                                <!-- Footer Info -->
+                                <div class="text-center">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <small class="text-muted d-block">Total Pembayaran</small>
+                                            <span class="fw-bold text-success">Rp <?= number_format($data['info']['total'], 0, ',', '.') ?></span>
+                                        </div>
+                                        <div class="col-6">
+                                            <small class="text-muted d-block">Tanggal Order</small>
+                                            <span class="fw-bold"><?= date('d M Y', strtotime($data['info']['tanggal'])) ?></span>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="alert alert-info py-2 small mb-0">
+                                        <i class="bi bi-info-circle me-1"></i>
+                                        <strong>Informasi:</strong> Tiket berlaku untuk 1x penggunaan. Pastikan datang tepat waktu sesuai jadwal event.
                                     </div>
                                 </div>
                             </div>
-                            <div class="modal-footer border-0">
-                                <button type="button" class="btn btn-light w-100 rounded-pill fw-bold" onclick="window.print()">
-                                    <i class="bi bi-printer me-2"></i>Cetak / Simpan PDF
-                                </button>
+                            <div class="modal-footer border-0 bg-light" style="border-radius: 0 0 20px 20px;">
+                                <div class="w-100 d-flex gap-2">
+                                    <button type="button" class="btn btn-outline-secondary flex-fill rounded-pill" data-bs-dismiss="modal">
+                                        <i class="bi bi-x-circle me-1"></i>Tutup
+                                    </button>
+                                    <button type="button" class="btn btn-primary flex-fill rounded-pill" onclick="printTicket(<?= $id_order ?>)">
+                                        <i class="bi bi-printer me-1"></i>Cetak E-Ticket
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -327,5 +567,16 @@ while ($row = mysqli_fetch_assoc($result)) {
     document.getElementById('id_transaksi').value = id;
     let modal = new bootstrap.Modal(document.getElementById('modalCancel'));
     modal.show();
-}
+   }
+
+   function printTicket(orderId) {
+    // Buka modal e-ticket
+    const modal = new bootstrap.Modal(document.getElementById('modalTiket' + orderId));
+    modal.show();
+    
+    // Tunggu sebentar lalu print
+    setTimeout(() => {
+        window.print();
+    }, 500);
+   }
 </script>
