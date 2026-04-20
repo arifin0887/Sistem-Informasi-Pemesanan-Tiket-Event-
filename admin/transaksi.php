@@ -64,9 +64,6 @@ $res_transaksi = mysqli_query($conn, $sql_transaksi);
                 <div class="card-body py-4">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5 class="card-title mb-0">Riwayat Penjualan Tiket</h5>
-                        <button class="btn btn-outline-primary btn-sm" onclick="window.location.reload();">
-                            <i class="bi bi-arrow-clockwise"></i> Refresh Data
-                        </button>
                     </div>
 
                     <div class="table-responsive">
@@ -107,17 +104,6 @@ $res_transaksi = mysqli_query($conn, $sql_transaksi);
                                         <?php endif; ?>
                                     </td>
                                     <td class="text-center">
-                                        <div class="dropdown d-inline-block">
-                                            <button class="btn btn-light btn-action" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Ubah Status">
-                                                <i class="bi bi-arrow-repeat"></i>
-                                            </button>
-                                            <ul class="dropdown-menu shadow border-0">
-                                                <li><h6 class="dropdown-header">Ubah Status Ke:</h6></li>
-                                                <li><a class="dropdown-item" href="index.php?page=transaksi&action=update_status&status=paid&id=<?= $row['id_order']; ?>">✅ Set Terbayar (Paid)</a></li>
-                                                <li><a class="dropdown-item" href="index.php?page=transaksi&action=update_status&status=pending&id=<?= $row['id_order']; ?>">⏳ Set Menunggu (Pending)</a></li>
-                                                <li><a class="dropdown-item text-danger" href="index.php?page=transaksi&action=update_status&status=cancelled&id=<?= $row['id_order']; ?>">❌ Batalkan (Cancel)</a></li>
-                                            </ul>
-                                        </div>
 
                                         <a href="index.php?page=detail&id=<?= $row['id_order']; ?>" class="btn btn-primary btn-action" title="Detail Pesanan">
                                             <i class="bi bi-eye"></i>

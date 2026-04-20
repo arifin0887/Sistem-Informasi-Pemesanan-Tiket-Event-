@@ -89,7 +89,7 @@ $res_items = mysqli_query($conn, $sql_items);
           <h5 class="card-title">Item yang Dibeli</h5>
           
           <div class="table-responsive">
-            <table class="table table-bordered align-middle">
+            <table class="table align-middle">
               <thead class="bg-light">
                 <tr>
                   <th>Event</th>
@@ -115,7 +115,7 @@ $res_items = mysqli_query($conn, $sql_items);
               </tbody>
                 <tr>
                   <th colspan="4" class="text-end text-uppercase">Total Bayar</th>
-                  <th class="text-end text-primary h5">Rp <?= number_format($data_order['total'], 0, ',', '.') ?></th>
+                  <th class="text-end text-primary fw-bold h5">Rp <?= number_format($data_order['total'], 0, ',', '.') ?></th>
                 </tr>
               </tfoot>
             </table>
