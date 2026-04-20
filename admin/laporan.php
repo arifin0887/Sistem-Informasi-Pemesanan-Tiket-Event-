@@ -156,7 +156,7 @@ $avg_tickets_per_event = count($data_event_sales) > 0 ? round($total_event_qty /
                             <h6 class="text-uppercase mb-1 small opacity-75">Total Omzet</h6>
                             <h2 class="mb-0 fw-bold">Rp <?= number_format($total_pendapatan, 0, ',', '.') ?></h2>
                         </div>
-                        <div class="icon-shape bg-white bg-opacity-10 p-3 rounded-circle">
+                        <div class="icon-shape bg-light p-3 rounded-circle"  style="color: #0ca4aa ">
                             <i class="bi bi-cash-stack fs-3"></i>
                         </div>
                     </div>
@@ -166,16 +166,16 @@ $avg_tickets_per_event = count($data_event_sales) > 0 ? round($total_event_qty /
 
         <!-- CARD RATA RATA  -->
         <div class="col-md-6">
-            <div class="card border-0 shadow-sm bg-white" style="border-radius: 15px; border-left: 5px solid #1D1145 !important;">
+            <div class="card border-0 shadow-sm text-white" style="background: linear-gradient(45deg, #1D1145, #2a1a5e); border-radius: 15px;">
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="text-uppercase mb-1 small text-muted">Rata-rata Transaksi</h6>
-                            <h2 class="mb-0 fw-bold" style="color: #1D1145;">
+                            <h6 class="text-uppercase mb-1 small opacity-75">Rata-rata Transaksi</h6>
+                            <h2 class="mb-0 fw-bold">
                                 Rp <?= ($jumlah_transaksi > 0) ? number_format($total_pendapatan / $jumlah_transaksi, 0, ',', '.') : 0 ?>
                             </h2>
                         </div>
-                        <div class="icon-shape bg-light p-3 rounded-circle text-primary">
+                        <div class="icon-shape bg-light p-3 rounded-circle"  style="color: #1D1145 ">
                             <i class="bi bi-graph-up-arrow fs-3"></i>
                         </div>
                     </div>
@@ -192,7 +192,7 @@ $avg_tickets_per_event = count($data_event_sales) > 0 ? round($total_event_qty /
                             <h6 class="text-uppercase mb-1 small opacity-75">Tiket Terjual</h6>
                             <h2 class="mb-0 fw-bold"><?= number_format($total_tiket_terjual) ?> <span class="fs-6 fw-normal">Pcs</span></h2>
                         </div>
-                        <div class="icon-shape bg-white bg-opacity-10 p-3 rounded-circle">
+                        <div class="icon-shape bg-light p-3 rounded-circle" style="color: #1D1145 ">
                             <i class="bi bi-ticket-perforated fs-3"></i>
                         </div>
                     </div>
@@ -209,7 +209,7 @@ $avg_tickets_per_event = count($data_event_sales) > 0 ? round($total_event_qty /
                             <h6 class="text-uppercase mb-1 small opacity-75">Tiket Dibatalkan</h6>
                             <h2 class="mb-0 fw-bold"><?= number_format($total_cancel) ?> <span class="fs-6 fw-normal">Pcs</span></h2>
                         </div>
-                        <div class="icon-shape bg-white bg-opacity-10 p-3 rounded-circle">
+                        <div class="icon-shape bg-light p-3 rounded-circle text-danger">
                             <i class="bi bi-x-circle fs-3"></i>
                         </div>
                     </div>
@@ -227,7 +227,7 @@ $avg_tickets_per_event = count($data_event_sales) > 0 ? round($total_event_qty /
                             <h5 class="mb-1 fw-bold"><?= htmlspecialchars($top_event['nama_event']) ?></h5>
                             <h6 class="mb-0">Rp <?= number_format($top_event['revenue'], 0, ',', '.') ?></h6>
                         </div>
-                        <div class="icon-shape bg-white bg-opacity-10 p-3 rounded-circle">
+                        <div class="icon-shape bg-light p-3 rounded-circle text-success">
                             <i class="bi bi-trophy fs-3"></i>
                         </div>
                     </div>
