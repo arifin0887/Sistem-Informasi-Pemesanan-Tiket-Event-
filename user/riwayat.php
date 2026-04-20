@@ -369,8 +369,18 @@ while ($row = mysqli_fetch_assoc($result)) {
 
                                             <?php if ($status == 'paid'): ?>
                                                 <div class="bg-white mx-3 mb-3 p-3 rounded">
-                                                   
-
+                                                    <small class="text-muted d-block mb-2">Kode Tiket:</small>
+                                                    <div class="d-flex flex-wrap gap-2">
+                                                        <?php 
+                                                        $id_det_m = $item['id_detail'];
+                                                        $q_att_m = mysqli_query($conn, "SELECT kode_tiket FROM attendee WHERE id_detail = $id_det_m");
+                                                        while($att_m = mysqli_fetch_assoc($q_att_m)):
+                                                        ?>
+                                                            <div class="ticket-code-badge bg-light border px-2 py-1 rounded-pill small">
+                                                                <code class="fw-bold text-primary"><?= $att_m['kode_tiket'] ?></code>
+                                                            </div>
+                                                        <?php endwhile; ?>
+                                                    </div>
                                                 </div>
                                             <?php endif; ?>
 
