@@ -270,69 +270,106 @@ $query_jelajah = mysqli_query($conn, "
     <!-- MENU JELAJAH -->
     <main id="menu-jelajah" class="pt-24 pb-16 flex-grow hidden">
         <div class="container mx-auto px-6 lg:px-16">
-            <h2 class="text-3xl font-extrabold text-[#1D1145] mb-2">Pusat Jelajah Event</h2>
-            <p class="text-gray-500 mb-6 text-sm">Temukan event impianmu berdasarkan kata kunci atau kategori.</p>
 
-            <div class="bg-white p-2 rounded-xl shadow-lg max-w-4xl mb-8 border border-gray-100">
-                <div class="flex items-center"> 
-                    <svg class="w-6 h-6 ml-5 text-[#0DB5BB]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    <input type="text" id="searchInput" oninput="filterEvent()" placeholder="Cari event berdasarkan nama atau lokasi..." class="flex-grow p-4 text-base border-none focus:ring-0 focus:outline-none placeholder-gray-500 bg-transparent">
-                </div>
+            <!-- HEADER -->
+            <div class="mb-10">
+                <h2 class="text-4xl font-extrabold text-[#1D1145] mb-2">
+                    Temukan Event Terbaik
+                </h2>
+                <p class="text-gray-500 text-sm max-w-2xl">
+                    Jelajahi berbagai event menarik mulai dari konser, seminar, workshop hingga festival seru di sekitarmu.
+                </p>
             </div>
 
-            <div id="eventGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+            <!-- SEARCH + FILTER -->
+            <div class="bg-white p-3 rounded-2xl shadow-lg max-w-5xl mb-6 border flex flex-col md:flex-row gap-3">
+                
+                <!-- SEARCH -->
+                <div class="flex items-center flex-grow">
+                    <i class="bi bi-search text-[#0DB5BB] text-xl ml-3"></i>
+                    <input type="text" id="searchInput" oninput="filterEvent()" 
+                        placeholder="Cari event, kota, atau venue..." 
+                        class="flex-grow p-3 text-sm border-none focus:ring-0 focus:outline-none bg-transparent">
+                </div>
+
+            </div>
+
+            <!-- GRID EVENT -->
+            <div id="eventGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
                 <?php if (mysqli_num_rows($query_event) > 0) : ?>
                     <?php while ($row = mysqli_fetch_assoc($query_event)) : ?>
                         
-                        <div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden border border-gray-100 group">
-                            
-                            <!-- HEADER -->
-                            <div class="relative bg-gradient-to-br from-[#1d1145] to-[#2d1b6b] text-white h-40 flex flex-col justify-between p-4">
-                                
-                                <span class="bg-[#0DB5BB] text-white text-xs font-bold px-3 py-1 rounded-full uppercase w-fit">
-                                    Event
-                                </span>
+                        <div class="bg-white rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-2 transition duration-300 overflow-hidden border group relative">
 
-                                <div class="absolute right-3 bottom-2 opacity-10">
-                                    <i class="bi bi-calendar-event" style="font-size: 4rem;"></i>
+                            <!-- FAVORITE -->
+                            <button class="absolute top-3 right-3 bg-white p-2 rounded-full shadow hover:bg-pink-100">
+                                <i class="bi bi-heart text-gray-400 hover:text-pink-500"></i>
+                            </button>
+
+                            <!-- HEADER -->
+                            <div class="relative bg-gradient-to-br from-[#1d1145] to-[#2d1b6b] text-white h-44 flex flex-col justify-between p-4">
+                                
+                                <!-- BADGE -->
+                                <div class="flex justify-between items-start">
+                                    <span class="bg-[#0DB5BB] text-white text-xs font-bold px-3 py-1 rounded-full">
+                                        Event
+                                    </span>
+
+                                    <span class="bg-white/20 text-white text-xs px-2 py-1 rounded">
+                                        <?= date('d M', strtotime($row['tanggal'])); ?>
+                                    </span>
                                 </div>
 
+                                <!-- TITLE -->
                                 <div>
-                                    <h6 class="font-bold text-white line-clamp-2">
+                                    <h6 class="font-bold text-sm line-clamp-2">
                                         <?= htmlspecialchars($row['nama_event']); ?>
                                     </h6>
-                                    <small class="text-white/70">
-                                        <?= date('d M Y', strtotime($row['tanggal'])); ?>
+                                    <small class="text-white/70 text-xs">
+                                        <?= date('Y', strtotime($row['tanggal'])); ?>
                                     </small>
                                 </div>
                             </div>
 
                             <!-- BODY -->
                             <div class="p-4">
-                                <p class="text-sm text-gray-500 mb-2">
+
+                                <!-- LOCATION -->
+                                <p class="text-xs text-gray-500 mb-2 flex items-center gap-1">
                                     <i class="bi bi-geo-alt"></i> 
                                     <?= htmlspecialchars($row['nama_venue'] ?? 'TBA'); ?>
                                 </p>
 
-                                <div class="flex justify-between items-center">
-                                    <span class="text-[#e66c8a] font-bold">
-                                        Rp <?= number_format($row['harga_mulai'] ?? 0, 0, ',', '.'); ?>
-                                    </span>
+                                <!-- INFO -->
+                                <div class="flex justify-between items-center mt-3">
+
+                                    <div>
+                                        <span class="text-xs text-gray-400 block">Mulai dari</span>
+                                        <span class="text-[#e66c8a] font-bold text-sm">
+                                            Rp <?= number_format($row['harga_mulai'] ?? 0, 0, ',', '.'); ?>
+                                        </span>
+                                    </div>
 
                                     <a href="detail_event.php?id=<?= $row['id_event']; ?>" 
-                                    class="bg-[#1d1145] text-white px-3 py-1 rounded-lg text-sm hover:bg-[#e66c8a] transition">
+                                    class="bg-[#1d1145] text-white px-3 py-2 rounded-lg text-xs hover:bg-[#e66c8a] transition">
                                         Detail
                                     </a>
                                 </div>
+
                             </div>
 
                         </div>
 
                     <?php endwhile; ?>
                 <?php else : ?>
-                    <p class="col-span-full text-center text-gray-400">Belum ada event</p>
+                    <div class="col-span-full text-center py-16">
+                        <i class="bi bi-calendar-x text-5xl text-gray-300"></i>
+                        <h4 class="text-gray-400 mt-3">Belum ada event tersedia</h4>
+                        <p class="text-sm text-gray-400">Coba cek kembali nanti ya 😉</p>
+                    </div>
                 <?php endif; ?>
             </div>
+
         </div>
     </main>
     <!-- MENU END -->
@@ -340,35 +377,118 @@ $query_jelajah = mysqli_query($conn, "
     <!-- MENU TENTANG -->
     <main id="menu-tentang" class="pt-24 pb-16 flex-grow hidden">
         <div class="container mx-auto px-6 lg:px-16">
-            <div class="max-w-4xl mx-auto text-center mb-16">
-                <h2 class="text-4xl font-extrabold text-[#1D1145] mb-4">Tentang <span class="text-[#E66C8A]">EventKu</span></h2>
-                <p class="text-lg text-gray-600 font-light">Kami adalah jembatan utama yang menghubungkan para pecinta hiburan dengan momen-momen terbaik dalam hidup mereka secara aman dan transparan.</p>
+
+            <!-- HEADER -->
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-4xl font-extrabold text-[#1D1145] mb-4">
+                    Tentang <span class="text-[#E66C8A]">EventKu</span>
+                </h2>
+                <p class="text-gray-600 text-lg leading-relaxed">
+                    EventKu adalah platform digital yang dirancang untuk memudahkan masyarakat dalam menemukan, 
+                    memesan, dan mengelola tiket berbagai acara secara cepat, aman, dan terpercaya.
+                </p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                <div>
-                    <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=600&q=80" alt="Tim EventKu" class="rounded-2xl shadow-xl w-full object-cover h-80">
-                </div>
-                <div class="space-y-6">
-                    <div class="border-l-4 border-[#0DB5BB] pl-4">
-                        <h3 class="text-xl font-bold text-[#1D1145]">Visi Kami</h3>
-                        <p class="text-gray-600 mt-1">Menciptakan ekosistem pertiketan yang bersih dan bebas dari calo fiktif di Indonesia.</p>
-                    </div>
-                    <div class="border-l-4 border-[#E66C8A] pl-4">
-                        <h3 class="text-xl font-bold text-[#1D1145]">Misi Kami</h3>
-                        <p class="text-gray-600 mt-1">Menghadirkan teknologi pemindaian QR-Code berlapis yang menjamin keaslian tiket hingga ke tangan pembeli.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <!-- TENTANG EVENTKU -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-20">
 
-        <div class="mt-16 max-w-4xl mx-auto text-center">
-            <h3 class="text-2xl font-bold text-[#1D1145] mb-4">Tentang PT Edu Tech Development</h3>
-            <p class="text-gray-600 leading-relaxed">
-                PT Edu Tech Development adalah perusahaan teknologi terdepan yang berkomitmen untuk menghadirkan solusi digital inovatif. 
-                Kami menyediakan platform EventKu ini sebagai bagian dari upaya kami dalam mendukung industri event di Indonesia, 
-                memastikan setiap pengguna mendapatkan pengalaman pemesanan tiket yang aman, transparan, dan tanpa hambatan.
-            </p>
+                <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=600&q=80" 
+                    class="rounded-2xl shadow-lg w-full h-80 object-cover">
+
+                <div class="space-y-5 text-gray-600 leading-relaxed">
+                    <p>
+                        Di era digital saat ini, kebutuhan akan sistem pemesanan tiket yang transparan dan efisien semakin meningkat. 
+                        EventKu hadir sebagai solusi modern yang menghubungkan penyelenggara event dengan para pengunjung secara langsung, 
+                        tanpa perantara yang merugikan.
+                    </p>
+
+                    <p>
+                        Kami menyediakan berbagai pilihan event mulai dari konser musik, seminar, workshop, hingga acara komunitas, 
+                        dengan sistem pembelian yang mudah dan terintegrasi.
+                    </p>
+
+                    <p>
+                        Dengan teknologi berbasis QR Code dan sistem validasi yang aman, setiap tiket yang dibeli melalui EventKu 
+                        dijamin keasliannya, sehingga pengguna dapat menikmati acara tanpa rasa khawatir.
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- KEUNGGULAN -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
+
+                <div class="bg-white p-6 rounded-xl shadow text-center">
+                    <i class="bi bi-shield-check text-3xl text-[#0DB5BB]"></i>
+                    <h4 class="font-bold mt-3 text-[#1D1145]">Aman & Terpercaya</h4>
+                    <p class="text-sm text-gray-500 mt-2">
+                        Sistem validasi tiket digital memastikan setiap transaksi aman dan bebas dari penipuan.
+                    </p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow text-center">
+                    <i class="bi bi-lightning-charge text-3xl text-[#E66C8A]"></i>
+                    <h4 class="font-bold mt-3 text-[#1D1145]">Cepat & Mudah</h4>
+                    <p class="text-sm text-gray-500 mt-2">
+                        Proses pembelian tiket hanya dalam beberapa langkah tanpa ribet.
+                    </p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow text-center">
+                    <i class="bi bi-people text-3xl text-[#1D1145]"></i>
+                    <h4 class="font-bold mt-3 text-[#1D1145]">Terhubung Langsung</h4>
+                    <p class="text-sm text-gray-500 mt-2">
+                        Menghubungkan penyelenggara dan pengunjung tanpa perantara.
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- TENTANG PERUSAHAAN -->
+            <div class="text-center max-w-4xl mx-auto">
+                <h3 class="text-2xl font-bold text-[#1D1145] mb-4">
+                    Tentang PT Edu Tech Development
+                </h3>
+
+                <p class="text-gray-600 leading-relaxed mb-4">
+                    PT Edu Tech Development adalah perusahaan teknologi yang berfokus pada pengembangan solusi digital inovatif 
+                    di berbagai sektor, termasuk pendidikan, event, dan sistem manajemen berbasis web.
+                </p>
+
+                <p class="text-gray-600 leading-relaxed mb-4">
+                    Dengan tim yang berpengalaman di bidang pengembangan perangkat lunak dan desain sistem, 
+                    kami berkomitmen untuk menciptakan produk digital yang tidak hanya fungsional, tetapi juga memberikan 
+                    pengalaman pengguna yang optimal.
+                </p>
+
+                <p class="text-gray-600 leading-relaxed">
+                    EventKu merupakan salah satu produk unggulan kami yang dikembangkan untuk mendukung ekosistem event di Indonesia, 
+                    dengan tujuan menghadirkan solusi ticketing yang modern, efisien, dan terpercaya bagi semua kalangan.
+                </p>
+            </div>
+
+            <br>
+            <!-- VISI MISI -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
+                
+                <div class="bg-white p-6 rounded-xl shadow border-l-4 border-[#0DB5BB]">
+                    <h3 class="font-bold text-[#1D1145] mb-2">Visi</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Menjadi platform ticketing digital terdepan di Indonesia yang menghadirkan pengalaman terbaik 
+                        dalam menemukan dan menikmati berbagai event.
+                    </p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow border-l-4 border-[#E66C8A]">
+                    <h3 class="font-bold text-[#1D1145] mb-2">Misi</h3>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Memberikan layanan ticketing yang aman, transparan, dan inovatif dengan memanfaatkan teknologi 
+                        untuk mendukung pertumbuhan industri event di Indonesia.
+                    </p>
+                </div>
+
+            </div>
+
         </div>
     </main>
     <!-- MENU END -->
@@ -376,42 +496,177 @@ $query_jelajah = mysqli_query($conn, "
     <!-- MENU KONTAK -->
     <main id="menu-kontak" class="pt-24 pb-16 flex-grow hidden">
         <div class="container mx-auto px-6 lg:px-16">
+
+            <!-- HEADER -->
             <div class="text-center mb-12">
-                <h2 class="text-4xl font-extrabold text-[#1D1145] mb-2">Hubungi Kami</h2>
-                <p class="text-gray-500">Ada kendala atau pertanyaan? Kami siap membantu Anda 24/7.</p>
+                <h2 class="text-4xl font-extrabold text-[#1D1145] mb-2">
+                    Hubungi Kami 📩
+                </h2>
+                <p class="text-gray-500 text-sm max-w-2xl mx-auto">
+                    Kami siap membantu Anda terkait pemesanan tiket, informasi event, maupun kerja sama. 
+                    Jangan ragu untuk menghubungi kami melalui berbagai kanal berikut.
+                </p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                <div class="bg-white p-6 rounded-xl shadow-md text-center border-t-4 border-[#0DB5BB]">
-                    <div class="text-3xl mb-3">📍</div>
-                    <h3 class="font-bold text-gray-900 mb-1">Kantor Pusat</h3>
-                    <p class="text-sm text-gray-500">Jl. A Yani No 135A Magelang Utara, Kota Magelang</p>
+            <!-- CONTACT INFO -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-12">
+
+                <!-- Alamat -->
+                <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition text-center border-t-4 border-[#0DB5BB]">
+                    <i class="bi bi-geo-alt text-3xl text-[#0DB5BB]"></i>
+                    <h4 class="font-bold mt-3">Alamat</h4>
+                    <p class="text-sm text-gray-500">
+                        Jl. A Yani No 135A <br>
+                        Magelang Utara, Indonesia
+                    </p>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-md text-center border-t-4 border-[#E66C8A]">
-                    <div class="text-3xl mb-3">✉️</div>
-                    <h3 class="font-bold text-gray-900 mb-1">E-mail</h3>
+
+                <!-- Email -->
+                <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition text-center border-t-4 border-[#E66C8A]">
+                    <i class="bi bi-envelope text-3xl text-[#E66C8A]"></i>
+                    <h4 class="font-bold mt-3">Email</h4>
                     <p class="text-sm text-gray-500">support@eventku.id</p>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-md text-center border-t-4 border-[#1D1145]">
-                    <div class="text-3xl mb-3">📞</div>
-                    <h3 class="font-bold text-gray-900 mb-1">WhatsApp</h3>
+
+                <!-- WhatsApp -->
+                <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition text-center border-t-4 border-[#1D1145]">
+                    <i class="bi bi-whatsapp text-3xl text-[#1D1145]"></i>
+                    <h4 class="font-bold mt-3">WhatsApp</h4>
                     <p class="text-sm text-gray-500">+62 812 3456 7890</p>
                 </div>
+
             </div>
+
+            <!-- GOOGLE MAPS -->
+            <div class="max-w-6xl mx-auto">
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden border">
+
+                    <!-- TITLE -->
+                    <div class="p-4 border-b">
+                        <h4 class="font-bold text-[#1D1145]">
+                            📍 Lokasi Kantor Kami
+                        </h4>
+                        <p class="text-sm text-gray-500">
+                            Kunjungi kantor kami secara langsung melalui peta di bawah ini.
+                        </p>
+                    </div>
+
+                    <!-- MAP -->
+                    <div class="w-full h-[400px]">
+                        <iframe 
+                            src="https://www.google.com/maps?q=SMK+Negeri+2+Magelang&output=embed"
+                            width="100%" 
+                            height="100%" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy">
+                        </iframe>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
     </main>
     <!-- MENU END -->
 
     <!-- FOOTER -->
-    <footer class="bg-[#1D1145] text-white py-8 md:py-10 mt-auto text-center">
-        <div class="container mx-auto px-6 lg:px-16 text-center">
-            <a href="#" class="text-3xl font-extrabold text-white tracking-tight">
-                Event<span class="text-[#E66C8A]">Ku</span>
-            </a>
-            <p class="text-sm text-gray-400 mt-2">Tiket resmi, pengalaman tanpa batas. Partner event terpercaya Anda.</p>
-            <div class="text-center border-t border-gray-700 pt-6 mt-6">
-                <p class="text-xs text-gray-500">Dikembangkan oleh PT Edu Tech Development</p>
-                <p class="text-xs text-gray-500">© 2026 EventKu. Hak Cipta Dilindungi Undang-Undang.</p>
+    <footer class="bg-gradient-to-b from-[#1D1145] to-[#0A0A1E] text-white relative overflow-hidden">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 opacity-5">
+            <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20%_80%,#0DB5BB20_0%,transparent_50%)]"></div>
+            <div class="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(circle_at_80%_20%,#E66C8A20_0%,transparent_50%)]"></div>
+        </div>
+
+        <div class="container mx-auto px-6 lg:px-16 py-16 relative z-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-12">
+                
+                <!-- Logo & Deskripsi -->
+                <div class="lg:col-span-1">
+                    <a href="#" class="text-3xl md:text-4xl font-black bg-gradient-to-r from-white via-[#0DB5BB] to-[#E66C8A] bg-clip-text inline-block mb-6">
+                        Event<span class="text-[#E66C8A]">Ku</span>
+                    </a>
+                    <p class="text-gray-300 leading-relaxed mb-6">Platform tiket event #1 Indonesia. Aman, resmi, tanpa calo. Rasakan pengalaman event terbaik dengan kami.</p>
+                    <div class="flex space-x-3">
+                        <a href="#" class="w-12 h-12 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center hover:bg-white/20 transition-all duration-300 group">
+                            <i class="bi bi-instagram text-xl group-hover:scale-110"></i>
+                        </a>
+                        <a href="#" class="w-12 h-12 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center hover:bg-white/20 transition-all duration-300 group">
+                            <i class="bi bi-twitter-x text-xl group-hover:scale-110"></i>
+                        </a>
+                        <a href="#" class="w-12 h-12 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center hover:bg-white/20 transition-all duration-300 group">
+                            <i class="bi bi-youtube text-xl group-hover:scale-110"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="text-lg font-bold mb-6 text-white">Quick Links</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-300 hover:text-[#0DB5BB] transition flex items-center group"><i class="bi bi-chevron-right me-2 opacity-0 group-hover:opacity-100 transition"></i>Tentang Kami</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-[#0DB5BB] transition flex items-center group"><i class="bi bi-chevron-right me-2 opacity-0 group-hover:opacity-100 transition"></i>Cara Beli Tiket</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-[#0DB5BB] transition flex items-center group"><i class="bi bi-chevron-right me-2 opacity-0 group-hover:opacity-100 transition"></i>FAQ</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-[#0DB5BB] transition flex items-center group"><i class="bi bi-chevron-right me-2 opacity-0 group-hover:opacity-100 transition"></i>Hubungi Kami</a></li>
+                    </ul>
+                </div>
+
+                <!-- Company -->
+                <div>
+                    <h4 class="text-lg font-bold mb-6 text-white">Perusahaan</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-300 hover:text-[#E66C8A] transition flex items-center group"><i class="bi bi-chevron-right me-2 opacity-0 group-hover:opacity-100 transition"></i>Syarat & Ketentuan</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-[#E66C8A] transition flex items-center group"><i class="bi bi-chevron-right me-2 opacity-0 group-hover:opacity-100 transition"></i>Kebijakan Privasi</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-[#E66C8A] transition flex items-center group"><i class="bi bi-chevron-right me-2 opacity-0 group-hover:opacity-100 transition"></i>Karir</a></li>
+                        <li><p class="text-gray-400 text-xs">PT Edu Tech Development</p></li>
+                    </ul>
+                </div>
+
+                <!-- Contact -->
+                <div>
+                    <h4 class="text-lg font-bold mb-6 text-white">Kontak</h4>
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-10 h-10 bg-[#0DB5BB]/20 rounded-xl flex items-center justify-center mt-1 flex-shrink-0">
+                                <i class="bi bi-geo-alt text-[#0DB5BB]"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-300 font-medium">Jl. A Yani No 135A</p>
+                                <p class="text-sm text-gray-400">Magelang Utara, Kota Magelang</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-[#E66C8A]/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="bi bi-envelope text-[#E66C8A]"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-300">support@eventku.id</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="bi bi-whatsapp text-[#25D366]"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-300">+62 812 3456 7890</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Bar -->
+            <div class="border-t border-white/10 pt-8 mt-12">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <p class="text-xs text-gray-400 text-center md:text-left">
+                        © 2026 EventKu. Dikembangkan oleh <span class="font-semibold text-[#0DB5BB]">PT Edu Tech Development</span>. Hak Cipta Dilindungi.
+                    </p>
+                    <div class="flex justify-center md:justify-end space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-[#E66C8A] transition"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-[#1DA1F2] transition"><i class="bi bi-twitter-x"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-[#0DB5BB] transition"><i class="bi bi-youtube"></i></a>
+                    </div>
+                </div>
             </div>
         </div>
     </footer>
