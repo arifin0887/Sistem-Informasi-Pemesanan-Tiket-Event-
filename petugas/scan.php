@@ -11,7 +11,6 @@
         border: none !important;
     }
 
-    /* Menghilangkan tulisan link dan info default dari library */
     #reader__dashboard_section_csr button {
         background-color: #0d6efd !important;
         border: none !important;
@@ -23,7 +22,6 @@
         font-size: 0.8rem;
     }
 
-    /* Efek Viewfinder (Sudut Siku) */
     .scanner-overlay {
         position: absolute;
         top: 50%;
@@ -37,7 +35,6 @@
         z-index: 2;
     }
 
-    /* Animasi Garis Scan */
     .scan-line {
         position: absolute;
         width: 100%;

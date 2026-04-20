@@ -43,7 +43,6 @@ $total_tiket = $data_tiket['total'] ?? 0;
         font-size: 4rem;
         opacity: 0.1;
     }
-    /* Styling untuk Input Scanner Kasir */
     .scanner-input-group {
         background: #f8f9fa;
         border: 2px dashed #dee2e6;
@@ -74,7 +73,6 @@ $total_tiket = $data_tiket['total'] ?? 0;
         transition: all 0.3s ease;
     }
 
-    /* Efek tombol Kamera HP */
     .btn-camera {
         background: linear-gradient(135deg, #0d6efd 0%, #0043a8 100%);
         border: none;
@@ -88,7 +86,6 @@ $total_tiket = $data_tiket['total'] ?? 0;
         background: linear-gradient(135deg, #0b5ed7 0%, #003687 100%);
     }
 
-    /* Area Scanner Kasir */
     .scanner-container {
         background: #fcfdfe;
         border: 2px solid #edf2f7;
@@ -129,7 +126,6 @@ $total_tiket = $data_tiket['total'] ?? 0;
         color: #94a3b8;
     }
 
-    /* Animasi pulse kecil untuk indikator standby */
     .standby-indicator {
         width: 8px;
         height: 8px;
@@ -149,18 +145,16 @@ $total_tiket = $data_tiket['total'] ?? 0;
     .attendance-card {
         border: none;
         border-radius: 24px;
-        background: linear-gradient(145deg, #1e293b, #0f172a); /* Gradient gelap yang elegan */
+        background: linear-gradient(145deg, #1e293b, #0f172a);
         overflow: hidden;
     }
 
-    /* Efek pendaran pada angka utama */
     .glow-text {
         color: #fff;
         text-shadow: 0 0 20px rgba(13, 110, 253, 0.5);
         letter-spacing: -1px;
     }
 
-    /* Progress Bar yang lebih modern */
     .progress-custom {
         background: rgba(255, 255, 255, 0.1) !important;
         height: 12px !important;
@@ -176,7 +170,6 @@ $total_tiket = $data_tiket['total'] ?? 0;
         overflow: visible;
     }
 
-    /* Indikator pendar di ujung progress bar */
     .progress-bar-glow::after {
         content: '';
         position: absolute;
@@ -190,13 +183,12 @@ $total_tiket = $data_tiket['total'] ?? 0;
         box-shadow: 0 0 10px #fff;
     }
 
-    /* Icon dekoratif di latar belakang */
     .bg-icon-decoration {
         position: absolute;
         right: -10px;
         bottom: -10px;
         font-size: 8rem;
-        color: rgba(255, 255, 255, 0.03); /* Sangat samar */
+        color: rgba(255, 255, 255, 0.03); 
         transform: rotate(-15deg);
         pointer-events: none;
     }

@@ -176,22 +176,22 @@ $v = mysqli_fetch_assoc($query_voucher);
     }
 
     .display-title {
-        font-size: 1.75rem; /* Ukuran lebih besar dan tegas */
+        font-size: 1.75rem; 
         line-height: 1.1;
         letter-spacing: -0.02em;
-        color: #1a237e; /* Navy */
+        color: #1a237e;
         cursor: pointer;
         transition: all 0.3s ease;
-        word-wrap: break-word; /* Biar kalau kepanjangan tidak hancur */
+        word-wrap: break-word; 
         display: -webkit-box;
-        -webkit-line-clamp: 2; /* Maksimal 2 baris */
+        -webkit-line-clamp: 2; 
         -webkit-box-orient: vertical;
         overflow: hidden;
         min-height: 3.5rem;
     }
 
     .display-title:hover {
-        color: #ff4081; /* Pink accent */
+        color: #ff4081;
     }
 
     .event-date-badge {
@@ -201,7 +201,7 @@ $v = mysqli_fetch_assoc($query_voucher);
         padding: 12px 8px;
         border-radius: 18px;
         border: 1px dashed #ddd;
-        flex-shrink: 0; /* Mencegah box tanggal menyusut */
+        flex-shrink: 0; 
     }
 
     .event-card.expired {

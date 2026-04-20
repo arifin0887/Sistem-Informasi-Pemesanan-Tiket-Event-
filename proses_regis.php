@@ -6,23 +6,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $nama     = mysqli_real_escape_string($conn, $_POST['full_name']);
     $email    = mysqli_real_escape_string($conn, $_POST['email']);
-    $password = md5($_POST['password']); // sesuai kebutuhan kamu
-    $role     = 'user'; // default role
+    $password = md5($_POST['password']); 
+    $role     = 'user'; 
 
-    // Validasi
+    // VALIDASI
     if (empty($nama) || empty($email) || empty($_POST['password'])) {
         echo "<script>alert('Data tidak boleh kosong!');window.location='regis.php';</script>";
         exit;
     }
 
-    // Cek email
+    // CEK EMAIL
     $cek = mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
     if (mysqli_num_rows($cek) > 0) {
         echo "<script>alert('Email sudah digunakan!');window.location='regis.php';</script>";
         exit;
     }
 
-    // Simpan data
     $insert = mysqli_query($conn, "
         INSERT INTO users (nama, email, password, role)
         VALUES ('$nama', '$email', '$password', '$role')

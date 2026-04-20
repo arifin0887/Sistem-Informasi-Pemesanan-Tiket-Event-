@@ -6,13 +6,11 @@
     <title>Masuk ke Akun Anda | EventKu</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Konsistensi Font Poppins */
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f0f4f8; 
         }
-        /* Custom Class untuk Gradien pada Button */
         .cta-gradient {
             background-image: linear-gradient(to right, #E66C8A 0%, #CF2E2E 100%);
             transition: all 0.3s ease;

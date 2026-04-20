@@ -58,7 +58,7 @@ $query_jelajah = mysqli_query($conn, "
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EventKu – Platform Tiket Event Profesional</title>
+    <title>EventKu - Platform Tiket Event Profesional</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -66,17 +66,15 @@ $query_jelajah = mysqli_query($conn, "
         
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #f8fafc; /* Warna lebih soft */
+            background-color: #f8fafc; 
         }
 
-        /* Glass Header */
         .glass-nav {
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(0,0,0,0.05);
         }
 
-        /* Card Pilihan */
         .event-card {
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
@@ -84,7 +82,6 @@ $query_jelajah = mysqli_query($conn, "
             transform: translateY(-10px);
         }
 
-        /* Gradient Text */
         .text-gradient {
             background: linear-gradient(135deg, #1D1145 0%, #0DB5BB 100%);
             -webkit-background-clip: text;
@@ -364,6 +361,15 @@ $query_jelajah = mysqli_query($conn, "
                 </div>
             </div>
         </div>
+
+        <div class="mt-16 max-w-4xl mx-auto text-center">
+            <h3 class="text-2xl font-bold text-[#1D1145] mb-4">Tentang PT Edu Tech Development</h3>
+            <p class="text-gray-600 leading-relaxed">
+                PT Edu Tech Development adalah perusahaan teknologi terdepan yang berkomitmen untuk menghadirkan solusi digital inovatif. 
+                Kami menyediakan platform EventKu ini sebagai bagian dari upaya kami dalam mendukung industri event di Indonesia, 
+                memastikan setiap pengguna mendapatkan pengalaman pemesanan tiket yang aman, transparan, dan tanpa hambatan.
+            </p>
+        </div>
     </main>
     <!-- MENU END -->
 
@@ -402,8 +408,9 @@ $query_jelajah = mysqli_query($conn, "
             <a href="#" class="text-3xl font-extrabold text-white tracking-tight">
                 Event<span class="text-[#E66C8A]">Ku</span>
             </a>
-            <p class="text-sm text-gray-400 mt-2">Tiket resmi, pengalaman tanpa batas. Partner event tepercaya Anda.</p>
+            <p class="text-sm text-gray-400 mt-2">Tiket resmi, pengalaman tanpa batas. Partner event terpercaya Anda.</p>
             <div class="text-center border-t border-gray-700 pt-6 mt-6">
+                <p class="text-xs text-gray-500">Dikembangkan oleh PT Edu Tech Development</p>
                 <p class="text-xs text-gray-500">© 2026 EventKu. Hak Cipta Dilindungi Undang-Undang.</p>
             </div>
         </div>
@@ -469,7 +476,7 @@ $query_jelajah = mysqli_query($conn, "
             </div>`;
         }
 
-        // FILTER EVENT (FIX ERROR NULL)
+        // FILTER EVENT
         function filterEvent() {
             const grid = document.getElementById('eventGrid');
             if (!grid) return;
@@ -514,10 +521,8 @@ $query_jelajah = mysqli_query($conn, "
                 }
             });
 
-            // tampilkan menu aktif
             document.getElementById('menu-' + menu).classList.remove('hidden');
 
-            // aktifkan navbar
             const navAktif = document.getElementById('nav-' + menu);
             if(navAktif){
                 navAktif.classList.remove('text-gray-700','border-transparent');
@@ -529,9 +534,7 @@ $query_jelajah = mysqli_query($conn, "
             if(menu === 'jelajah') filterEvent();
         }
 
-        // INIT (AMAN)
         document.addEventListener("DOMContentLoaded", () => {
-            // default render jika langsung ke jelajah
             filterEvent();
         });
 

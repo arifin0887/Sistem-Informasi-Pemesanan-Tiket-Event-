@@ -47,7 +47,7 @@ if (isset($_POST['proses_buy'])) {
             'harga_satuan' => $data['harga'],
             'jumlah'       => $jumlah,
             'subtotal'     => $data['harga'] * $jumlah,
-            'diskon'       => 0, // Inisialisasi awal, akan dihitung di checkout jika ada voucher
+            'diskon'       => 0,
             'total'        => $data['harga'] * $jumlah,
             'id_voucher'   => null,
             'kode_voucher' => ''
@@ -92,98 +92,12 @@ if (isset($_POST['proses_buy'])) {
     </div>
 </section>
 
-<!-- <div class="row g-4 mt-2">
-    <div class="col-lg-7">
-        <div class="card buy-card shadow-sm border-0 h-100">
-            <div class="card-body p-4">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb mb-2">
-                        <li class="breadcrumb-item"><a href="index.php?page=event" class="text-decoration-none">Event</a></li>
-                        <li class="breadcrumb-item active"><?= htmlspecialchars($data['nama_event']); ?></li>
-                    </ol>
-                </nav>
-                <h2 class="fw-bold text-navy mb-1"><?= htmlspecialchars($data['nama_event']); ?></h2>
-                <p class="text-muted"><i class="bi bi-geo-alt me-2"></i><?= $data['nama_venue']; ?></p>
-                
-                <div class="p-3 rounded-4 bg-light d-flex justify-content-between align-items-center mt-4">
-                    <div>
-                        <span class="badge bg-primary rounded-pill px-3 mb-2"><?= $data['nama_tiket']; ?></span>
-                        <h4 class="mb-0 fw-bold">Rp <?= number_format($data['harga'], 0, ',', '.'); ?> <small class="text-muted fs-6">/tiket</small></h4>
-                    </div>
-                    <div class="text-end">
-                        <small class="text-muted d-block">Tersedia</small>
-                        <span class="fw-bold"><?= $data['kuota']; ?> Tiket</span>
-                    </div>
-                </div>
-
-                <div class="mt-4">
-                    <h6 class="fw-bold"><i class="bi bi-info-circle me-2"></i>Informasi Penting</h6>
-                    <ul class="small text-muted ps-3">
-                        <li>Tiket yang sudah dibeli tidak dapat dibatalkan/refund.</li>
-                        <li>Maksimal pembelian disesuaikan dengan kuota tersedia.</li>
-                        <li>Pastikan kode voucher diinput sebelum menekan tombol beli.</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-5">
-        <div class="card buy-card shadow-sm border-0">
-            <div class="card-body p-4">
-                <h5 class="fw-bold mb-4">Konfirmasi Pesanan</h5>
-                
-                <form method="POST">
-                    <div class="mb-4 d-flex justify-content-between align-items-center">
-                        <label class="fw-semibold">Jumlah Tiket</label>
-                        <div class="input-step">
-                            <button type="button" onclick="changeQty(-1)"><i class="bi bi-dash"></i></button>
-                            <input type="number" name="jumlah" id="jumlah_tiket" value="1" min="1" max="<?= $data['kuota']; ?>" readonly>
-                            <button type="button" onclick="changeQty(1)"><i class="bi bi-plus"></i></button>
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label fw-semibold">Gunakan Promo</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-white border-end-0"><i class="bi bi-ticket-perforated"></i></span>
-                            <input type="text" id="kode_voucher_field" class="form-control border-start-0 ps-0" placeholder="Kode Promo">
-                            <button class="btn btn-outline-primary" type="button" onclick="validateVoucher()">Cek</button>
-                        </div>
-                        <div id="voucherStatus" class="mt-2 small"></div>
-                        <input type="hidden" name="id_voucher" id="id_voucher_input">
-                    </div>
-
-                    <div class="summary-box">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted">Subtotal</span>
-                            <span class="fw-semibold" id="display_subtotal">Rp 0</span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2 text-danger">
-                            <span class="text-muted">Potongan Harga</span>
-                            <span id="display_diskon">- Rp 0</span>
-                        </div>
-                        <hr>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="fw-bold">Total Bayar</span>
-                            <h4 class="fw-bold text-primary mb-0" id="display_total">Rp 0</h4>
-                        </div>
-                    </div>
-
-                    <button type="submit" name="beli" class="btn btn-primary btn-lg w-100 mt-4 rounded-pill fw-bold shadow">
-                        Beli Tiket Sekarang <i class="bi bi-arrow-right ms-2"></i>
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div> -->
-
 <script>
     const ticketPrice = <?= $data['harga']; ?>;
     const maxQuota = <?= $data['kuota']; ?>;
     let currentDiscount = 0;
 
+    // FUNGSI AMBIL KUOTA 
     function changeQty(step) {
         const input = document.getElementById('jumlah_tiket');
         let newVal = parseInt(input.value) + step;
@@ -193,6 +107,7 @@ if (isset($_POST['proses_buy'])) {
         }
     }
 
+    // FUNGSI UPDATE 
     function updateSummary() {
         const jumlah = parseInt(document.getElementById('jumlah_tiket').value);
         const subtotal = ticketPrice * jumlah;
@@ -203,6 +118,7 @@ if (isset($_POST['proses_buy'])) {
         document.getElementById('display_total').innerText = "Rp " + total.toLocaleString('id-ID');
     }
 
+    // FUNGSI VALIDASI VOUCHER
     function validateVoucher() {
         const kode = document.getElementById('kode_voucher_field').value;
         const statusDiv = document.getElementById('voucherStatus');

@@ -92,7 +92,6 @@
     left: 0;
   }
 
-  /* OVERLAY */
   .sidebar-overlay {
     position: fixed;
     top: 0;
@@ -109,7 +108,6 @@
   }
 }
 
-/* Sesuaikan Konten Utama (Main) */
 #main {
   transition: all 0.3s;
   padding: 20px;
@@ -117,7 +115,7 @@
 
 @media (min-width: 769px) {
   #main {
-    margin-left: 260px; /* Jarak sidebar di desktop */
+    margin-left: 260px; 
   }
 }
 
@@ -127,7 +125,7 @@
   }
   
   .sidebar {
-    top: 0; /* Di mobile, sidebar biasanya menutupi dari atas */
+    top: 0; 
     height: 100vh;
     z-index: 1000;
   }

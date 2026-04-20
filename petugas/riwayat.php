@@ -115,7 +115,6 @@ if (!$result) {
 </div>
 
 <style>
-    /* Card Styling */
     .history-card {
         border: none;
         border-radius: 24px;
@@ -123,7 +122,6 @@ if (!$result) {
         box-shadow: 0 10px 30px rgba(0,0,0,0.03) !important;
     }
 
-    /* Table Headers */
     .table thead th {
         background-color: #f8f9fa;
         font-size: 0.7rem;
@@ -135,7 +133,6 @@ if (!$result) {
         padding: 15px 20px;
     }
 
-    /* Table Body */
     .table tbody td {
         padding: 18px 20px;
         border-bottom: 1px solid #f1f5f9;
@@ -147,7 +144,6 @@ if (!$result) {
         transition: all 0.2s ease;
     }
 
-    /* Avatar atau Initial */
     .user-avatar {
         width: 38px;
         height: 38px;
@@ -161,7 +157,6 @@ if (!$result) {
         margin-right: 12px;
     }
 
-    /* Custom Badge */
     .badge-status {
         background: #dcfce7;
         color: #15803d;
@@ -191,7 +186,6 @@ if (!$result) {
         font-size: 0.85rem;
     }
 
-    /* Waktu Check-in */
     .checkin-time {
         font-size: 0.9rem;
         font-weight: 600;

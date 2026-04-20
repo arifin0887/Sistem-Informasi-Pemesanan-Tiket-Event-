@@ -13,7 +13,6 @@
         margin-bottom: 5px;
     }
 
-    /* State saat menu aktif */
     .sidebar-nav .nav-link:not(.collapsed) {
         color: #e66c8a;
         background: #fef1f4;
@@ -44,7 +43,7 @@
 
     .sidebar {
         position: fixed;
-        top: 60px; /* Sesuaikan dengan tinggi navbar kamu */
+        top: 60px; 
         left: 0;
         bottom: 0;
         width: 260px;
@@ -56,7 +55,6 @@
         border-right: 1px solid #f0f0f0;
     }
 
-    /* OVERLAY: Latar gelap saat sidebar terbuka di mobile */
     .sidebar-overlay {
         position: fixed;
         top: 0;
@@ -72,19 +70,18 @@
     /* RESPONSIVE LOGIC */
     @media (max-width: 768px) {
         .sidebar {
-            left: -260px; /* Sembunyikan ke kiri */
+            left: -260px; 
         }
 
         .sidebar.active {
-            left: 0; /* Munculkan saat class active ditambah */
+            left: 0; 
         }
 
         .sidebar-overlay.active {
-            display: block; /* Tampilkan overlay */
+            display: block; 
         }
     }
 
-    /* Pengaturan konten utama agar tidak tertutup di Desktop */
     #main-content {
         transition: all 0.3s;
         padding: 20px;

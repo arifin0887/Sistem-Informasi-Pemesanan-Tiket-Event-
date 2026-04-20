@@ -14,7 +14,7 @@ if (!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
 $cart = $_SESSION['cart'];
 $message = ""; $message_type = "";
 
-// ================== APPLY VOUCHER ==================
+// APPLY VOUCHER
 if (isset($_POST['apply_voucher'])) {
     $kode = trim($_POST['kode_voucher']);
 
@@ -40,7 +40,7 @@ if (isset($_POST['apply_voucher'])) {
     }
 }
 
-// ================== HITUNG TOTAL ==================
+// HITUNG TOTAL
 $subtotal = $cart['subtotal'];
 $diskon = $_SESSION['cart']['potongan'] ?? 0;
 $total = $subtotal - $diskon;
@@ -48,7 +48,7 @@ if ($total < 0) $total = 0;
 
 $_SESSION['cart']['total'] = $total;
 
-// ================== CHECKOUT ==================
+// CHECKOUT
 if (isset($_POST['proses_checkout'])) {
     mysqli_begin_transaction($conn);
 
@@ -95,7 +95,7 @@ if (isset($_POST['proses_checkout'])) {
     }
 }
 
-// ================== DATA EVENT ==================
+// DATA EVENT
 $id_ev = (int)$cart['id_event'];
 $ev = mysqli_fetch_assoc(mysqli_query($conn, "
     SELECT e.*, v.nama_venue 

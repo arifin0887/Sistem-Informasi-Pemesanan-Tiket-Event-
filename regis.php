@@ -6,13 +6,11 @@
     <title>Daftar Akun Baru | EventKu</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Konsistensi Font Poppins */
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f0f4f8; /* Background sama dengan landing page */
+            background-color: #f0f4f8; 
         }
-        /* Custom Class untuk Gradien pada Button */
         .cta-gradient {
             background-image: linear-gradient(to right, #E66C8A 0%, #CF2E2E 100%);
             transition: all 0.3s ease;
@@ -21,7 +19,6 @@
             background-image: linear-gradient(to right, #CF2E2E 0%, #E66C8A 100%);
             box-shadow: 0 10px 15px -3px rgba(230, 108, 138, 0.5);
         }
-        /* Gradien untuk Judul Teks */
         .text-gradient {
             background-image: linear-gradient(to right, #1D1145, #0DB5BB);
             -webkit-background-clip: text;
@@ -86,7 +83,7 @@
                         <label class="text-xs font-semibold text-gray-600 uppercase">Nama Lengkap</label>
                         <div class="relative mt-1">
                             <span class="absolute left-3 top-3 text-gray-400">
-                                👤
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                             </span>
                             <input type="text" name="full_name" required
                                 class="w-full pl-10 pr-3 py-2.5 text-sm border rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#E66C8A]/20 focus:border-[#E66C8A] outline-none"
@@ -99,7 +96,7 @@
                         <label class="text-xs font-semibold text-gray-600 uppercase">Email</label>
                         <div class="relative mt-1">
                             <span class="absolute left-3 top-3 text-gray-400">
-                                ✉️
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v12a2 2 0 002 2z"></path></svg>
                             </span>
                             <input type="email" name="email" required
                                 class="w-full pl-10 pr-3 py-2.5 text-sm border rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#E66C8A]/20 focus:border-[#E66C8A] outline-none"
@@ -112,7 +109,7 @@
                         <label class="text-xs font-semibold text-gray-600 uppercase">Password</label>
                         <div class="relative mt-1">
                             <span class="absolute left-3 top-3 text-gray-400">
-                                🔒
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                             </span>
                             <input type="password" name="password" required
                                 class="w-full pl-10 pr-3 py-2.5 text-sm border rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#E66C8A]/20 focus:border-[#E66C8A] outline-none"

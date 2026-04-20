@@ -175,7 +175,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                             <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
                                 <div>
                                     <span class="text-muted small d-block">ID PESANAN</span>
-                                    <h5 class="order-id fw-bold mb-0">#<?= str_pad($id_order, 6, '0', STR_PAD_LEFT) ?></h5>
+                                    <h5 class="order-id fw-bold mb-0">#<?= ($id_order) ?></h5>
                                 </div>
                                 <div class="text-end">
                                     <span class="badge status-badge <?= $statusClass ?> mb-1"><?= $statusLabel ?></span>
@@ -204,27 +204,11 @@ while ($row = mysqli_fetch_assoc($result)) {
 
                                             <?php if ($status == 'paid'): ?>
                                                 <div class="bg-white mx-3 mb-3 p-3 rounded">
-                                                    <!-- <p class="small fw-bold text-muted mb-2">
-                                                        <i class="bi bi-qr-code-scan me-1"></i> Kode Tiket:</p> -->
-                                                    <!-- <div class="row g-2">
-                                                        <?php 
-                                                            $id_det = $item['id_detail'];
-                                                            $q_att = mysqli_query($conn, "SELECT kode_tiket, status_checkin FROM attendee WHERE id_detail = $id_det");
-                                                            while($att = mysqli_fetch_assoc($q_att)):
-                                                        ?>
-                                                            <div class="col-md-6">
-                                                                <div class="d-flex justify-content-between align-items-center border p-2 rounded bg-light">
-                                                                    <code class="fw-bold text-primary"><?= $att['kode_tiket'] ?></code>
-                                                                    <span class="badge <?= $att['status_checkin'] == 'sudah' ? 'bg-success' : 'bg-secondary' ?>" style="font-size: 0.6rem;">
-                                                                        <?= ucfirst($att['status_checkin']) ?>
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                        <?php endwhile; ?>
-                                                    </div> -->
+                                                   
 
                                                 </div>
                                             <?php endif; ?>
+
                                         </div>
                                     <?php endforeach; ?>
                                 </div>

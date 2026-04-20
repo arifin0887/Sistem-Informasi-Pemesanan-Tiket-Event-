@@ -13,7 +13,6 @@
         margin-bottom: 5px;
     }
 
-    /* State saat menu aktif */
     .sidebar-nav .nav-link:not(.collapsed) {
         color: #e66c8a;
         background: #fef1f4;
