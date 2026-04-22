@@ -185,7 +185,7 @@ if (isset($_POST['proses_buy'])) {
 
         // Update tampilan info tiket
         document.getElementById('display_kuota').innerText = kuota;
-    document.getElementById('display_harga_satuan').innerText = new Intl.NumberFormat('id-ID').format(harga) + ' / tiket';
+        document.getElementById('display_harga_satuan').innerText = new Intl.NumberFormat('id-ID').format(harga) + ' / tiket';
         
         // Pastikan jumlah tiket tidak melebihi kuota kategori baru
         if(parseInt(jumlahInput.value) > kuota) {
@@ -223,4 +223,5 @@ if (isset($_POST['proses_buy'])) {
 
     // Jalankan saat halaman dibuka pertama kali
     document.addEventListener('DOMContentLoaded', updateTicketInfo);
+    
 </script>

@@ -37,16 +37,6 @@ $sql_recent = "SELECT o.id_order, u.nama, e.nama_event, o.total, o.status
 $res_recent = mysqli_query($conn, $sql_recent);
 ?>
 
-<div class="pagetitle">
-  <h1>Admin Dashboard</h1>
-  <nav>
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-      <li class="breadcrumb-item active">Dashboard</li>
-    </ol>
-  </nav>
-</div>
-
 <section class="section dashboard">
   <div class="row">
 

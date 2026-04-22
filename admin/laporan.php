@@ -9,16 +9,6 @@ $tgl_selesai = $_GET['tgl_selesai'] ?? date('Y-m-t');
 $query_events = mysqli_query($conn, "SELECT id_event, nama_event FROM event ORDER BY nama_event ASC");
 ?>
 
-<div class="pagetitle mb-4">
-    <h1 style="color: #1D1145; font-weight: 700;">Laporan Penjualan</h1>
-    <nav>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="index.php?page=admin">Home</a></li>
-            <li class="breadcrumb-item active">Laporan</li>
-        </ol>
-    </nav>
-</div>
-
 <section class="section">
     <div class="card border-0 shadow-sm mb-4" style="border-radius: 15px;">
         <div class="card-body p-3">
@@ -41,7 +31,8 @@ $query_events = mysqli_query($conn, "SELECT id_event, nama_event FROM event ORDE
                         <?php endwhile; ?>
                     </select>
                 </div>
-                <div class="col-md-3">
+                
+                <div class="col-md-3 z-index: 20">
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary flex-grow-1 fw-bold" style="background-color: #1D1145; border: none; height: 45px;">
                             <i class="bi bi-funnel-fill me-2"></i>Filter
@@ -53,7 +44,7 @@ $query_events = mysqli_query($conn, "SELECT id_event, nama_event FROM event ORDE
                             <ul class="dropdown-menu dropdown-menu-end shadow border-0">
                                 <li><a class="dropdown-item py-2" id="linkExcel" href="ekspor_excel.php?tgl_mulai=<?= $tgl_mulai ?>&tgl_selesai=<?= $tgl_selesai ?>"><i class="bi bi-file-earmark-excel text-success me-2"></i>Excel</a></li>
                                 <li><a class="dropdown-item py-2" href="#" onclick="printPDF()"><i class="bi bi-file-earmark-pdf text-danger me-2"></i>Cetak PDF</a></li>
-                                </ul>
+                            </ul>
                         </div>
                     </div>
                 </div>

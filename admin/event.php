@@ -54,16 +54,6 @@ $events = mysqli_query($conn, "SELECT e.*, v.nama_venue FROM event e JOIN venue 
 $venues = mysqli_query($conn, "SELECT * FROM venue ORDER BY nama_venue ASC");
 ?>
 
-<div class="pagetitle">
-    <h1>Manajemen Event</h1>
-    <nav>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-            <li class="breadcrumb-item active">Event</li>
-        </ol>
-    </nav>
-</div>
-
  <!-- TAMPILKAN ALERT JIKA ADA PESAN DARI PROSES CRUD -->
 <?php if ($message): ?>
     <div class="alert alert-<?= $message_type; ?> alert-dismissible fade show" role="alert">

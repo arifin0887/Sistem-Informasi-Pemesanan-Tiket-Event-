@@ -50,16 +50,6 @@ if (isset($_GET['status'])) {
 $venues = mysqli_query($conn, "SELECT * FROM venue ORDER BY id_venue DESC");
 ?>
 
-<div class="pagetitle">
-    <h1>Manajemen Venue</h1>
-    <nav>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-            <li class="breadcrumb-item active">Venue</li>
-        </ol>
-    </nav>
-</div>
-
 <!-- ALERT UNTUK NOTIFIKASI UPDATE STATUS & DELETE -->
 <?php if ($message): ?>
     <div class="alert alert-<?= $message_type; ?> alert-dismissible fade show" role="alert">

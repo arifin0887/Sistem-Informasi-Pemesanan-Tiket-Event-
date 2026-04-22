@@ -70,16 +70,6 @@ if (isset($_GET['status'])) {
 $vouchers = mysqli_query($conn, "SELECT * FROM voucher ORDER BY id_voucher DESC");
 ?>
 
-<div class="pagetitle">
-    <h1>Manajemen Voucher</h1>
-    <nav>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-            <li class="breadcrumb-item active">Voucher</li>
-        </ol>
-    </nav>
-</div>
-
 <!-- ALERT UNTUK NOTIFIKASI UPDATE STATUS & DELETE -->
 <?php if ($message): ?>
     <div class="alert alert-<?= $message_type; ?> alert-dismissible fade show" role="alert">

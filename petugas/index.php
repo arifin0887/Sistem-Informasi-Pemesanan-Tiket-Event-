@@ -730,16 +730,6 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] != 'petugas') {
         <!-- Bootstrap JS (Essential) -->
         <script src="../template/NiceAdmin/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-        <!-- Library untuk Charts & Tables-->
-        <script src="../template/NiceAdmin/assets/vendor/apexcharts/apexcharts.min.js"></script>
-        <script src="../template/NiceAdmin/assets/vendor/chart.js/chart.umd.js"></script>
-        <script src="../template/NiceAdmin/assets/vendor/simple-datatables/simple-datatables.js"></script>
-
-        <!-- Custom JS Files -->
-        <script src="assets/js/main.js"></script>
-        <script src="assets/js/charts.js"></script>
-        <script src="assets/js/tables.js"></script>
-
         <svg id="SvgjsSvg1152" width="2" height="0" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev" style="overflow: hidden; top: -100%; left: -100%; position: absolute; opacity: 0;">
             <defs id="SvgjsDefs1153"></defs>
             <polyline id="SvgjsPolyline1154" points="0,0"></polyline>

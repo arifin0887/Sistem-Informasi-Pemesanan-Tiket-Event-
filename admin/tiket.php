@@ -83,16 +83,6 @@ $tickets = mysqli_query($conn, "SELECT t.*, e.nama_event FROM tiket t JOIN event
 $events = mysqli_query($conn, "SELECT e.id_event, e.nama_event, v.kapasitas FROM event e JOIN venue v ON e.id_venue = v.id_venue");
 ?>
 
-<div class="pagetitle">
-    <h1>Management Tiket</h1>
-    <nav>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-            <li class="breadcrumb-item active">Management Tiket</li>
-        </ol>
-    </nav>
-</div>
-
 <section class="section">
     <div class="row">
         <div class="col-lg-12">

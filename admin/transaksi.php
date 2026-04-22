@@ -38,16 +38,6 @@ $sql_transaksi = "SELECT o.*, u.nama, u.email
 $res_transaksi = mysqli_query($conn, $sql_transaksi);
 ?>
 
-<div class="pagetitle">
-    <h1>Data Transaksi</h1>
-    <nav>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-            <li class="breadcrumb-item active">Transaksi</li>
-        </ol>
-    </nav>
-</div>
-
 <!-- ALERT UNTUK NOTIFIKASI UPDATE STATUS & DELETE -->
 <?php if ($message): ?>
     <div class="alert alert-<?= $message_type; ?> alert-dismissible fade show" role="alert">

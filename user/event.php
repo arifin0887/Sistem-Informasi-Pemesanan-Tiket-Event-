@@ -427,4 +427,16 @@ $v = mysqli_fetch_assoc($query_voucher);
         navigator.clipboard.writeText(kode);
         alert("Kode voucher berhasil disalin: " + kode);
     }
+
+    // Contoh logika di frontend
+    fetch(`cek_limit.php?id_event=${idEvent}`)
+    .then(res => res.json())
+    .then(data => {
+        if (!data.allow) {
+            alert(data.message);
+            btnBeli.disabled = true; // Matikan tombol beli
+        } else {
+            inputQty.max = data.sisa; // Batasi input jumlah maksimal
+        }
+    });
 </script>

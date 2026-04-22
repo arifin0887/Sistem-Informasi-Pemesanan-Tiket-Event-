@@ -31,71 +31,61 @@ $sql_items = "SELECT od.*, t.nama_tiket, t.kategori_tiket, e.nama_event, e.tangg
 $res_items = mysqli_query($conn, $sql_items);
 ?>
 
-<div class="pagetitle">
-  <h1>Detail Transaksi #<?= $id_order ?></h1>
-  <nav>
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-      <li class="breadcrumb-item"><a href="index.php?page=transaksi">Transaksi</a></li>
-      <li class="breadcrumb-item active">Detail</li>
-    </ol>
-  </nav>
-</div>
-
 <section class="section">
   <div class="row">
     
     <div class="col-lg-4">
-      <div class="card">
+      <div class="card border-0 shadow-sm">
         <div class="card-body">
-          <h5 class="card-title">Informasi Pesanan</h5>
+          <h5 class="card-title mb-4">Informasi Pesanan</h5>
           
           <div class="mb-3">
             <label class="text-muted small d-block">Nama Pelanggan</label>
-            <strong><?= htmlspecialchars($data_order['nama']) ?></strong>
+            <strong class="text-dark"><?= htmlspecialchars($data_order['nama']) ?></strong>
           </div>
           
           <div class="mb-3">
             <label class="text-muted small d-block">Email</label>
-            <span><?= htmlspecialchars($data_order['email']) ?></span>
+            <span class="text-dark"><?= htmlspecialchars($data_order['email']) ?></span>
           </div>
 
-          <hr>
+          <hr class="opacity-50">
 
           <div class="mb-3">
             <label class="text-muted small d-block">Tanggal Transaksi</label>
-            <span><?= date('d F Y, H:i', strtotime($data_order['tanggal_order'])) ?></span>
+            <span class="text-dark"><?= date('d F Y, H:i', strtotime($data_order['tanggal_order'])) ?></span>
           </div>
 
           <div class="mb-3">
-            <label class="text-muted small d-block">Status</label>
+            <label class="text-muted small d-block mb-1">Status Pembayaran</label>
             <?php 
-              $status = $data_order['status'];
-              $badge = ($status == 'paid') ? 'bg-success' : (($status == 'pending') ? 'bg-warning' : 'bg-danger');
+              $status = strtolower($data_order['status']);
+              // Menggunakan class subtle yang ada di CSS terpadu
+              $badge_class = ($status == 'paid') ? 'bg-success-subtle' : (($status == 'pending') ? 'bg-warning-subtle' : 'bg-danger-subtle');
             ?>
-            <span class="badge <?= $badge ?>"><?= ucfirst($status) ?></span>
+            <span class="badge badge-status <?= $badge_class ?>"><?= ucfirst($status) ?></span>
           </div>
         </div>
       </div>
       
-      <a href="index.php?page=transaksi" class="btn btn-light w-100 mb-3">
+      <a href="index.php?page=transaksi" class="btn btn-light w-100 mb-3 border shadow-sm">
         <i class="bi bi-arrow-left me-1"></i> Kembali ke Daftar
       </a>
     </div>
 
     <div class="col-lg-8">
-      <div class="card">
+      <div class="card border-0 shadow-sm">
         <div class="card-body">
-          <h5 class="card-title">Item yang Dibeli</h5>
+          <h5 class="card-title mb-3">Item yang Dibeli</h5>
           
           <div class="table-responsive">
             <table class="table align-middle">
-              <thead class="bg-light">
+              <thead>
                 <tr>
                   <th>Event</th>
                   <th>Jenis Tiket</th>
                   <th class="text-center">Qty</th>
-                  <th class="text-end">Harga Satuan</th>
+                  <th class="text-end">Harga</th>
                   <th class="text-end">Subtotal</th>
                 </tr>
               </thead>
@@ -103,19 +93,30 @@ $res_items = mysqli_query($conn, $sql_items);
                 <?php while($item = mysqli_fetch_assoc($res_items)): ?>
                 <tr>
                   <td>
-                    <strong><?= htmlspecialchars($item['nama_event']) ?></strong><br>
-                    <small class="text-muted"><i class="bi bi-calendar-event me-1"></i> <?= date('d M Y', strtotime($item['tanggal'])) ?></small>
+                    <div class="fw-bold text-dark"><?= htmlspecialchars($item['nama_event']) ?></div>
+                    <small class="text-muted">
+                      <i class="bi bi-calendar-event me-1"></i> <?= date('d M Y', strtotime($item['tanggal'])) ?>
+                    </small>
                   </td>
-                  <td><?= ucfirst($item['kategori_tiket']) ?> - <?= ucfirst($item['nama_tiket']) ?></td>
-                  <td class="text-center"><?= $item['qty'] ?></td>
+                  <td>
+                    <span class="venue-tag">
+                      <?= ucfirst($item['kategori_tiket']) ?> - <?= ucfirst($item['nama_tiket']) ?>
+                    </span>
+                  </td>
+                  <td class="text-center fw-bold"><?= $item['qty'] ?></td>
                   <td class="text-end">Rp <?= number_format($item['subtotal'], 0, ',', '.') ?></td>
-                  <td class="text-end font-weight-bold">Rp <?= number_format($item['qty'] * $item['subtotal'], 0, ',', '.') ?></td>
+                  <td class="text-end fw-bold text-dark">Rp <?= number_format($item['qty'] * $item['subtotal'], 0, ',', '.') ?></td>
                 </tr>
                 <?php endwhile; ?>
               </tbody>
+              <tfoot>
                 <tr>
-                  <th colspan="4" class="text-end text-uppercase">Total Bayar</th>
-                  <th class="text-end text-primary fw-bold h5">Rp <?= number_format($data_order['total'], 0, ',', '.') ?></th>
+                  <td colspan="4" class="text-end text-uppercase fw-bold pt-4" style="border:none;">Total Bayar</td>
+                  <td class="text-end pt-4" style="border:none;">
+                    <span class="h5 fw-bold" style="color: var(--secondary-color);">
+                      Rp <?= number_format($data_order['total'], 0, ',', '.') ?>
+                    </span>
+                  </td>
                 </tr>
               </tfoot>
             </table>
