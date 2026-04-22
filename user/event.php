@@ -337,33 +337,43 @@ $v = mysqli_fetch_assoc($query_voucher);
         let tiketHtml = '';
 
         if (event.tikets.length > 0) {
-            tiketHtml = `
-                <div class="mb-4">
-                    <h4 class="fw-bold mb-1" style="color: var(--navy);">${event.nama_event} - ${event.tanggal}</h4>
-                    <p class="text-muted small"><i class="bi bi-geo-alt me-1"></i> ${event.nama_venue}</p>
-                </div>
-                <div class="list-group list-group-flush border rounded-3 overflow-hidden">
-            `;
+            const mainTicket = event.tikets[0]; 
+            const isSoldOut = event.tikets.every(t => t.kuota <= 0);
 
-            event.tikets.forEach(t => {
-                const isSoldOut = t.kuota <= 0;
-                tiketHtml += `
-                    <div class="list-group-item p-3 d-flex justify-content-between align-items-center ${isSoldOut ? 'bg-light' : ''}">
+            tiketHtml = `
+                <div class="text-center mb-4">
+                    <h4 class="fw-bold mb-1" style="color: var(--navy);">${event.nama_event}</h4>
+                    <p class="text-muted"><i class="bi bi-geo-alt me-1"></i> ${event.nama_venue}</p>
+                    <hr>
+                </div>
+                <div class="p-3 border rounded-4 bg-light mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h6 class="mb-0 fw-bold">${t.nama_tiket}</h6>
-                            <span class="text-pink fw-bold">Rp ${t.harga.toLocaleString('id-ID')}</span>
-                            <small class="d-block text-muted">Sisa Kuota: ${t.kuota}</small>
+                            <h6 class="mb-1 fw-bold">Konfirmasi Pemesanan</h6>
+                            <p class="small text-muted mb-0">Kamu akan diarahkan ke halaman pemilihan kategori tiket (Reguler, VIP, VVIP).</p>
                         </div>
-                        ${isSoldOut 
-                            ? '<span class="badge bg-danger">Habis Terjual</span>' 
-                            : `<a href="index.php?page=buy&id_event=${event.id_event}&id_tiket=${t.id_tiket}" class="btn btn-primary btn-sm rounded-pill px-4">Pilih</a>`
-                        }
+                        <i class="bi bi-ticket-perforated fs-1 text-pink opacity-50"></i>
                     </div>
-                `;
-            });
-            tiketHtml += '</div>';
+                </div>
+                
+                <div class="d-grid mt-4">
+                    ${isSoldOut 
+                        ? '<button class="btn btn-danger btn-lg rounded-pill fw-bold" disabled>Maaf, Tiket Habis</button>' 
+                        : `<a href="index.php?page=buy&id_event=${event.id_event}&id_tiket=${mainTicket.id_tiket}" 
+                              class="btn btn-primary btn-lg rounded-pill fw-bold shadow-sm">
+                              Pesan Sekarang <i class="bi bi-arrow-right ms-2"></i>
+                           </a>`
+                    }
+                </div>
+                <p class="text-center mt-3 small text-muted">Harga mulai dari <span class="text-pink fw-bold">Rp ${parseInt(mainTicket.harga).toLocaleString('id-ID')}</span></p>
+            `;
         } else {
-            tiketHtml = '<div class="alert alert-warning">Maaf, tiket belum tersedia untuk event ini.</div>';
+            tiketHtml = `
+                <div class="text-center py-4">
+                    <i class="bi bi-emoji-frown fs-1 text-muted"></i>
+                    <h5 class="mt-3">Tiket Belum Tersedia</h5>
+                    <p class="text-muted small">Penyelenggara belum mengunggah kategori tiket untuk event ini.</p>
+                </div>`;
         }
 
         modalBody.innerHTML = tiketHtml;

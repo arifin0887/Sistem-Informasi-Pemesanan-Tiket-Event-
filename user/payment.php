@@ -22,7 +22,7 @@ if (!$order) {
 }
 
 // AMBIL DATA TIKET YANG DIBELI DALAM ORDER BESERTA NAMA EVENT, TANGGAL, DAN VENUE
-$tikets = mysqli_query($conn, "SELECT od.*, t.nama_tiket, e.nama_event, e.tanggal, v.nama_venue, t.id_event 
+$tikets = mysqli_query($conn, "SELECT od.*, t.nama_tiket, t.kategori_tiket, e.nama_event, e.tanggal, v.nama_venue, t.id_event 
     FROM order_detail od 
     JOIN tiket t ON od.id_tiket = t.id_tiket 
     JOIN event e ON t.id_event = e.id_event 
@@ -63,101 +63,133 @@ if (isset($_POST['proses_bayar'])) {
 }
 ?>
 
-<section class="section">
-    <div class="row">
-        <div class="col-lg-8">
-            <div class="card shadow-sm border-0">
-                <div class="card-body p-4">
-                    <h5 class="card-title fw-bold">Konfirmasi Pembayaran #<?php echo $id_order; ?></h5>
-                    
-                    <?php if ($message): ?>
-                        <div class="alert alert-success border-0 shadow-sm mb-4">
-                            <i class="bi bi-check-circle-fill me-2"></i> <?php echo $message; ?>
-                            <br><a href="index.php?page=e-tiket&id=<?php echo $id_order; ?>" class="btn btn-sm btn-light mt-2 text-success fw-bold">Lihat E-Tiket Saya</a>
-                        </div>
-                    <?php endif; ?>
+<section class="section section-payment">
+    <div class="container">
 
-                    <div class="table-responsive mb-4">
-                        <table class="table align-middle">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Item Event</th>
-                                    <th class="text-center">Qty</th>
-                                    <th class="text-end">Subtotal</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php 
-                                $total_item = 0;
-                                while($t = mysqli_fetch_assoc($tikets)): 
-                                    $total_item += $t['subtotal'];
-                                ?>
-                                <tr>
-                                    <td>
-                                        <span class="fw-bold d-block"><?php echo $t['nama_event']; ?></span>
-                                        <small class="text-muted"><?php echo $t['nama_tiket']; ?></small>
-                                    </td>
-                                    <td class="text-center"><?php echo $t['qty']; ?></td>
-                                    <td class="text-end">Rp <?php echo number_format($t['subtotal'], 0, ',', '.'); ?></td>
-                                </tr>
-                                <?php endwhile; ?>
-
-                                <?php if ($order['potongan'] > 0): ?>
-                                <tr class="table-light">
-                                    <td colspan="2" class="text-end fw-bold text-danger">Potongan (<?php echo $order['kode_voucher'] ?? 'Discount'; ?>)</td>
-                                    <td class="text-end fw-bold text-danger">- Rp <?php echo number_format($order['potongan'], 0, ',', '.'); ?></td>
-                                </tr>
-                                <?php endif; ?>
-
-                                <tr class="table-primary">
-                                    <td colspan="2" class="text-end fw-bold text-uppercase">Total Bayar</td>
-                                    <td class="text-end fw-bold" style="font-size: 1.1rem;">
-                                        Rp <?php echo number_format($order['total'], 0, ',', '.'); ?>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-9">
+                <div class="card card-buy">
+                    <div class="card-header text-white text-center">
+                        <h4 class="mb-0 fw-bold">Konfirmasi Pembayaran #<?= $id_order ?></h4>
+                        <p class="mb-0 opacity-75 small">Lengkapi pembayaran untuk menerima e-tiket</p>
                     </div>
-
-                    <?php if ($order['status'] == 'pending'): ?>
-                    <form method="POST">
-                        <div class="p-3 border rounded mb-4 bg-light">
-                            <h6 class="fw-bold mb-3">Pilih Metode Pembayaran:</h6>
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="pay" id="m1" checked>
-                                <label class="form-check-label" for="m1">Instant Payment (QRIS/E-Wallet)</label>
+                    
+                    <div class="card-body p-4 p-md-5">
+                        <?php if ($message): ?>
+                            <div class="alert alert-success border-0 shadow-sm mb-4">
+                                <i class="bi bi-check-circle-fill me-2 text-success"></i> <?= $message ?>
+                                <br><a href="index.php?page=e-tiket&id=<?= $id_order ?>" class="btn btn-sm btn-outline-success mt-2 fw-bold">Lihat E-Tiket Saya</a>
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="pay" id="m2">
-                                <label class="form-check-label" for="m2">Virtual Account Bank</label>
+                        <?php endif; ?>
+
+                        <div class="row g-4">
+                            <div class="col-lg-8">
+                                <div class="event-info-box mb-4">
+                                    <h6 class="text-muted text-uppercase fw-bold small mb-3" style="letter-spacing: 1px;">Detail Pesanan</h6>
+                                    
+                                    <?php 
+                                    mysqli_data_seek($tikets, 0); // Reset pointer
+                                    while($t = mysqli_fetch_assoc($tikets)): 
+                                    ?>
+                                    <div class="border-bottom pb-3 mb-3">
+                                        <h5 class="fw-bold text-primary mb-2"><?= htmlspecialchars($t['nama_event']) ?></h5>
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <span class="text-muted">[<?= ucfirst($t['kategori_tiket']) ?>] <?= $t['nama_tiket'] ?></span>
+                                            <span class="fw-bold">x<?= $t['qty'] ?></span>
+                                        </div>
+                                        <div class="text-end text-primary fw-bold">
+                                            Rp <?= number_format($t['subtotal'], 0, ',', '.') ?>
+                                        </div>
+                                    </div>
+                                    <?php endwhile; ?>
+
+                                    <?php if ($order['potongan'] > 0): ?>
+                                    <div class="d-flex justify-content-between text-success fw-bold fs-6 mb-3">
+                                        <span>Potongan Voucher</span>
+                                        <span>- Rp <?= number_format($order['potongan'], 0, ',', '.') ?></span>
+                                    </div>
+                                    <?php endif; ?>
+
+                                    <hr class="my-4">
+
+                                    <div class="d-flex justify-content-between align-items-center fs-4 fw-bold">
+                                        <span class="text-primary">Total Bayar</span>
+                                        <span class="text-secondary">Rp <?= number_format($order['total'], 0, ',', '.') ?></span>
+                                    </div>
+                                </div>
+
+                                <?php if ($order['status'] == 'pending'): ?>
+                                <form method="POST" class="form-buy">
+                                    <div class="mb-4">
+                                        <label class="form-label fw-bold text-primary fs-5 mb-3">Pilih Metode Pembayaran</label>
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <div class="form-check payment-method">
+                                                    <input class="form-check-input" type="radio" name="pay" id="qris" value="qris" checked>
+                                                    <label class="form-check-label d-flex align-items-center p-3 border rounded-lg bg-light hover-shadow" for="qris">
+                                                        <i class="bi bi-qr-code-scan fs-3 text-secondary me-3"></i>
+                                                        <div>
+                                                            <div class="fw-bold">QRIS / E-Wallet</div>
+                                                            <small class="text-muted">Instant & Secure</small>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-check payment-method">
+                                                    <input class="form-check-input" type="radio" name="pay" id="bank" value="bank">
+                                                    <label class="form-check-label d-flex align-items-center p-3 border rounded-lg bg-light hover-shadow" for="bank">
+                                                        <i class="bi bi-bank fs-3 text-secondary me-3"></i>
+                                                        <div>
+                                                            <div class="fw-bold">Virtual Account</div>
+                                                            <small class="text-muted">Transfer Bank</small>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="submit" name="proses_bayar" class="btn btn-checkout btn-lg">
+                                        <i class="bi bi-lock-fill me-2"></i>Bayar Sekarang Rp <?= number_format($order['total'], 0, ',', '.') ?>
+                                    </button>
+                                </form>
+                                <?php else: ?>
+                                <div class="text-center py-5">
+                                    <div class="icon-box mb-4" style="font-size: 4rem; color: var(--success);">
+                                        <i class="bi bi-patch-check-fill"></i>
+                                    </div>
+                                    <h3 class="fw-bold text-success mb-3">Pembayaran Berhasil!</h3>
+                                    <p class="text-muted mb-4">Transaksi lunas. E-tiket sudah tersedia.</p>
+                                    <a href="index.php?page=e-tiket&id=<?= $id_order ?>" class="btn btn-success btn-lg">
+                                        <i class="bi bi-ticket-perforated me-2"></i>Lihat E-Tiket
+                                    </a>
+                                </div>
+                                <?php endif; ?>
+                            </div>
+
+                            <div class="col-lg-4">
+                                <div class="card border-0 bg-gradient text-white shadow rounded-3" style="background: linear-gradient(135deg, var(--secondary) 0%, #d45a78 100%);">
+                                    <div class="card-body p-4 text-center">
+                                        <i class="bi bi-credit-card-2-front fs-1 mb-3 opacity-75"></i>
+                                        <h2 class="fw-bold mb-1">Rp <?= number_format($order['total'], 0, ',', '.') ?></h2>
+                                        <p class="opacity-75 mb-0">Total Tagihan</p>
+                                    </div>
+                                </div>
+                                <div class="card border-0 shadow-sm mt-3">
+                                    <div class="card-body p-4">
+                                        <h6 class="fw-bold text-primary mb-3">
+                                            <i class="bi bi-shield-check me-2 text-success"></i>100% Aman
+                                        </h6>
+                                        <ul class="list-unstyled small text-muted">
+                                            <li class="mb-2"><i class="bi bi-shield-lock me-2 text-primary"></i>Data terenkripsi SSL</li>
+                                            <li class="mb-2"><i class="bi bi-check-circle me-2 text-success"></i>Pembayaran resmi</li>
+                                            <li><i class="bi bi-headset me-2 text-warning"></i>Customer support 24/7</li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <button type="submit" name="proses_bayar" class="btn btn-primary btn-lg w-100 fw-bold rounded-pill">
-                            Bayar Sekarang Rp <?php echo number_format($order['total'],0,',','.'); ?>
-                        </button>
-                    </form>
-                    <?php else: ?>
-                        <div class="text-center py-4">
-                            <div class="display-1 text-success mb-3"><i class="bi bi-patch-check-fill"></i></div>
-                            <h4 class="fw-bold text-success">Lunas</h4>
-                            <p class="text-muted">Transaksi ini telah berhasil dibayar pada <?php echo date('d/m/Y H:i'); ?></p>
-                        </div>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4">
-            <div class="card border-0 bg-primary text-white shadow">
-                <div class="card-body p-4 text-center">
-                    <p class="mb-1 opacity-75">Total Tagihan</p>
-                    <h2 class="fw-bold mb-0">Rp <?php echo number_format($order['total'],0,',','.'); ?></h2>
-                </div>
-            </div>
-            <div class="card border-0 shadow-sm mt-3">
-                <div class="card-body">
-                    <h6 class="fw-bold"><i class="bi bi-shield-lock me-2"></i>Keamanan</h6>
-                    <small class="text-muted">Data pembayaran Anda dienkripsi dan aman. Pastikan tidak membagikan bukti transfer kepada siapapun.</small>
+                    </div>
                 </div>
             </div>
         </div>

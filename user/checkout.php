@@ -105,76 +105,93 @@ $ev = mysqli_fetch_assoc(mysqli_query($conn, "
 "));
 ?>
 
-<div class="container mt-4">
-    <div class="row">
-        
-        <!-- FORM -->
-        <div class="col-lg-7">
-            <div class="card p-4 shadow-sm">
-                <h5>Checkout</h5>
+<section class="section section-checkout">
+    <div class="container">
 
-                <?php if ($message): ?>
-                    <div class="alert alert-<?= $message_type ?>"><?= $message ?></div>
-                <?php endif; ?>
-
-                <form method="POST">
-
-                    <div class="mb-3">
-                        <label>Nama</label>
-                        <input type="text" class="form-control" value="<?= $_SESSION['user']['nama'] ?>" readonly>
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-9">
+                <div class="card card-buy">
+                    <div class="card-header text-white text-center">
+                        <h4 class="mb-0 fw-bold">Checkout Pesanan</h4>
+                        <p class="mb-0 opacity-75 small">Konfirmasi detail sebelum pembayaran</p>
                     </div>
+                    
+                    <div class="card-body p-4 p-md-5">
+                        <div class="row g-4">
+                            <div class="col-md-6 pe-md-4 border-end">
+                                <div class="event-info-box mb-4">
+                                    <h6 class="text-muted text-uppercase fw-bold small mb-3" style="letter-spacing: 1px;">Detail Event</h6>
+                                    <h3 class="fw-bold text-primary mb-3"><?= htmlspecialchars($ev['nama_event']) ?></h3>
+                                    
+                                    <div class="d-flex align-items-center mb-2">
+                                        <div class="icon-box me-3 text-secondary"><i class="bi bi-calendar3 fs-5"></i></div>
+                                        <div>
+                                            <p class="mb-0 fw-bold text-primary"><?= date('d F Y', strtotime($ev['tanggal'])) ?></p>
+                                            <p class="mb-0 small text-muted"><?= date('H:i', strtotime($ev['tanggal'])) ?> WIB</p>
+                                        </div>
+                                    </div>
 
-                    <div class="mb-3">
-                        <label>Email</label>
-                        <input type="email" class="form-control" value="<?= $_SESSION['user']['email'] ?>" readonly>
-                    </div>
+                                    <div class="d-flex align-items-center mb-4">
+                                        <div class="icon-box me-3 text-secondary"><i class="bi bi-geo-alt fs-5"></i></div>
+                                        <div>
+                                            <p class="mb-0 fw-bold text-primary"><?= htmlspecialchars($ev['nama_venue']) ?></p>
+                                        </div>
+                                    </div>
+                                </div>
 
-                    <!-- VOUCHER -->
-                    <div class="mb-3">
-                        <label>Kode Voucher</label>
-                        <div class="input-group">
-                            <input type="text" name="kode_voucher" class="form-control" placeholder="Masukkan kode voucher">
-                            <button type="submit" name="apply_voucher" class="btn btn-outline-primary">
-                                Gunakan
-                            </button>
+                                <div class="summary-box p-4">
+                                    <h6 class="fw-bold text-primary mb-3">Ringkasan Pembayaran</h6>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span class="text-muted"><?= $cart['nama_tiket'] ?> x<?= $cart['jumlah'] ?></span>
+                                        <span class="fw-bold">Rp <?= number_format($subtotal) ?></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2 text-success fw-bold">
+                                        <span>Potongan Voucher</span>
+                                        <span>- Rp <?= number_format($diskon) ?></span>
+                                    </div>
+                                    <hr class="my-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="fw-bold text-primary fs-5">Total Bayar</span>
+                                        <span class="fs-4 fw-bold text-secondary">Rp <?= number_format($total) ?></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 ps-md-4">
+                                <?php if ($message): ?>
+                                    <div class="alert alert-success border-0 shadow-sm mb-4"><?= $message ?></div>
+                                <?php endif; ?>
+
+                                <form method="POST" class="form-buy">
+                                    <div class="mb-4">
+                                        <label class="form-label fw-bold text-primary">Nama Lengkap</label>
+                                        <input type="text" class="form-control form-control-lg" value="<?= $_SESSION['user']['nama'] ?>" readonly>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label class="form-label fw-bold text-primary">Email</label>
+                                        <input type="email" class="form-control form-control-lg" value="<?= $_SESSION['user']['email'] ?>" readonly>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label class="form-label fw-bold text-primary">Kode Voucher <small class="text-muted">(Opsional)</small></label>
+                                        <div class="input-group">
+                                            <input type="text" name="kode_voucher" class="form-control form-control-lg" placeholder="Masukkan kode voucher" value="<?= $cart['kode_voucher'] ?>">
+                                            <button type="submit" name="apply_voucher" class="btn btn-outline-secondary">
+                                                <i class="bi bi-tag me-1"></i>Gunakan
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" name="proses_checkout" class="btn btn-checkout btn-lg">
+                                        <i class="bi bi-credit-card me-2"></i>Lanjut ke Pembayaran
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
-
-                    <button type="submit" name="proses_checkout" class="btn btn-primary w-100">
-                        Checkout Sekarang
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <!-- RINGKASAN -->
-        <div class="col-lg-5">
-            <div class="card p-4 shadow-sm">
-                <h5>Ringkasan</h5>
-
-                <p class="fw-bold"><?= $ev['nama_event'] ?></p>
-                <small><?= date('d F Y', strtotime($ev['tanggal'])) ?></small>
-
-                <hr>
-
-                <div class="d-flex justify-content-between">
-                    <span><?= $cart['nama_tiket'] ?> x<?= $cart['jumlah'] ?></span>
-                    <span>Rp <?= number_format($subtotal) ?></span>
-                </div>
-
-                <div class="d-flex justify-content-between text-danger">
-                    <span>Diskon</span>
-                    <span>- Rp <?= number_format($diskon) ?></span>
-                </div>
-
-                <hr>
-
-                <div class="d-flex justify-content-between fw-bold">
-                    <span>Total</span>
-                    <span>Rp <?= number_format($total) ?></span>
                 </div>
             </div>
         </div>
-
     </div>
-</div>
+</section>

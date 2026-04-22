@@ -23,7 +23,7 @@ if (!$data_order) {
 }
 
 // QUERY UNTUK MENGAMBIL ITEM YANG DIBELI DALAM TRANSAKSI INI
-$sql_items = "SELECT od.*, t.nama_tiket, e.nama_event, e.tanggal
+$sql_items = "SELECT od.*, t.nama_tiket, t.kategori_tiket, e.nama_event, e.tanggal
               FROM order_detail od
               JOIN tiket t ON od.id_tiket = t.id_tiket
               JOIN event e ON t.id_event = e.id_event
@@ -106,7 +106,7 @@ $res_items = mysqli_query($conn, $sql_items);
                     <strong><?= htmlspecialchars($item['nama_event']) ?></strong><br>
                     <small class="text-muted"><i class="bi bi-calendar-event me-1"></i> <?= date('d M Y', strtotime($item['tanggal'])) ?></small>
                   </td>
-                  <td><?= ucfirst($item['nama_tiket']) ?></td>
+                  <td><?= ucfirst($item['kategori_tiket']) ?> - <?= ucfirst($item['nama_tiket']) ?></td>
                   <td class="text-center"><?= $item['qty'] ?></td>
                   <td class="text-end">Rp <?= number_format($item['subtotal'], 0, ',', '.') ?></td>
                   <td class="text-end font-weight-bold">Rp <?= number_format($item['qty'] * $item['subtotal'], 0, ',', '.') ?></td>

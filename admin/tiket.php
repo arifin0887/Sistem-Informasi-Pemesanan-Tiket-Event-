@@ -5,6 +5,8 @@ $message_type = "";
 
 // PROSES CREATE & UPDATE
 if (isset($_POST['submit'])) {
+    // Tambahkan kategori_tiket
+    $kategori_tiket = mysqli_real_escape_string($conn, $_POST['kategori_tiket']);
     $nama_tiket = mysqli_real_escape_string($conn, $_POST['nama_tiket']);
     $harga = (int)$_POST['harga'];
     $kuota = (int)$_POST['kuota'];
@@ -24,7 +26,6 @@ if (isset($_POST['submit'])) {
 
     // HITUNG TOTAL KUOTA TIKET YANG SUDAH ADA DI EVENT INI
     if ($id_tiket) {
-        // kalau update, jangan hitung tiket yang sedang diedit
         $get_total = mysqli_query($conn, "
             SELECT SUM(kuota) as total 
             FROM tiket 
@@ -50,20 +51,19 @@ if (isset($_POST['submit'])) {
         exit;
     }
 
-    // LOGIC UPDATE JIKA ID TIKET ADA, INSERT JIKA TIDAK ADA
+    // UPDATE QUERY UNTUK MENYERTAKAN kategori_tiket
     if ($id_tiket) {
-        $query = mysqli_query($conn, "UPDATE tiket SET nama_tiket='$nama_tiket', harga='$harga', kuota='$kuota', id_event='$id_event' WHERE id_tiket='$id_tiket'");
+        $query = mysqli_query($conn, "UPDATE tiket SET kategori_tiket='$kategori_tiket', nama_tiket='$nama_tiket', harga='$harga', kuota='$kuota', id_event='$id_event' WHERE id_tiket='$id_tiket'");
         $status = $query ? "updated" : "failed";
     } else {
-        $query = mysqli_query($conn, "INSERT INTO tiket (nama_tiket, harga, kuota, id_event) VALUES ('$nama_tiket', '$harga', '$kuota', '$id_event')");
+        $query = mysqli_query($conn, "INSERT INTO tiket (kategori_tiket, nama_tiket, harga, kuota, id_event) VALUES ('$kategori_tiket', '$nama_tiket', '$harga', '$kuota', '$id_event')");
         $status = $query ? "added" : "failed";
     }
+    
     echo "<script>
         alert('Tiket berhasil disimpan!');
         window.location='index.php?page=tiket';
     </script>";
-
-    // header("Location: index.php?page=tiket&status=$status");
     exit;
 }
 
@@ -71,54 +71,27 @@ if (isset($_POST['submit'])) {
 if (isset($_POST['delete'])) {
     $id_tiket = mysqli_real_escape_string($conn, $_POST['id_tiket']);
     $query = mysqli_query($conn, "DELETE FROM tiket WHERE id_tiket='$id_tiket'");
-    $status = $query ? "deleted" : "failed";
-
     echo "<script>
         alert('Tiket berhasil dihapus!');
         window.location='index.php?page=tiket';
     </script>";
-
-    // header("Location: index.php?page=tiket&status=$status");
     exit;
 }
 
-// HANDLING ALERT DARI URL (POST-REDIRECT-GET PATTERN)
-if (isset($_GET['status'])) {
-    switch ($_GET['status']) {
-        case 'added': $message = "Kategori tiket berhasil dibuat!"; $message_type = "success"; break;
-        case 'updated': $message = "Data tiket berhasil diperbarui!"; $message_type = "success"; break;
-        case 'deleted': $message = "Tiket telah dihapus!"; $message_type = "success"; break;
-        case 'failed': $message = "Gagal memproses data database!"; $message_type = "danger"; break;
-    }
-}
-
-//  GET DATA UNTUK TAMPILAN 
+// GET DATA UNTUK TAMPILAN 
 $tickets = mysqli_query($conn, "SELECT t.*, e.nama_event FROM tiket t JOIN event e ON t.id_event = e.id_event ORDER BY e.nama_event ASC, t.harga ASC");
-// $events = mysqli_query($conn, "SELECT id_event, nama_event FROM event ORDER BY nama_event ASC");
-$events = mysqli_query($conn, "
-    SELECT e.id_event, e.nama_event, v.kapasitas 
-    FROM event e 
-    JOIN venue v ON e.id_venue = v.id_venue
-");
+$events = mysqli_query($conn, "SELECT e.id_event, e.nama_event, v.kapasitas FROM event e JOIN venue v ON e.id_venue = v.id_venue");
 ?>
 
 <div class="pagetitle">
-    <h1>Manajemen Tiket</h1>
+    <h1>Management Tiket</h1>
     <nav>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-            <li class="breadcrumb-item active">Tiket</li>
+            <li class="breadcrumb-item active">Management Tiket</li>
         </ol>
     </nav>
 </div>
-
-<?php if ($message): ?>
-    <div class="alert alert-<?= $message_type; ?> alert-dismissible fade show" role="alert">
-        <i class="bi bi-<?= $message_type == 'success' ? 'check-circle' : 'exclamation-circle'; ?> me-2"></i>
-        <?= $message; ?>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="filter:none;"></button>
-    </div>
-<?php endif; ?>
 
 <section class="section">
     <div class="row">
@@ -137,7 +110,8 @@ $events = mysqli_query($conn, "
                             <thead>
                                 <tr>
                                     <th width="50">No</th>
-                                    <th>Info Tiket</th>
+                                    <th>Kelas</th>
+                                    <th>Kategori Tiket</th>
                                     <th>Harga</th>
                                     <th>Kuota</th>
                                     <th>Nama Event</th>
@@ -149,26 +123,24 @@ $events = mysqli_query($conn, "
                                     <tr>
                                         <td><?= $no++; ?></td>
                                         <td>
-                                            <strong><?= htmlspecialchars($ticket['nama_tiket']); ?></strong>
+                                            <?php 
+                                                $badge_color = 'bg-success';
+                                                if($ticket['kategori_tiket'] == 'VIP') $badge_color = 'bg-warning';
+                                                if($ticket['kategori_tiket'] == 'VVIP') $badge_color = 'bg-danger';
+                                            ?>
+                                            <span class="badge <?= $badge_color ?>"><?= $ticket['kategori_tiket']; ?></span>
                                         </td>
-                                        <td><span class="badge-price">Rp <?= number_format($ticket['harga'], 0, ',', '.'); ?></span></td>
-                                        <td>
-                                            <i class="bi bi-people me-1 text-muted"></i> 
-                                            <?= number_format($ticket['kuota'], 0, ',', '.'); ?> <small class="text-muted">slot</small>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-light text-dark border"><i class="bi bi-calendar-event me-1"></i> <?= htmlspecialchars($ticket['nama_event']); ?></span>
-                                        </td>
+                                        <td><strong><?= htmlspecialchars($ticket['nama_tiket']); ?></strong></td>
+                                        <td><span class="badge-price fw-bold">Rp <?= number_format($ticket['harga'], 0, ',', '.'); ?></span></td>
+                                        <td><?= number_format($ticket['kuota'], 0, ',', '.'); ?> <small class="text-muted">slot</small></td>
+                                        <td><span class="badge bg-light text-dark border"><?= htmlspecialchars($ticket['nama_event']); ?></span></td>
                                         <td class="text-center">
-                                            <button class="btn btn-warning btn-sm text-white" onclick='editTicket(<?= json_encode($ticket, JSON_HEX_APOS | JSON_HEX_QUOT); ?>)'>
+                                            <button class="btn btn-warning btn-sm text-white" onclick='editTicket(<?= json_encode($ticket); ?>)'>
                                                 <i class="bi bi-pencil"></i>
                                             </button>
-                                            
-                                            <form method="POST" style="display:inline;" onsubmit="return confirm('Hapus kategori tiket ini? Data penjualan mungkin akan terpengaruh.');">
+                                            <form method="POST" style="display:inline;" onsubmit="return confirm('Hapus tiket ini?');">
                                                 <input type="hidden" name="id_tiket" value="<?= $ticket['id_tiket']; ?>">
-                                                <button type="submit" name="delete" class="btn btn-danger btn-sm">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
+                                                <button type="submit" name="delete" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
                                             </form>
                                         </td>
                                     </tr>
@@ -182,13 +154,12 @@ $events = mysqli_query($conn, "
     </div>
 </section>
 
-<!-- MODAL UNTUK PILIH TIKET DI HALAMAN EVENT.PHP -->
 <div class="modal fade" id="formModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header border-0">
                 <h5 class="modal-title" id="formModalLabel">Tambah Tiket</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter:invert(1)"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form method="POST" id="ticketForm">
                 <div class="modal-body p-4">
@@ -200,9 +171,7 @@ $events = mysqli_query($conn, "
                             <option value="">-- Pilih Event --</option>
                             <?php mysqli_data_seek($events, 0); ?>
                             <?php while($e = mysqli_fetch_assoc($events)): ?>
-                                <option 
-                                    value="<?= $e['id_event']; ?>" 
-                                    data-kapasitas="<?= $e['kapasitas']; ?>">
+                                <option value="<?= $e['id_event']; ?>" data-kapasitas="<?= $e['kapasitas']; ?>">
                                     <?= htmlspecialchars($e['nama_event']); ?>
                                 </option>                            
                             <?php endwhile; ?>
@@ -210,24 +179,27 @@ $events = mysqli_query($conn, "
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Nama/Kategori Tiket</label>
-                        <input type="text" class="form-control" id="nama_tiket" name="nama_tiket" placeholder="Contoh: Music, Dance, Comedy" required>
+                        <label class="form-label fw-bold">Kelas</label>
+                        <select class="form-select" id="kategori_tiket" name="kategori_tiket" required>
+                            <option value="Reguler">Reguler</option>
+                            <option value="VIP">VIP</option>
+                            <option value="VVIP">VVIP</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Kategori</label>
+                        <input type="text" class="form-control" id="nama_tiket" name="nama_tiket" placeholder="Contoh: Early Bird / Sesi 1">
                     </div>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Harga</label>
-                            <div class="input-group">
-                                <span class="input-group-text">Rp</span>
-                                <input type="number" class="form-control" id="harga" name="harga" required min="0">
-                            </div>
+                            <input type="number" class="form-control" id="harga" name="harga" required min="0">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Kuota</label>
-                            <div class="input-group">
-                                <input type="number" class="form-control" id="kuota" name="kuota" required min="1">
-                                <span class="input-group-text">Slot</span>
-                            </div>
+                            <input type="number" class="form-control" id="kuota" name="kuota" required min="1">
                         </div>
                     </div>
                 </div>
@@ -240,18 +212,16 @@ $events = mysqli_query($conn, "
     </div>
 </div>
 
-
 <script>
-    // FUNGSI UNTUK RESET FORM SAAT BUKA MODAL (UNTUK TAMBAH DATA)
     function resetForm() {
         document.getElementById('ticketForm').reset();
         document.getElementById('id_tiket').value = '';
         document.getElementById('formModalLabel').innerText = 'Tambah Tiket';
     }
 
-    // FUNGSI UNTUK MENGISI FORM SAAT EDIT TIKET
     function editTicket(ticket) {
         document.getElementById('id_tiket').value = ticket.id_tiket;
+        document.getElementById('kategori_tiket').value = ticket.kategori_tiket;
         document.getElementById('nama_tiket').value = ticket.nama_tiket;
         document.getElementById('harga').value = ticket.harga;
         document.getElementById('kuota').value = ticket.kuota;
@@ -262,19 +232,15 @@ $events = mysqli_query($conn, "
         modal.show();
     }
 
-    //VALIDASI KUOTA DI FRONTEND AGAR TIDAK MELEBIHI KAPASITAS VENUE
+    // Logic kapasitas tetap sama seperti sebelumnya
     let kapasitas = 0;
-
-    // ambil kapasitas saat pilih event
     document.getElementById('id_event').addEventListener('change', function() {
         let selected = this.options[this.selectedIndex];
         kapasitas = parseInt(selected.getAttribute('data-kapasitas')) || 0;
     });
 
-    // validasi kuota
     document.getElementById('kuota').addEventListener('input', function() {
         let val = parseInt(this.value) || 0;
-
         if (kapasitas > 0 && val > kapasitas) {
             this.value = kapasitas;
             alert("Kuota melebihi kapasitas venue!");
