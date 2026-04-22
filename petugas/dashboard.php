@@ -23,7 +23,7 @@ $total_checkin = $data_checkin['total'];
 $sql_total = "SELECT COUNT(*) as total FROM attendee";
 $query_total = mysqli_query($conn, $sql_total);
 $data_total = mysqli_fetch_assoc($query_total);
-$total_tiket = $data_tiket['total'] ?? 0;
+$total_tiket = $data_total['total'];
 ?>
 
 <section class="section dashboard">
@@ -74,11 +74,11 @@ $total_tiket = $data_tiket['total'] ?? 0;
                     <div>
                         <div class="d-flex justify-content-between align-items-start mb-3">
                             <h5 class="fw-bold mb-0">Kehadiran</h5>
-                            <i class="bi bi-broadcast text-danger pulse"></i>
+                            <i class="bi bi-broadcast text-success pulse-green" data-success-icon="true"></i>
                         </div>
                         
                         <div class="py-2">
-                            <h1 class="display-3 fw-bold mb-0"><?= $total_checkin; ?></h1>
+                            <h1 class="display-3 fw-bold mb-0 counter" data-target="<?= $total_checkin ?>"><?= $total_checkin; ?></h1>
                             <span class="opacity-50 fs-5">dari <?= $total_tiket; ?> Peserta</span>
                         </div>
                     </div>
@@ -103,6 +103,30 @@ $total_tiket = $data_tiket['total'] ?? 0;
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // Counter animation
+        const counters = document.querySelectorAll('.counter');
+        counters.forEach(counter => {
+            const target = parseInt(counter.getAttribute('data-target'));
+            const increment = target / 100;
+            let current = 0;
+            const updateCounter = () => {
+                if (current < target) {
+                    current += increment;
+                    counter.textContent = Math.floor(current);
+                    setTimeout(updateCounter, 20);
+                } else {
+                    counter.textContent = target;
+                }
+            };
+            updateCounter();
+        });
+
+        // Progress bar animation
+        const progressBars = document.querySelectorAll('.progress-bar-glow');
+        progressBars.forEach(bar => {
+            bar.style.width = bar.style.width;
+        });
+
     const inputManual = document.getElementById('manual_kode');
 
     inputManual.focus();
