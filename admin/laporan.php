@@ -52,8 +52,8 @@ $query_events = mysqli_query($conn, "SELECT id_event, nama_event FROM event ORDE
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end shadow border-0">
                                 <li><a class="dropdown-item py-2" id="linkExcel" href="ekspor_excel.php?tgl_mulai=<?= $tgl_mulai ?>&tgl_selesai=<?= $tgl_selesai ?>"><i class="bi bi-file-earmark-excel text-success me-2"></i>Excel</a></li>
-                                <li><a class="dropdown-item py-2" href="#" onclick="window.print()"><i class="bi bi-file-earmark-pdf text-danger me-2"></i>Cetak PDF</a></li>
-                            </ul>
+                                <li><a class="dropdown-item py-2" href="#" onclick="printPDF()"><i class="bi bi-file-earmark-pdf text-danger me-2"></i>Cetak PDF</a></li>
+                                </ul>
                         </div>
                     </div>
                 </div>
@@ -74,7 +74,7 @@ $query_events = mysqli_query($conn, "SELECT id_event, nama_event FROM event ORDE
         const filterForm = document.getElementById('filterForm');
         const displayArea = document.getElementById('displayArea');
         const linkExcel = document.getElementById('linkExcel');
-
+                                
         function fetchData() {
             const formData = new FormData(filterForm);
             const params = new URLSearchParams(formData).toString();
@@ -82,7 +82,12 @@ $query_events = mysqli_query($conn, "SELECT id_event, nama_event FROM event ORDE
             // Update link excel agar sesuai filter
             linkExcel.href = `ekspor_excel.php?${params}`;
 
-            fetch(`laporan_render.php?${params}`)
+            // Keep current pagination when filtering
+            const currentPaidPage = new URLSearchParams(window.location.search).get('paid_page') || 1;
+            const currentCancelPage = new URLSearchParams(window.location.search).get('cancel_page') || 1;
+            const fullParams = params + (params ? '&' : '') + `paid_page=${currentPaidPage}&cancel_page=${currentCancelPage}`;
+
+            fetch(`laporan_render.php?${fullParams}`)
                 .then(response => response.text())
                 .then(html => {
                     displayArea.innerHTML = html;
@@ -92,6 +97,21 @@ $query_events = mysqli_query($conn, "SELECT id_event, nama_event FROM event ORDE
                 });
         }
 
+        // Handle pagination clicks (prevent full page reload, use AJAX)
+        displayArea.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A' && e.target.closest('.pagination')) {
+                e.preventDefault();
+                const url = e.target.href;
+                const urlParams = new URLSearchParams(url.split('?')[1]);
+                
+                fetch(`laporan_render.php?${urlParams.toString()}`)
+                    .then(response => response.text())
+                    .then(html => {
+                        displayArea.innerHTML = html;
+                    });
+            }
+        });
+
         filterForm.addEventListener('submit', function(e) {
             e.preventDefault();
             fetchData();
@@ -100,4 +120,10 @@ $query_events = mysqli_query($conn, "SELECT id_event, nama_event FROM event ORDE
         // Load data pertama kali saat halaman dibuka
         fetchData();
     });
+
+    function printPDF() {
+        const formData = new FormData(filterForm);
+        const params = new URLSearchParams(formData).toString();
+        window.open(`laporan_print.php?${params}`, '_blank');
+    }
 </script>
