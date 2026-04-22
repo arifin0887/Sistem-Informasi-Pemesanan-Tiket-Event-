@@ -1,118 +1,116 @@
 <?php
 
-// QUERY RIWAYAT CHECK-IN (SUDAH DIPERBAIKI & DIOPTIMALKAN)
+// AMBIL DAFTAR EVENT UNTUK FILTER (Hanya event yang punya data attendee)
+$query_events = "SELECT DISTINCT e.id_event, e.nama_event 
+                 FROM event e 
+                 JOIN tiket t ON e.id_event = t.id_event 
+                 JOIN order_detail od ON t.id_tiket = od.id_tiket
+                 JOIN attendee a ON od.id_detail = a.id_detail";
+$res_events = mysqli_query($conn, $query_events);
+
+// TANGKAP FILTER ID_EVENT
+$filter_event = isset($_GET['id_event']) ? $_GET['id_event'] : '';
+
+// QUERY RIWAYAT DENGAN FILTER
 $query = "
     SELECT 
         a.kode_tiket, 
         a.waktu_checkin, 
         a.status_checkin,
         t.nama_tiket,
-        u.nama AS nama_pembeli
+        u.nama AS nama_pembeli,
+        e.nama_event
     FROM attendee a
     JOIN order_detail od ON a.id_detail = od.id_detail
     JOIN tiket t ON od.id_tiket = t.id_tiket
+    JOIN event e ON t.id_event = e.id_event
     JOIN orders o ON od.id_order = o.id_order
     JOIN users u ON o.id_user = u.id_user
     WHERE a.status_checkin = 'sudah'
-    ORDER BY a.waktu_checkin DESC
 ";
 
-$result = mysqli_query($conn, $query);
-
-if (!$result) {
-    die("Query error: " . mysqli_error($conn));
+if ($filter_event != '') {
+    $query .= " AND e.id_event = '" . mysqli_real_escape_string($conn, $filter_event) . "'";
 }
+
+$query .= " ORDER BY a.waktu_checkin DESC";
+$result = mysqli_query($conn, $query);
 ?>
+
+<style>
+    .history-card { border: none; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+    .user-avatar {
+        width: 38px; height: 38px; background: #f0f2f5; color: #1D1145;
+        display: flex; align-items: center; justify-content: center;
+        border-radius: 10px; font-weight: bold; margin-right: 12px;
+    }
+    .ticket-code { background: #fff8e1; color: #f57f17; padding: 4px 8px; border-radius: 5px; font-weight: 600; }
+    .badge-status { background: #e8f5e9; color: #2e7d32; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+    .checkin-time { font-weight: 600; color: #1D1145; }
+    .filter-section { background: #f8f9fa; border-radius: 12px; padding: 15px; margin-bottom: 20px; }
+</style>
 
 <div class="pagetitle mb-4">
     <h1>Riwayat Check-in</h1>
     <nav>
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="index.php">Home</a></li>
+            <li class="breadcrumb-item"><a href="dashboard.php">Home</a></li>
             <li class="breadcrumb-item active">Riwayat Check-in</li>
         </ol>
     </nav>
 </div>
 
-<div class="card history-card">
-    <div class="card-body p-4">
-
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <p class="text-muted small mb-0">Daftar peserta yang baru saja memvalidasi tiket</p>
+<div class="card history-card mb-4">
+    <div class="card-body p-3">
+        <div class="row align-items-center g-3">
+            <div class="col-md-8">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-filter-left fs-4 me-2 text-muted"></i>
+                    <select id="filterEvent" class="form-select border-0 bg-light" style="border-radius: 10px;">
+                        <option value="">Semua Event</option>
+                        <?php 
+                        $res_events = mysqli_query($conn, "SELECT DISTINCT e.id_event, e.nama_event FROM event e JOIN tiket t ON e.id_event = t.id_event JOIN order_detail od ON t.id_tiket = od.id_tiket JOIN attendee a ON od.id_detail = a.id_detail");
+                        while($ev = mysqli_fetch_assoc($res_events)): 
+                        ?>
+                            <option value="<?= $ev['id_event'] ?>"><?= htmlspecialchars($ev['nama_event']) ?></option>
+                        <?php endwhile; ?>
+                    </select>
+                </div>
             </div>
-            <span class="badge bg-primary rounded-pill px-3">
-                <?= mysqli_num_rows($result); ?> Total Data
-            </span>
-        </div>
-
-        <div class="table-responsive">
-            <table class="table table-hover align-middle border-0">
-                <thead>
-                    <tr>
-                        <th class="text-center">#</th>
-                        <th>Peserta</th>
-                        <th>Detail Tiket</th>
-                        <th>Kode</th>
-                        <th>Waktu Validasi</th>
-                        <th class="text-center">Status</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                <?php if (mysqli_num_rows($result) > 0): ?>
-                    <?php $no = 1; ?>
-                    <?php while ($row = mysqli_fetch_assoc($result)) : 
-                        // Ambil inisial nama
-                        $inisial = strtoupper(substr($row['nama_pembeli'], 0, 1));
-                    ?>
-                        <tr>
-                            <td class="text-center text-muted small"><?= $no++; ?></td>
-
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <div class="user-avatar"><?= $inisial ?></div>
-                                    <div>
-                                        <div class="fw-bold mb-0"><?= htmlspecialchars($row['nama_pembeli']); ?></div>
-                                        <small class="text-muted">Verified Guest</small>
-                                    </div>
-                                </div>
-                            </td>
-
-                            <td>
-                                <div class="fw-semibold small"><?= htmlspecialchars($row['nama_tiket']); ?></div>
-                                <div class="text-muted" style="font-size: 0.75rem;">Reguler Access</div>
-                            </td>
-
-                            <td>
-                                <code class="ticket-code"><?= htmlspecialchars($row['kode_tiket']); ?></code>
-                            </td>
-
-                            <td>
-                                <div class="checkin-time"><?= date('H:i:s', strtotime($row['waktu_checkin'])); ?></div>
-                                <small class="text-muted small"><?= date('d M Y', strtotime($row['waktu_checkin'])); ?></small>
-                            </td>
-
-                            <td class="text-center">
-                                <span class="badge-status">
-                                    Checked-in
-                                </span>
-                            </td>
-                        </tr>
-                    <?php endwhile; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="6" class="text-center py-5">
-                            <i class="bi bi-inbox text-light d-block mb-2" style="font-size: 3rem;"></i>
-                            <div class="text-muted">Belum ada aktivitas check-in hari ini</div>
-                        </td>
-                    </tr>
-                <?php endif; ?>
-                </tbody>
-            </table>
         </div>
     </div>
 </div>
+
+<div id="table-checkin-container">
+    <?php include 'fetch_riwayat.php'; ?>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#filterEvent').on('change', function() {
+        var idEvent = $(this).val();
+        
+        // EFEK LOADING
+        $('#table-checkin-container').css('opacity', '0.5');
+
+        $.ajax({
+            url: 'fetch_riwayat.php', 
+            type: 'GET',
+            data: { id_event: idEvent },
+            success: function(data) {
+                $('#table-checkin-container').html(data);
+                $('#table-checkin-container').css('opacity', '1');
+            },
+            error: function() {
+                alert('Gagal mengambil data.');
+                $('#table-checkin-container').css('opacity', '1');
+            }
+        });
+    });
+});
+</script>
+
 
 <style>
     .history-card {
