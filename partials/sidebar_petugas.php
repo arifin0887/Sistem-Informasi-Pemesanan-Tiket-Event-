@@ -1,9 +1,9 @@
+<div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-
-<aside id="sidebar" class="sidebar">
+<aside id="sidebar" class="sidebar shadow-sm">
     <ul class="sidebar-nav" id="sidebar-nav">
-
-        <li class="nav-item">
+        
+         <li class="nav-item">
             <?php 
                 // CEK HALAMAN AKTIF
                 $is_dashboard = (!isset($_GET['page']) || $_GET['page'] == 'petugas');
@@ -22,6 +22,6 @@
                 <span>Riwayat Check-in</span>
             </a>
         </li>
-
+        
     </ul>
 </aside>

@@ -1,0 +1,88 @@
+.attendance-card {
+    background: linear-gradient(135deg, var(--primary-navy) 0%, #2a1b5e 100%);
+    border: none;
+    border-radius: 20px;
+    color: #ffffff !important; 
+    transition: transform 0.3s ease;
+}
+
+.attendance-card h5, 
+.attendance-card h1, 
+.attendance-card span, 
+.attendance-card p {
+    color: #ffffff !important;
+}
+
+.attendance-card .text-white-50 {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.progress-custom {
+    height: 10px;
+    background: rgba(255, 255, 255, 0.1); 
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar-glow {
+    background: var(--secondary-tosca); 
+    box-shadow: 0 0 15px rgba(13, 181, 187, 0.4);
+    border-radius: 10px;
+}
+
+.pulse {
+    animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+    0% { transform: scale(0.95); opacity: 0.7; }
+    70% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(0.95); opacity: 0.7; }
+}
+
+.standby-indicator {
+    width: 10px;
+    height: 10px;
+    background-color: #28a745;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+    box-shadow: 0 0 8px rgba(40, 167, 69, 0.5);
+    animation: pulse-green 2s infinite;
+}
+
+@keyframes pulse-green {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+}
+
+.scanner-icon-box {
+    width: 50px;
+    height: 50px;
+    background: var(--light-bg);
+    color: var(--primary-navy);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.history-card {
+    border: none;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--card-shadow);
+    background: #fff;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(45deg, var(--primary-navy), var(--secondary-tosca));
+    color: white;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
