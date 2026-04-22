@@ -32,12 +32,12 @@ $query_events = mysqli_query($conn, "SELECT id_event, nama_event FROM event ORDE
                     </select>
                 </div>
                 
-                <div class="col-md-3 z-index: 20">
+                <div class="col-md-3 position-relative">
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary flex-grow-1 fw-bold" style="background-color: #1D1145; border: none; height: 45px;">
                             <i class="bi bi-funnel-fill me-2"></i>Filter
                         </button>
-                        <div class="dropdown">
+                        <div class="dropdown dropdown-fix">
                             <button class="btn btn-success fw-bold dropdown-toggle" type="button" data-bs-toggle="dropdown" style="height: 45px; background-color: #0DB5BB; border: none;">
                                 <i class="bi bi-cloud-download-fill"></i>
                             </button>
@@ -48,6 +48,7 @@ $query_events = mysqli_query($conn, "SELECT id_event, nama_event FROM event ORDE
                         </div>
                     </div>
                 </div>
+
             </form>
         </div>
     </div>
@@ -61,6 +62,58 @@ $query_events = mysqli_query($conn, "SELECT id_event, nama_event FROM event ORDE
 </section>
 
 <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        document.addEventListener("click", function (e) {
+            const btn = e.target.closest('[data-bs-toggle="dropdown"]');
+            if (!btn) return;
+
+            const dropdown = btn.nextElementSibling;
+            if (!dropdown) return;
+
+            // Tutup dropdown lain
+            document.querySelectorAll('.dropdown-menu.show').forEach(el => {
+                el.classList.remove('show');
+                if (el.dataset.moved === "true") {
+                    document.body.removeChild(el);
+                    el.dataset.moved = "false";
+                }
+            });
+
+            // Ambil posisi tombol
+            const rect = btn.getBoundingClientRect();
+
+            // Pindahkan ke body
+            document.body.appendChild(dropdown);
+            dropdown.dataset.moved = "true";
+
+            // Set posisi
+            dropdown.style.position = "fixed";
+            dropdown.style.top = (rect.bottom + 5) + "px";
+            dropdown.style.left = rect.left + "px";
+            dropdown.style.zIndex = 99999;
+
+            // Tampilkan
+            dropdown.classList.add("show");
+
+            e.preventDefault();
+        });
+
+        // Klik di luar = tutup dropdown
+        document.addEventListener("click", function (e) {
+            if (!e.target.closest('.dropdown')) {
+                document.querySelectorAll('.dropdown-menu.show').forEach(el => {
+                    el.classList.remove('show');
+                    if (el.dataset.moved === "true") {
+                        document.body.removeChild(el);
+                        el.dataset.moved = "false";
+                    }
+                });
+            }
+        });
+
+    });
+
     document.addEventListener('DOMContentLoaded', function() {
         const filterForm = document.getElementById('filterForm');
         const displayArea = document.getElementById('displayArea');
