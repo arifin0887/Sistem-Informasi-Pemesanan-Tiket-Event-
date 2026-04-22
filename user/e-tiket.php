@@ -14,6 +14,7 @@ $id_user = (int)$_SESSION['user']['id'];
 $query = "SELECT 
             o.id_order, 
             t.nama_tiket, 
+            t.kategori_tiket,
             e.nama_event, 
             e.tanggal as tgl_event, 
             v.nama_venue, 
@@ -78,7 +79,7 @@ if (empty($tickets)) {
                         <div class="row text-start mt-3">
                             <div class="col-6">
                                 <small class="text-muted d-block">Jenis Tiket</small>
-                                <span class="fw-bold text-uppercase"><?= $t['nama_tiket']; ?></span>
+                                <span class="fw-bold text-uppercase"><?= $t['nama_tiket']; ?> - <?= $t['kategori_tiket'];?> </span>
                             </div>
                             <div class="col-6 text-end">
                                 <small class="text-muted d-block">Waktu</small>

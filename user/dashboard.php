@@ -19,6 +19,7 @@ $query = "SELECT
             o.status, 
             od.qty, 
             t.nama_tiket, 
+            t.kategori_tiket,
             e.nama_event, 
             e.tanggal AS tanggal_event,
             v.nama_venue
@@ -66,7 +67,7 @@ $result = $stmt->get_result();
                         <div class="ticket-body">
                             <div class="mb-3">
                                 <small class="text-uppercase text-muted fw-bold" style="font-size: 0.65rem;">Event</small>
-                                <div class="event-title text-truncate"><?= htmlspecialchars($row['nama_event']); ?></div>
+                                <div class="event-title text-truncate"><?= htmlspecialchars($row['nama_event']); ?> - <?= htmlspecialchars($row['kategori_tiket']);?></div>
                             </div>
 
                             <div class="row mb-3">

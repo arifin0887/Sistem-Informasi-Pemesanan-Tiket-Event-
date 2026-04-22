@@ -75,8 +75,6 @@ if (isset($_POST['proses_buy'])) {
 }
 ?>
 
-
-
 <section class="section section-buy">
     <div class="container">
 

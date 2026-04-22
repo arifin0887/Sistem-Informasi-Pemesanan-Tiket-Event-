@@ -10,7 +10,7 @@ $event_filter_sql = $id_event_filter ? " AND e.id_event = '$id_event_filter'" : 
 $query_laporan = mysqli_query($conn, "
     SELECT o.id_order, o.tanggal_order, u.nama AS nama_pembeli, o.total, o.status,
            COUNT(od.id_detail) as jumlah_item, SUM(od.qty) as total_tiket,
-           GROUP_CONCAT(CONCAT(t.nama_tiket, ' (', od.qty, ')') SEPARATOR ', ') as rincian_tiket
+           GROUP_CONCAT(CONCAT(t.nama_tiket, ' (', t.kategori_tiket, ')') SEPARATOR ', ') as rincian_tiket
     FROM orders o
     JOIN users u ON o.id_user = u.id_user
     JOIN order_detail od ON o.id_order = od.id_order
@@ -35,7 +35,7 @@ $jumlah_transaksi = count($data_rows);
 $query_cancel = mysqli_query($conn, "
     SELECT o.id_order, o.tanggal_order, u.nama AS nama_pembeli, o.total, o.status,
            COUNT(od.id_detail) as jumlah_item, SUM(od.qty) as total_tiket,
-           GROUP_CONCAT(CONCAT(t.nama_tiket, ' (', od.qty, ')') SEPARATOR ', ') as rincian_tiket
+           GROUP_CONCAT(CONCAT(t.nama_tiket, ' (', t.kategori_tiket, ')') SEPARATOR ', ') as rincian_tiket
     FROM orders o
     JOIN users u ON o.id_user = u.id_user
     JOIN order_detail od ON o.id_order = od.id_order
@@ -67,14 +67,26 @@ $top_event = mysqli_fetch_assoc($top_event_query) ?: ['nama_event' => 'Tidak ada
 
 // Penjualan Per Event
 $event_sales_query = mysqli_query($conn, "
-    SELECT e.nama_event, v.nama_venue, SUM(o.total) as revenue, SUM(od.qty) as qty, COUNT(DISTINCT o.id_order) as transaksi
+    SELECT 
+        e.id_event,
+        e.nama_event, 
+        v.nama_venue, 
+        SUM(o.total) as revenue, 
+        SUM(od.qty) as total_qty, 
+        COUNT(DISTINCT o.id_order) as transaksi,
+        SUM(CASE WHEN t.kategori_tiket LIKE '%Reguler%' THEN od.qty ELSE 0 END) as qty_reguler,
+        SUM(CASE WHEN t.kategori_tiket LIKE '%VIP%' AND t.kategori_tiket NOT LIKE '%VVIP%' THEN od.qty ELSE 0 END) as qty_vip,
+        SUM(CASE WHEN t.kategori_tiket LIKE '%VVIP%' THEN od.qty ELSE 0 END) as qty_vvip
     FROM orders o 
     JOIN order_detail od ON o.id_order = od.id_order 
     JOIN tiket t ON od.id_tiket = t.id_tiket
     JOIN event e ON t.id_event = e.id_event 
     JOIN venue v ON e.id_venue = v.id_venue
-    WHERE DATE(o.tanggal_order) BETWEEN '$tgl_mulai' AND '$tgl_selesai' AND o.status = 'paid' $event_filter_sql
-    GROUP BY e.id_event ORDER BY revenue DESC
+    WHERE DATE(o.tanggal_order) BETWEEN '$tgl_mulai' AND '$tgl_selesai' 
+    AND o.status = 'paid' 
+    $event_filter_sql
+    GROUP BY e.id_event 
+    ORDER BY revenue DESC
 ");
 ?>
 
@@ -90,6 +102,7 @@ $event_sales_query = mysqli_query($conn, "
             </div>
         </div>
     </div>
+    
     <div class="col-md-6 mb-3">
         <div class="card border-0 shadow-sm text-white p-4" style="background: linear-gradient(45deg, #1D1145, #2a1a5e); border-radius: 15px;">
             <div class="d-flex justify-content-between align-items-center">
@@ -165,19 +178,45 @@ $event_sales_query = mysqli_query($conn, "
                     <tr>
                         <th>EVENT</th>
                         <th class="text-center">TRANSAKSI</th>
-                        <th class="text-center">TIKET</th>
+                        <th class="text-center">REGULER</th>
+                        <th class="text-center">VIP</th>
+                        <th class="text-center">VVIP</th>
+                        <th class="text-center">TOTAL TIKET</th>
                         <th class="text-end">PENDAPATAN</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <?php while($ev = mysqli_fetch_assoc($event_sales_query)): ?>
+                <?php 
+                    if(mysqli_num_rows($event_sales_query) > 0):
+                        while($ev = mysqli_fetch_assoc($event_sales_query)): 
+                    ?>
                     <tr>
-                        <td><strong><?= htmlspecialchars($ev['nama_event']) ?></strong><br><small><?= $ev['nama_venue'] ?></small></td>
-                        <td class="text-center"><?= $ev['transaksi'] ?></td>
-                        <td class="text-center"><?= $ev['qty'] ?></td>
-                        <td class="text-end fw-bold">Rp <?= number_format($ev['revenue'], 0, ',', '.') ?></td>
+                        <td>
+                            <div class="fw-bold text-dark"><?= htmlspecialchars($ev['nama_event']) ?></div>
+                            <small class="text-muted"><i class="bi bi-geo-alt-fill me-1"></i><?= htmlspecialchars($ev['nama_venue']) ?></small>
+                        </td>
+                        <td class="text-center">
+                            <span class="fw-bold text-dark"><?= number_format($ev['transaksi']) ?></span>
+                        </td>
+                        <td class="text-center"><?= number_format($ev['qty_reguler']) ?></td>
+                        <td class="text-center"><?= number_format($ev['qty_vip']) ?></td>
+                        <td class="text-center"><?= number_format($ev['qty_vvip']) ?></td>
+                        
+                        <td class="text-center fw-bold bg-light">
+                            <?= number_format($ev['total_qty']) ?>
+                        </td>
+                        
+                        <td class="text-end fw-bold">
+                            Rp <?= number_format($ev['revenue'], 0, ',', '.') ?>
+                        </td>
                     </tr>
-                    <?php endwhile; ?>
+                    <?php 
+                        endwhile; 
+                    else: 
+                    ?>
+                    <tr>
+                        <td colspan="7" class="text-center py-4 text-muted">Tidak ada data penjualan untuk periode ini.</td>
+                    </tr>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>

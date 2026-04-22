@@ -116,7 +116,7 @@ while ($row = mysqli_fetch_assoc($auto_expire)) {
 $query = "SELECT 
             o.id_order, o.tanggal_order, o.total, o.status,
             od.id_detail, 
-            od.qty, t.nama_tiket, t.harga,
+            od.qty, t.nama_tiket, t.harga, t.kategori_tiket,
             e.nama_event, e.tanggal, v.nama_venue
           FROM orders o
           JOIN order_detail od ON o.id_order = od.id_order
@@ -144,167 +144,166 @@ while ($row = mysqli_fetch_assoc($result)) {
 
 
 <style>
-/* Custom styles untuk modal e-tiket */
-.ticket-card {
-    border-radius: 15px;
-    border: none;
-    transition: transform 0.2s ease;
-}
-
-.ticket-card:hover {
-    transform: translateY(-2px);
-}
-
-.status-badge {
-    font-size: 0.75rem;
-    padding: 0.375rem 0.75rem;
-    border-radius: 20px;
-}
-
-.status-pending {
-    background-color: #fff3cd;
-    color: #856404;
-    border: 1px solid #ffeaa7;
-}
-
-.status-paid {
-    background-color: #d1ecf1;
-    color: #0c5460;
-    border: 1px solid #bee5eb;
-}
-
-.status-cancelled {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
-.event-info-box {
-    border-radius: 12px;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border: 1px solid #dee2e6;
-}
-
-.ticket-code-badge {
-    border: 1px solid #dee2e6 !important;
-    transition: all 0.2s ease;
-}
-
-.ticket-code-badge:hover {
-    transform: scale(1.02);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.qr-box {
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    border: 2px solid #e9ecef;
-}
-
-.ticket-quantity {
-    font-size: 1.1rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-}
-
-.event-ticket-item {
-    transition: all 0.2s ease;
-}
-
-.event-ticket-item:hover {
-    background-color: rgba(255,255,255,0.5);
-    border-radius: 8px;
-    padding: 8px;
-    margin: -8px;
-}
-
-.qr-codes-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-    max-width: 100%;
-}
-
-.qr-item {
-    text-align: center;
-    min-width: 180px;
-}
-
-.qr-item .qr-box {
-    margin-bottom: 8px;
-}
-
-.qr-item code {
-    font-size: 0.85rem;
-    word-break: break-all;
-}
-
-/* Responsive untuk multiple QR codes */
-@media (max-width: 768px) {
-    .qr-codes-container {
-        gap: 15px;
+    .ticket-card {
+        border-radius: 15px;
+        border: none;
+        transition: transform 0.2s ease;
     }
 
-    .qr-item {
-        min-width: 150px;
+    .ticket-card:hover {
+        transform: translateY(-2px);
     }
 
-    .qr-item .qr-box img {
-        width: 120px !important;
-        height: 120px !important;
-    }
-}
-
-/* Print styles */
-@media print {
-    .modal-header,
-    .modal-footer,
-    .btn-close {
-        display: none !important;
+    .status-badge {
+        font-size: 0.75rem;
+        padding: 0.375rem 0.75rem;
+        border-radius: 20px;
     }
 
-    .modal-content {
-        border: none !important;
-        box-shadow: none !important;
+    .status-pending {
+        background-color: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
     }
 
-    .modal-body {
-        padding: 20px !important;
+    .status-paid {
+        background-color: #d1ecf1;
+        color: #0c5460;
+        border: 1px solid #bee5eb;
     }
 
-    body * {
-        visibility: hidden;
+    .status-cancelled {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
     }
 
-    .modal-content,
-    .modal-content * {
-        visibility: visible;
+    .event-info-box {
+        border-radius: 12px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border: 1px solid #dee2e6;
     }
 
-    .modal-content {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        max-width: none;
+    .ticket-code-badge {
+        border: 1px solid #dee2e6 !important;
+        transition: all 0.2s ease;
+    }
+
+    .ticket-code-badge:hover {
+        transform: scale(1.02);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .qr-box {
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        border: 2px solid #e9ecef;
+    }
+
+    .ticket-quantity {
+        font-size: 1.1rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .event-ticket-item {
+        transition: all 0.2s ease;
+    }
+
+    .event-ticket-item:hover {
+        background-color: rgba(255,255,255,0.5);
+        border-radius: 8px;
+        padding: 8px;
+        margin: -8px;
     }
 
     .qr-codes-container {
-        flex-direction: row !important;
-        justify-content: space-around !important;
-        gap: 10px !important;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        max-width: 100%;
     }
 
     .qr-item {
-        page-break-inside: avoid;
-        margin-bottom: 15px !important;
+        text-align: center;
+        min-width: 180px;
     }
 
-    .qr-item .qr-box img {
-        width: 120px !important;
-        height: 120px !important;
+    .qr-item .qr-box {
+        margin-bottom: 8px;
     }
-}
+
+    .qr-item code {
+        font-size: 0.85rem;
+        word-break: break-all;
+    }
+
+    /* Responsive untuk multiple QR codes */
+    @media (max-width: 768px) {
+        .qr-codes-container {
+            gap: 15px;
+        }
+
+        .qr-item {
+            min-width: 150px;
+        }
+
+        .qr-item .qr-box img {
+            width: 120px !important;
+            height: 120px !important;
+        }
+    }
+
+    /* Print styles */
+    @media print {
+        .modal-header,
+        .modal-footer,
+        .btn-close {
+            display: none !important;
+        }
+
+        .modal-content {
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        .modal-body {
+            padding: 20px !important;
+        }
+
+        body * {
+            visibility: hidden;
+        }
+
+        .modal-content,
+        .modal-content * {
+            visibility: visible;
+        }
+
+        .modal-content {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            max-width: none;
+        }
+
+        .qr-codes-container {
+            flex-direction: row !important;
+            justify-content: space-around !important;
+            gap: 10px !important;
+        }
+
+        .qr-item {
+            page-break-inside: avoid;
+            margin-bottom: 15px !important;
+        }
+
+        .qr-item .qr-box img {
+            width: 120px !important;
+            height: 120px !important;
+        }
+    }
 </style>
 
 
@@ -361,7 +360,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                                                 <div class="flex-grow-1">
                                                     <h6 class="fw-bold mb-1"><?= htmlspecialchars($item['nama_event']) ?></h6>
                                                     <div class="small text-muted">
-                                                        <span class="me-3"><i class="bi bi-tag me-1"></i><?= $item['nama_tiket'] ?></span>
+                                                        <span class="me-3"><i class="bi bi-tag me-1"></i><?= $item['nama_tiket'] ?> - <?= $item['kategori_tiket']?></span>
                                                         <span><i class="bi bi-geo-alt me-1"></i><?= $item['nama_venue'] ?></span>
                                                     </div>
                                                 </div>
@@ -480,15 +479,15 @@ while ($row = mysqli_fetch_assoc($result)) {
                                         <div class="event-ticket-item <?= $index > 0 ? 'border-top pt-3 mt-3' : '' ?>">
                                             <div class="row align-items-center">
                                                 <div class="col">
-                                                    <h6 class="fw-bold mb-1 text-primary"><?= htmlspecialchars($item['nama_event']) ?></h6>
-                                                    <p class="mb-1 small text-muted">
-                                                        <i class="bi bi-tag me-1"></i><?= htmlspecialchars($item['nama_tiket']) ?> 
+                                                    <h6 class="fw-bold mb-1 text-primary text-center"><?= htmlspecialchars($item['nama_event']) ?></h6>
+                                                    <p class="mb-1 small text-muted text-center">
+                                                        <i class="bi bi-tag me-1"></i><?= htmlspecialchars($item['nama_tiket']) ?> - <?= htmlspecialchars($item['kategori_tiket']) ?>
                                                         • <i class="bi bi-calendar-event me-1"></i><?= date('d M Y H:i', strtotime($item['tanggal'])) ?>
                                                         • <i class="bi bi-geo-alt me-1"></i><?= htmlspecialchars($item['nama_venue']) ?>
                                                     </p>
-                                                    <div class="ticket-codes">
+                                                    <div class="ticket-codes text-center">
                                                         <small class="text-muted d-block mb-1">Kode Tiket:</small>
-                                                        <div class="d-flex flex-wrap gap-2">
+                                                        <div class="d-flex flex-wrap gap-2 justify-content-center">
                                                             <?php 
                                                             $id_det_m = $item['id_detail'];
                                                             $q_att_m = mysqli_query($conn, "SELECT kode_tiket, status_checkin FROM attendee WHERE id_detail = $id_det_m");
