@@ -218,8 +218,14 @@ $v = mysqli_fetch_assoc($query_voucher);
         color: #ff4081;
     }
 
-    .input-group-text {
+.input-group-text {
         border-radius: 12px 0 0 12px !important;
+    }
+
+    .ticket-limit-msg {
+        background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+        border: 1px solid #f8bbd9;
+        border-radius: 12px;
     }
 
 </style>
@@ -331,16 +337,17 @@ $v = mysqli_fetch_assoc($query_voucher);
 </div>
 
 <script>
-    // FUNGSI UNTUK MENAMPILKAN DETAIL TIKET DALAM MODAL
-    function showDetail(event) {
+    async function showDetail(event) {
         const modalBody = document.getElementById('modalContent');
-        let tiketHtml = '';
-
-        if (event.tikets.length > 0) {
-            const mainTicket = event.tikets[0]; 
-            const isSoldOut = event.tikets.every(t => t.kuota <= 0);
-
-            tiketHtml = `
+        
+        // Show loading
+        modalBody.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">Memeriksa ketersediaan tiket...</p></div>';
+        
+        try {
+            const response = await fetch(`check_ticket_limit.php?id_event=${event.id_event}`);
+            const data = await response.json();
+            
+            let tiketHtml = `
                 <div class="text-center mb-4">
                     <h4 class="fw-bold mb-1" style="color: var(--navy);">${event.nama_event}</h4>
                     <p class="text-muted"><i class="bi bi-geo-alt me-1"></i> ${event.nama_venue}</p>
@@ -350,33 +357,68 @@ $v = mysqli_fetch_assoc($query_voucher);
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="mb-1 fw-bold">Konfirmasi Pemesanan</h6>
-                            <p class="small text-muted mb-0">Kamu akan diarahkan ke halaman pemilihan kategori tiket (Reguler, VIP, VVIP).</p>
+                            <p class="small text-muted mb-0">Kamu akan diarahkan ke halaman pemilihan kategori tiket.</p>
                         </div>
                         <i class="bi bi-ticket-perforated fs-1 text-pink opacity-50"></i>
                     </div>
                 </div>
-                
-                <div class="d-grid mt-4">
-                    ${isSoldOut 
-                        ? '<button class="btn btn-danger btn-lg rounded-pill fw-bold" disabled>Maaf, Tiket Habis</button>' 
-                        : `<a href="index.php?page=buy&id_event=${event.id_event}&id_tiket=${mainTicket.id_tiket}" 
-                              class="btn btn-primary btn-lg rounded-pill fw-bold shadow-sm">
-                              Pesan Sekarang <i class="bi bi-arrow-right ms-2"></i>
-                           </a>`
-                    }
-                </div>
-                <p class="text-center mt-3 small text-muted">Harga mulai dari <span class="text-pink fw-bold">Rp ${parseInt(mainTicket.harga).toLocaleString('id-ID')}</span></p>
             `;
-        } else {
-            tiketHtml = `
-                <div class="text-center py-4">
-                    <i class="bi bi-emoji-frown fs-1 text-muted"></i>
-                    <h5 class="mt-3">Tiket Belum Tersedia</h5>
-                    <p class="text-muted small">Penyelenggara belum mengunggah kategori tiket untuk event ini.</p>
-                </div>`;
-        }
 
-        modalBody.innerHTML = tiketHtml;
+            if (event.tikets.length === 0) {
+                tiketHtml += `
+                    <div class="text-center py-4">
+                        <i class="bi bi-emoji-frown fs-1 text-muted"></i>
+                        <h5 class="mt-3">Tiket Belum Tersedia</h5>
+                    </div>
+                `;
+            } else {
+                const mainTicket = event.tikets[0];
+                const isSoldOut = event.tikets.every(t => t.kuota <= 0);
+                
+                if (!data.allow) {
+                    tiketHtml += `
+                        <div class="text-center py-4 ticket-limit-msg p-4">
+                            <i class="bi bi-exclamation-triangle-fill fs-1 text-danger mb-3"></i>
+                            <h5 class="fw-bold text-danger mb-2">${data.message}</h5>
+                            <p class="text-muted small mb-0">Hubungi admin jika ada kendala.</p>
+                        </div>
+                        <div class="d-grid mt-4">
+                            <button class="btn btn-secondary btn-lg rounded-pill fw-bold" data-bs-dismiss="modal">
+                                Tutup
+                            </button>
+                        </div>
+                    `;
+                } else if (isSoldOut) {
+                    tiketHtml += `
+                        <div class="d-grid mt-4">
+                            <button class="btn btn-danger btn-lg rounded-pill fw-bold" disabled>Maaf, Tiket Habis</button>
+                        </div>
+                    `;
+                } else {
+                    tiketHtml += `
+                        <div class="d-grid mt-4">
+                            <a href="index.php?page=buy&id_event=${event.id_event}&id_tiket=${mainTicket.id_tiket}" 
+                               class="btn btn-primary btn-lg rounded-pill fw-bold shadow-sm">
+                               Pesan Sekarang <i class="bi bi-arrow-right ms-2"></i>
+                            </a>
+                        </div>
+                    `;
+                }
+                
+                tiketHtml += `<p class="text-center mt-3 small text-muted">Harga mulai dari <span class="text-pink fw-bold">Rp ${parseInt(mainTicket.harga).toLocaleString('id-ID')}</span></p>`;
+            }
+
+            modalBody.innerHTML = tiketHtml;
+        } catch (error) {
+            modalBody.innerHTML = `
+                <div class="text-center py-4">
+                    <i class="bi bi-wifi-off fs-1 text-muted"></i>
+                    <h5 class="mt-3 text-danger">Koneksi bermasalah</h5>
+                    <button class="btn btn-outline-primary mt-2" onclick="showDetail(${JSON.stringify(event).replace(/"/g, '"')})">Coba Lagi</button>
+                </div>
+            `;
+        }
+        
         new bootstrap.Modal(document.getElementById('eventModal')).show();
     }
 
