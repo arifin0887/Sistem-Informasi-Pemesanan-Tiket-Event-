@@ -39,16 +39,6 @@ $result = $stmt->get_result();
 
 ?>
 
-<div class="pagetitle">
-    <h1 style="color: #1d1145;">Tiket Saya</h1>
-    <nav>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-            <li class="breadcrumb-item active">Koleksi Tiket</li>
-        </ol>
-    </nav>
-</div>
-
 <section class="section mt-4">
     <?php if ($result->num_rows > 0): ?>
         <div class="row g-4">

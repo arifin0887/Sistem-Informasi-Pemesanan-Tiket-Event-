@@ -2,20 +2,16 @@
 session_start();
 require_once '../koneksi.php';
 
-// 1. CEK LOGIN
 if (!isset($_SESSION['user'])) {
     header("Location: ../login.php");
     exit;
 }
 
-// 2. LOGIKA ROUTING (Disederhanakan)
-// Ambil halaman dari URL, jika kosong arahkan ke dashboard
 $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
 
-// Mapping halaman ke file fisik
 $page_map = [
     'dashboard' => 'dashboard.php',
-    'admin'     => 'dashboard.php', // Alias jika diperlukan
+    'admin'     => 'dashboard.php', 
     'venue'     => 'venue.php',
     'event'     => 'event.php',
     'tiket'     => 'tiket.php',
@@ -25,7 +21,6 @@ $page_map = [
     'laporan'   => 'laporan.php'
 ];
 
-// Tentukan file yang akan di-include
 $include_file = $page_map[$page] ?? null;
 ?>
 
@@ -72,7 +67,6 @@ $include_file = $page_map[$page] ?? null;
         if ($include_file && file_exists($include_file)) {
             include $include_file;
         } else {
-            // Tampilan jika halaman tidak ditemukan
             echo "
             <div class='container mt-5'>
                 <div class='card border-0 shadow-sm p-5 text-center'>
@@ -91,7 +85,6 @@ $include_file = $page_map[$page] ?? null;
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // Placeholder untuk script interaktif (misal: Sidebar Toggle)
         document.addEventListener('DOMContentLoaded', function() {
             console.log("EventKu Admin Loaded: " + "<?= $page ?>");
         });

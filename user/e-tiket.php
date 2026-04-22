@@ -47,47 +47,47 @@ if (empty($tickets)) {
 
 <div class="container py-5">
     <div class="text-center mb-5 no-print">
-        <h3 class="fw-bold">E-Ticket Resmi</h3>
-        <p class="text-muted">Tunjukkan QR Code di bawah ini saat memasuki area event.</p>
-        <button onclick="window.print()" class="btn btn-dark btn-sm rounded-pill px-4">
-            <i class="bi bi-printer me-1"></i> Cetak Tiket
+        <h2 class="fw-bold text-primary-eventku">E-Ticket Resmi</h2>
+        <p class="text-muted">Gunakan QR Code di bawah untuk verifikasi masuk.</p>
+        <button onclick="window.print()" class="btn btn-primary-eventku text-white btn-eventku shadow-sm">
+            <i class="bi bi-printer me-2"></i> Cetak Tiket
         </button>
     </div>
 
     <div class="row justify-content-center">
         <div class="col-lg-6">
             <?php foreach ($tickets as $t): ?>
-                <div class="card mb-5 shadow-sm border-0 overflow-hidden" style="border-radius: 20px;">
-                    <div class="p-3 text-center text-white" style="background-color: #1d1145;">
+                <div class="card card-eventku mb-5">
+                    <div class="p-3 text-center text-white bg-primary-eventku">
                         <h5 class="mb-0 fw-bold"><?= htmlspecialchars($t['nama_event']); ?></h5>
                     </div>
                     
                     <div class="card-body p-4 text-center">
-                        <div class="d-flex justify-content-center mb-3">
-                            <div class="qrcode-container p-3 border rounded-4" style="background: #ffffff;">
+                        <div class="d-flex justify-content-center mb-4">
+                            <div class="qrcode-container p-3 border rounded-4 shadow-sm" style="background: #ffffff; border: 2px solid #f8f9fa !important;">
                                 <div class="qrcode" data-code="<?= $t['kode_tiket']; ?>"></div>
                             </div>
                         </div>
 
                         <div class="mb-4">
-                            <small class="text-muted d-block text-uppercase fw-bold" style="font-size: 0.7rem;">Kode Tiket</small>
-                            <span class="fw-bold text-primary fs-5"><?= $t['kode_tiket']; ?></span>
+                            <small class="text-muted d-block text-uppercase fw-bold mb-1" style="font-size: 0.7rem; letter-spacing: 1px;">Kode Tiket</small>
+                            <span class="fw-bold text-primary-eventku fs-3"><?= $t['kode_tiket']; ?></span>
                         </div>
 
-                        <hr class="dashed">
+                        <hr class="dashed my-4">
 
-                        <div class="row text-start mt-3">
+                        <div class="row text-start mt-3 g-3">
                             <div class="col-6">
-                                <small class="text-muted d-block">Jenis Tiket</small>
-                                <span class="fw-bold text-uppercase"><?= $t['nama_tiket']; ?> - <?= $t['kategori_tiket'];?> </span>
+                                <small class="text-muted d-block small">Kategori</small>
+                                <span class="fw-bold text-uppercase text-primary-eventku"><?= $t['nama_tiket']; ?></span>
                             </div>
                             <div class="col-6 text-end">
-                                <small class="text-muted d-block">Waktu</small>
-                                <span class="fw-bold"><?= date('d M Y, H:i', strtotime($t['tgl_event'])); ?></span>
+                                <small class="text-muted d-block small">Waktu</small>
+                                <span class="fw-bold"><?= date('d M Y', strtotime($t['tgl_event'])); ?></span>
                             </div>
-                            <div class="col-12 mt-3">
-                                <small class="text-muted d-block">Lokasi</small>
-                                <span class="fw-bold"><i class="bi bi-geo-alt-fill text-danger me-1"></i> <?= $t['nama_venue']; ?></span>
+                            <div class="col-12">
+                                <small class="text-muted d-block small">Lokasi</small>
+                                <span class="fw-bold"><i class="bi bi-geo-alt-fill text-secondary me-1"></i> <?= $t['nama_venue']; ?></span>
                             </div>
                         </div>
                     </div>

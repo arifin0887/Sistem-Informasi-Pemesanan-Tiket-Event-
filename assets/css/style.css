@@ -305,3 +305,46 @@ body {
     .sidebar.active { left: 0; }
     .sidebar.active + .sidebar-overlay { display: block; }
 }
+
+/* --- Footer Custom Styling --- */
+.footer {
+    padding: 25px 0;
+    font-size: 14px;
+    transition: all 0.3s;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    background: #fff;
+    margin-top: auto; /* Memastikan footer terdorong ke bawah */
+}
+
+/* Penyesuaian margin untuk layar besar (mengikuti sidebar) */
+@media (min-width: 1200px) {
+    #footer {
+        margin-left: 270px;
+    }
+}
+
+.footer .copyright {
+    color: #4a5568;
+    font-size: 15px;
+}
+
+.footer .credits {
+    padding-top: 5px;
+    font-size: 12px;
+}
+
+.footer-links .nav-link {
+    transition: color 0.2s ease;
+}
+
+.footer-links .nav-link:hover {
+    color: var(--secondary-color) !important;
+}
+
+/* Responsif Mobile */
+@media (max-width: 1199px) {
+    .footer {
+        margin-left: 0;
+        text-align: center;
+    }
+}

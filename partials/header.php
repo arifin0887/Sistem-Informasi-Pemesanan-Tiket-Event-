@@ -46,13 +46,6 @@ if(!isset($_SESSION)){
           <li><hr class="dropdown-divider"></li>
           
           <li>
-            <a class="dropdown-item d-flex align-items-center py-2" href="index.php?page=profil">
-              <i class="bi bi-person me-2"></i>
-              <span>Profil Saya</span>
-            </a>
-          </li>
-          
-          <li>
             <a class="dropdown-item d-flex align-items-center py-2 text-danger" href="../logout.php">
               <i class="bi bi-box-arrow-right me-2"></i>
               <span>Sign Out</span>

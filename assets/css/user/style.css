@@ -1,0 +1,171 @@
+:root {
+    --primary-navy: #1D1145;
+    --secondary-tosca: #0DB5BB;
+    --accent-pink: #F82249;
+    --light-bg: #F4F7FE;
+    
+    --glass-bg: rgba(255, 255, 255, 0.9);
+    --card-shadow: 0 10px 30px rgba(29, 17, 69, 0.08);
+    --border-radius-lg: 20px;
+    --border-radius-xl: 25px;
+}
+
+body {
+    background-color: var(--light-bg);
+    font-family: 'Inter', sans-serif; 
+}
+
+/* Utility Classes */
+.text-navy { color: var(--primary-navy) !important; }
+.text-pink { color: var(--accent-pink) !important; }
+.text-primary-eventku { color: var(--primary-navy) !important; }
+
+.bg-primary-eventku { background-color: var(--primary-navy) !important; }
+.bg-gradient-user { background: linear-gradient(45deg, var(--primary-navy), var(--secondary-tosca)); }
+
+.card-eventku {
+    border-radius: var(--border-radius-lg);
+    border: none;
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+}
+
+/* Dashboard: Ticket Cards (E-Tiket) */
+.card-ticket {
+    background: #fff;
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    border: none;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.card-ticket.hover-up:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(29, 17, 69, 0.12);
+}
+
+.dashed-line, hr.dashed {
+    border-top: 2px dashed #dee2e6;
+    background-color: transparent;
+    opacity: 1;
+    margin: 1.5rem 0;
+    position: relative;
+}
+
+/* Lubang tiket di sisi kiri & kanan */
+.dashed-line::before, .dashed-line::after {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: var(--light-bg); 
+    border-radius: 50%;
+    top: -11px;
+}
+.dashed-line::before { left: -31px; }
+.dashed-line::after { right: -31px; }
+
+/* Event Page & Banner */
+.promo-banner {
+    background: linear-gradient(135deg, var(--primary-navy), #3a2a7a);
+    box-shadow: 0 10px 20px rgba(29, 17, 69, 0.2);
+    border-radius: var(--border-radius-lg);
+}
+
+.event-date-badge {
+    background: #fff;
+    padding: 10px;
+    border-radius: 12px;
+    text-align: center;
+    min-width: 70px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    border: 1px solid #eee;
+}
+
+/* Payment & Checkout */
+.card-buy {
+    border: none;
+    border-radius: var(--border-radius-xl);
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+}
+
+.card-buy .card-header {
+    background: var(--primary-navy);
+    padding: 2rem;
+}
+
+.btn-eventku, .btn-checkout {
+    border-radius: 50px;
+    padding: 12px 30px;
+    font-weight: 700;
+    transition: all 0.3s;
+    border: none;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.btn-checkout {
+    background: linear-gradient(135deg, var(--secondary-tosca), #0aa1a6);
+    color: white;
+}
+
+.btn-checkout:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(13, 181, 187, 0.3);
+    color: white;
+}
+
+.form-control-lg, .form-select-lg {
+    border-radius: 12px;
+    font-size: 1rem;
+    border: 1px solid #e2e8f0;
+}
+
+.form-control:focus {
+    border-color: var(--secondary-tosca);
+    box-shadow: 0 0 0 0.25rem rgba(13, 181, 187, 0.1);
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .card-buy .card-header {
+        padding: 1.5rem 1rem;
+    }
+    
+    .card-body {
+        padding: 1.25rem;
+    }
+
+    h2, .display-title {
+        font-size: 1.2rem;
+    }
+
+    .dashed-line::before { left: -25px; }
+    .dashed-line::after { right: -25px; }
+    
+    .btn-eventku, .btn-checkout {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .qrcode-container {
+        width: 100%;
+        max-width: 200px;
+        margin: 0 auto;
+    }
+}
+
+/* Print Optimization */
+@media print {
+    .no-print { display: none !important; }
+    body { background: white; }
+    .card-ticket, .card-eventku {
+        box-shadow: none !important;
+        border: 1px solid #eee !important;
+    }
+    .dashed-line::before, .dashed-line::after {
+        display: none; 
+    }
+}
