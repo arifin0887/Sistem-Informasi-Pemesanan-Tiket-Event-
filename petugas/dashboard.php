@@ -3,37 +3,49 @@ if (!isset($conn)) {
     require_once '../koneksi.php';
 }
 
-// AMBIL ID EVENT DARI URL (OPTIONAL)
-$id_event = isset($_GET['id_event']) ? (int)$_GET['id_event'] : 0;
+// 1. LOGIKA OTOMATIS: Cari id_event dari aktivitas check-in TERBARU
+$q_latest = mysqli_query($conn, "
+    SELECT t.id_event 
+    FROM attendee a
+    JOIN order_detail od ON a.id_detail = od.id_detail
+    JOIN tiket t ON od.id_tiket = t.id_tiket
+    WHERE a.status_checkin = 'sudah' 
+    ORDER BY a.waktu_checkin DESC 
+    LIMIT 1
+");
 
-// JIKA TIDAK ADA ID EVENT → AMBIL EVENT PERTAMA (DEFAULT)
-if ($id_event <= 0) {
-    $q = mysqli_query($conn, "SELECT id_event FROM event ORDER BY tanggal ASC LIMIT 1");
-    $d = mysqli_fetch_assoc($q);
-    $id_event = $d['id_event'] ?? 0;
+$d_latest = mysqli_fetch_assoc($q_latest);
+
+// 2. Tentukan ID Event yang akan ditampilkan
+if ($d_latest) {
+    // Jika sudah ada yang check-in, ikuti event dari orang terakhir tersebut
+    $id_event = $d_latest['id_event'];
+} else {
+    // Jika belum ada yang check-in sama sekali, ambil event terdekat yang akan datang
+    $q_default = mysqli_query($conn, "SELECT id_event FROM event WHERE tanggal >= CURDATE() ORDER BY tanggal ASC LIMIT 1");
+    $d_default = mysqli_fetch_assoc($q_default);
+    $id_event = $d_default['id_event'] ?? 0;
 }
 
-// CEK EVENT VALID
+// 3. Ambil Detail Event untuk Nama Event
 $cek_event = mysqli_query($conn, "SELECT * FROM event WHERE id_event = $id_event");
 $event = mysqli_fetch_assoc($cek_event);
 
 if (!$event) {
-    echo "<div class='alert alert-danger'>Event tidak ditemukan.</div>";
+    echo "<div class='alert alert-warning'>Belum ada data event atau check-in.</div>";
     return;
 }
 
-// TOTAL CHECKIN PER EVENT
+// 4. Hitung Statistik (Query Anda sudah benar, tinggal dijalankan)
 $sql_checkin = "
     SELECT COUNT(*) as total 
     FROM attendee a
     JOIN order_detail od ON a.id_detail = od.id_detail
     JOIN tiket t ON od.id_tiket = t.id_tiket
-    WHERE a.status_checkin = 'sudah'
-    AND t.id_event = $id_event
+    WHERE a.status_checkin = 'sudah' AND t.id_event = $id_event
 ";
 $total_checkin = mysqli_fetch_assoc(mysqli_query($conn, $sql_checkin))['total'];
 
-// TOTAL PESERTA EVENT
 $sql_total = "
     SELECT COUNT(*) as total 
     FROM attendee a
@@ -43,7 +55,6 @@ $sql_total = "
 ";
 $total_tiket = mysqli_fetch_assoc(mysqli_query($conn, $sql_total))['total'];
 
-// HITUNG PERSENTASE
 $persen = ($total_tiket > 0) ? ($total_checkin / $total_tiket) * 100 : 0;
 ?>
 
@@ -92,42 +103,32 @@ $persen = ($total_tiket > 0) ? ($total_checkin / $total_tiket) * 100 : 0;
 
         <div class="col-md-12 col-lg-4">
             <div class="card attendance-card h-100 shadow-sm border-0">
-
                 <div class="card-body p-4 d-flex flex-column justify-content-between">
-
-                    <!-- HEADER -->
                     <div>
                         <div class="d-flex justify-content-between align-items-start mb-3">
                             <div>
                                 <h6 class="text-muted small mb-1">Kehadiran Event</h6>
-                                <h5 class="fw-bold mb-0"><?= htmlspecialchars($event['nama_event']) ?></h5>
+                                <h5 class="fw-bold mb-0 text-primary"><?= htmlspecialchars($event['nama_event']) ?></h5>
                             </div>
                             <i class="bi bi-people-fill text-success fs-4"></i>
                         </div>
 
-                        <!-- TOTAL -->
                         <div class="py-2">
                             <h1 class="display-5 fw-bold mb-0"><?= $total_checkin ?></h1>
-                            <span class="text-muted small">dari <?= $total_tiket ?> peserta</span>
+                            <span class="text-muted small">dari <?= $total_tiket ?> peserta hadir</span>
                         </div>
                     </div>
 
-                    <!-- PROGRESS -->
                     <div class="mt-4">
                         <div class="d-flex justify-content-between mb-2">
                             <span class="small text-muted">Okupansi</span>
                             <span class="fw-bold small"><?= round($persen, 1) ?>%</span>
                         </div>
-
                         <div class="progress rounded-pill" style="height: 10px;">
-                            <div class="progress-bar bg-success"
-                                style="width: <?= $persen ?>%">
-                            </div>
+                            <div class="progress-bar bg-success" style="width: <?= $persen ?>%"></div>
                         </div>
                     </div>
-
                 </div>
-
             </div>
         </div>
         
