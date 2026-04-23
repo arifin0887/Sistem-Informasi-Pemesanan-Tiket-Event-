@@ -19,8 +19,27 @@ $offset = ($page - 1) * $limit;
 // 3. PAGINATION SETUP (CANCEL)
 $cancel_page = (int)($_GET['cancel_page'] ?? 1);
 if ($cancel_page < 1) $cancel_page = 1;
-$cancel_limit = 5;
+$cancel_limit = 3;
 $cancel_offset = ($cancel_page - 1) * $cancel_limit;
+
+// 4. PAGINATION SETUP (EVENT)
+$event_page = (int)($_GET['event_page'] ?? 1);
+if ($event_page < 1) $event_page = 1;
+$event_limit = 3;
+$event_offset = ($event_page - 1) * $event_limit;
+
+// Count total events for pagination
+$count_events = mysqli_query($conn, "
+    SELECT COUNT(DISTINCT e.id_event) as total 
+    FROM orders o 
+    JOIN order_detail od ON o.id_order = od.id_order 
+    JOIN tiket t ON od.id_tiket = t.id_tiket
+    JOIN event e ON t.id_event = e.id_event 
+    JOIN venue v ON e.id_venue = v.id_venue
+    WHERE DATE(o.tanggal_order) BETWEEN '$tgl_mulai' AND '$tgl_selesai' AND o.status = 'paid' $event_filter_sql
+");
+$total_events = mysqli_fetch_assoc($count_events)['total'] ?? 0;
+$total_event_pages = ceil($total_events / $event_limit);
 
 // --- DATA PAID ---
 $count_paid = mysqli_query($conn, "SELECT COUNT(DISTINCT o.id_order) as total FROM orders o JOIN users u ON o.id_user = u.id_user JOIN order_detail od ON o.id_order = od.id_order JOIN tiket t ON od.id_tiket = t.id_tiket JOIN event e ON t.id_event = e.id_event WHERE DATE(o.tanggal_order) BETWEEN '$tgl_mulai' AND '$tgl_selesai' AND o.status = 'paid' $event_filter_sql");
@@ -103,8 +122,14 @@ $event_sales_query = mysqli_query($conn, "
     JOIN event e ON t.id_event = e.id_event 
     JOIN venue v ON e.id_venue = v.id_venue
     WHERE DATE(o.tanggal_order) BETWEEN '$tgl_mulai' AND '$tgl_selesai' AND o.status = 'paid' $event_filter_sql
-    GROUP BY e.id_event ORDER BY revenue DESC
+    GROUP BY e.id_event ORDER BY revenue DESC LIMIT $event_limit OFFSET $event_offset
 ");
+
+$data_events = [];
+while($ev = mysqli_fetch_assoc($event_sales_query)) {
+    $data_events[] = $ev;
+}
+$total_events_displayed = count($data_events);
 ?>
 
 <div class="row mb-4">
@@ -186,11 +211,11 @@ $event_sales_query = mysqli_query($conn, "
         <nav class="mt-3">
             <ul class="pagination justify-content-center">
                 <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=laporan&<?= $url_params ?>&paid_page=<?= $page-1 ?>&cancel_page=<?= $cancel_page ?>">Prev</a>
+                    <a class="page-link" href="?page=laporan&<?= $url_params ?>&paid_page=<?= $page-1 ?>&cancel_page=<?= $cancel_page ?>&event_page=<?= $event_page ?>">Prev</a>
                 </li>
                 <?php for($i=1; $i<=$total_pages_paid; $i++): ?>
                 <li class="page-item <?= ($page == $i) ? 'active' : '' ?>">
-                    <a class="page-link" href="?page=laporan&<?= $url_params ?>&paid_page=<?= $i ?>&cancel_page=<?= $cancel_page ?>"><?= $i ?></a>
+                    <a class="page-link" href="?page=laporan&<?= $url_params ?>&paid_page=<?= $i ?>&cancel_page=<?= $cancel_page ?>&event_page=<?= $event_page ?>"><?= $i ?></a>
                 </li>
                 <?php endfor; ?>
                 <li class="page-item <?= ($page >= $total_pages_paid) ? 'disabled' : '' ?>">
@@ -221,7 +246,7 @@ $event_sales_query = mysqli_query($conn, "
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if(mysqli_num_rows($event_sales_query) > 0): while($ev = mysqli_fetch_assoc($event_sales_query)): ?>
+                    <?php if($total_events > 0): foreach($data_events as $ev): ?>
                     <tr>
                         <td><strong><?= htmlspecialchars($ev['nama_event']) ?></strong><br><small><?= htmlspecialchars($ev['nama_venue']) ?></small></td>
                         <td class="text-center"><span class="badge bg-light text-dark border"><?= $ev['transaksi'] ?></span></td>
@@ -231,12 +256,30 @@ $event_sales_query = mysqli_query($conn, "
                         <td class="text-center fw-bold"><?= number_format($ev['total_qty']) ?></td>
                         <td class="text-end fw-bold text-success">Rp <?= number_format($ev['revenue'], 0, ',', '.') ?></td>
                     </tr>
-                    <?php endwhile; else: ?>
+                    <?php endforeach; else: ?>
                         <tr><td colspan="7" class="text-center py-4 text-muted">Data event tidak ditemukan.</td></tr>
                     <?php endif; ?>
                 </tbody>
             </table>
         </div>
+
+        <?php if($total_event_pages > 1): ?>
+        <nav class="mt-3">
+            <ul class="pagination justify-content-center">
+                <li class="page-item <?= ($event_page <= 1) ? 'disabled' : '' ?>">
+                    <a class="page-link" href="?page=laporan&<?= $url_params ?>&paid_page=<?= $page ?>&cancel_page=<?= $cancel_page ?>&event_page=<?= $event_page-1 ?>">Prev</a>
+                </li>
+                <?php for($i=1; $i<=$total_event_pages; $i++): ?>
+                <li class="page-item <?= ($event_page == $i) ? 'active' : '' ?>">
+                    <a class="page-link" href="?page=laporan&<?= $url_params ?>&paid_page=<?= $page ?>&cancel_page=<?= $cancel_page ?>&event_page=<?= $i ?>"><?= $i ?></a>
+                </li>
+                <?php endfor; ?>
+                <li class="page-item <?= ($event_page >= $total_event_pages) ? 'disabled' : '' ?>">
+                    <a class="page-link" href="?page=laporan&<?= $url_params ?>&paid_page=<?= $page ?>&cancel_page=<?= $cancel_page ?>&event_page=<?= $event_page+1 ?>">Next</a>
+                </li>
+            </ul>
+        </nav>
+        <?php endif; ?>
     </div>
 </div>
 
@@ -276,11 +319,11 @@ $event_sales_query = mysqli_query($conn, "
         <nav class="mt-3">
             <ul class="pagination justify-content-center">
                 <li class="page-item <?= ($cancel_page <= 1) ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=laporan&<?= $url_params ?>&paid_page=<?= $page ?>&cancel_page=<?= $cancel_page-1 ?>">Prev</a>
+<a class="page-link" href="?page=laporan&<?= $url_params ?>&paid_page=<?= $page ?>&event_page=<?= $event_page ?>&cancel_page=<?= $cancel_page-1 ?>">Prev</a>
                 </li>
                 <?php for($i=1; $i<=$total_cancel_pages; $i++): ?>
                 <li class="page-item <?= ($cancel_page == $i) ? 'active' : '' ?>">
-                    <a class="page-link" href="?page=laporan&<?= $url_params ?>&paid_page=<?= $page ?>&cancel_page=<?= $i ?>"><?= $i ?></a>
+                    <a class="page-link" href="?page=laporan&<?= $url_params ?>&paid_page=<?= $page ?>&event_page=<?= $event_page ?>&cancel_page=<?= $i ?>"><?= $i ?></a>
                 </li>
                 <?php endfor; ?>
                 <li class="page-item <?= ($cancel_page >= $total_cancel_pages) ? 'disabled' : '' ?>">
