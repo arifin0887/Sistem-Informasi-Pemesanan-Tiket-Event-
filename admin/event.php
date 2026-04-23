@@ -7,6 +7,7 @@ $message_type = "";
 if (isset($_POST['submit'])) {
     $nama_event = mysqli_real_escape_string($conn, $_POST['nama_event']);
     $id_venue = (int)$_POST['id_venue'];
+    $max_beli = (int)$_POST['max_beli'];
     
     $tanggal_raw = $_POST['tanggal']; 
     $tanggal_fix = str_replace('T', ' ', $tanggal_raw); 
@@ -19,10 +20,10 @@ if (isset($_POST['submit'])) {
     if (!empty($_POST['id_event'])) {
         // LOGIC UPDATE
         $id = (int)$_POST['id_event'];
-        $query = "UPDATE event SET nama_event='$nama_event', tanggal='$tanggal_fix', id_venue='$id_venue' WHERE id_event=$id";
+        $query = "UPDATE event SET nama_event='$nama_event', tanggal='$tanggal_fix', id_venue='$id_venue', max_beli='$max_beli' WHERE id_event=$id";
     } else {
         // LOGIC INSERT
-        $query = "INSERT INTO event (nama_event, tanggal, id_venue) VALUES ('$nama_event', '$tanggal_fix', '$id_venue')";
+        $query = "INSERT INTO event (nama_event, tanggal, id_venue, max_beli) VALUES ('$nama_event', '$tanggal_fix', '$id_venue', '$max_beli')";
     }
 
     if (mysqli_query($conn, $query)) {
@@ -83,6 +84,7 @@ $venues = mysqli_query($conn, "SELECT * FROM venue ORDER BY nama_venue ASC");
                                     <th>Nama Event</th>
                                     <th>Waktu Pelaksanaan</th>
                                     <th>Lokasi (Venue)</th>
+                                    <th>Max Beli</th>
                                     <th width="150" class="text-center">Aksi</th>
                                 </tr>
                             </thead>
@@ -100,6 +102,9 @@ $venues = mysqli_query($conn, "SELECT * FROM venue ORDER BY nama_venue ASC");
                                         </td>
                                         <td>
                                             <span class="venue-tag"><i class="bi bi-geo-alt-fill me-1 text-danger"></i> <?= htmlspecialchars($event['nama_venue']); ?></span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-success"><?= $event['max_beli']; ?> Tiket</span>
                                         </td>
                                         <td class="text-center">
                                             <button class="btn btn-warning btn-sm text-white" onclick='editEvent(<?= json_encode($event, JSON_HEX_APOS | JSON_HEX_QUOT); ?>)'>
@@ -139,6 +144,11 @@ $venues = mysqli_query($conn, "SELECT * FROM venue ORDER BY nama_venue ASC");
                     <div class="mb-3">
                         <label class="form-label fw-bold">Nama Event</label>
                         <input type="text" class="form-control" id="nama_event" name="nama_event" placeholder="Masukkan nama event..." required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Max Beli</label>
+                        <input type="number" class="form-control" id="max_beli" name="max_beli" placeholder="Masukkan max beli..." required>
                     </div>
 
                     <div class="mb-3">
@@ -182,6 +192,7 @@ $venues = mysqli_query($conn, "SELECT * FROM venue ORDER BY nama_venue ASC");
 
         document.getElementById('id_event').value = data.id_event;
         document.getElementById('nama_event').value = data.nama_event;
+        document.getElementById('max_beli').value = data.max_beli;
         document.getElementById('id_venue').value = data.id_venue;
 
         // Konversi "YYYY-MM-DD HH:MM:SS" ke "YYYY-MM-DDTHH:MM"

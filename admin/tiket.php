@@ -114,7 +114,7 @@ $events = mysqli_query($conn, "SELECT e.id_event, e.nama_event, v.kapasitas FROM
                                         <td><?= $no++; ?></td>
                                         <td>
                                             <?php 
-                                                $badge_color = 'bg-success';
+                                                $badge_color = 'bg-primary';
                                                 if($ticket['kategori_tiket'] == 'VIP') $badge_color = 'bg-warning';
                                                 if($ticket['kategori_tiket'] == 'VVIP') $badge_color = 'bg-danger';
                                             ?>
