@@ -1,29 +1,50 @@
 <?php
-
-// CEK KONEKSI
-if (!isset($koneksi) || !($koneksi instanceof mysqli)) {
+if (!isset($conn)) {
     require_once '../koneksi.php';
 }
 
-$hari_ini = date('Y-m-d');
+// AMBIL ID EVENT DARI URL (OPTIONAL)
+$id_event = isset($_GET['id_event']) ? (int)$_GET['id_event'] : 0;
 
-// HITUNG TOTAL CHECK-IN HARI INI
-$sql_checkin = "SELECT COUNT(*) as total FROM attendee WHERE status_checkin = 'sudah' AND DATE(waktu_checkin) = '$hari_ini'";
-$query_checkin = mysqli_query($conn, $sql_checkin);
-
-// JIKA QUERY GAGAL, TAMPILKAN ERROR
-if (!$query_checkin) {
-    die("Query Error: " . mysqli_error($conn));
+// JIKA TIDAK ADA ID EVENT → AMBIL EVENT PERTAMA (DEFAULT)
+if ($id_event <= 0) {
+    $q = mysqli_query($conn, "SELECT id_event FROM event ORDER BY tanggal ASC LIMIT 1");
+    $d = mysqli_fetch_assoc($q);
+    $id_event = $d['id_event'] ?? 0;
 }
 
-$data_checkin = mysqli_fetch_assoc($query_checkin);
-$total_checkin = $data_checkin['total'];
+// CEK EVENT VALID
+$cek_event = mysqli_query($conn, "SELECT * FROM event WHERE id_event = $id_event");
+$event = mysqli_fetch_assoc($cek_event);
 
-// HITUNG TOTAL TIKET TERDAFTAR (CHECK-IN + BELUM CHECK-IN)
-$sql_total = "SELECT COUNT(*) as total FROM attendee";
-$query_total = mysqli_query($conn, $sql_total);
-$data_total = mysqli_fetch_assoc($query_total);
-$total_tiket = $data_total['total'];
+if (!$event) {
+    echo "<div class='alert alert-danger'>Event tidak ditemukan.</div>";
+    return;
+}
+
+// TOTAL CHECKIN PER EVENT
+$sql_checkin = "
+    SELECT COUNT(*) as total 
+    FROM attendee a
+    JOIN order_detail od ON a.id_detail = od.id_detail
+    JOIN tiket t ON od.id_tiket = t.id_tiket
+    WHERE a.status_checkin = 'sudah'
+    AND t.id_event = $id_event
+";
+$total_checkin = mysqli_fetch_assoc(mysqli_query($conn, $sql_checkin))['total'];
+
+// TOTAL PESERTA EVENT
+$sql_total = "
+    SELECT COUNT(*) as total 
+    FROM attendee a
+    JOIN order_detail od ON a.id_detail = od.id_detail
+    JOIN tiket t ON od.id_tiket = t.id_tiket
+    WHERE t.id_event = $id_event
+";
+$total_tiket = mysqli_fetch_assoc(mysqli_query($conn, $sql_total))['total'];
+
+// HITUNG PERSENTASE
+$persen = ($total_tiket > 0) ? ($total_checkin / $total_tiket) * 100 : 0;
 ?>
 
 <section class="section dashboard">
@@ -33,6 +54,7 @@ $total_tiket = $data_total['total'];
             <div class="card card-buy h-100">
                 <div class="card-body p-4 p-xl-5">
                     <div class="row align-items-center">
+
                         <div class="col-md-8">
                             <div class="d-flex align-items-center mb-3">
                                 <span class="standby-indicator"></span>
@@ -69,31 +91,43 @@ $total_tiket = $data_total['total'];
         </div>
 
         <div class="col-md-12 col-lg-4">
-            <div class="card attendance-card h-100 shadow">
-                <div class="card-body p-4 p-xl-5 d-flex flex-column justify-content-between">
+            <div class="card attendance-card h-100 shadow-sm border-0">
+
+                <div class="card-body p-4 d-flex flex-column justify-content-between">
+
+                    <!-- HEADER -->
                     <div>
                         <div class="d-flex justify-content-between align-items-start mb-3">
-                            <h5 class="fw-bold mb-0">Kehadiran</h5>
-                            <i class="bi bi-broadcast text-success pulse-green" data-success-icon="true"></i>
+                            <div>
+                                <h6 class="text-muted small mb-1">Kehadiran Event</h6>
+                                <h5 class="fw-bold mb-0"><?= htmlspecialchars($event['nama_event']) ?></h5>
+                            </div>
+                            <i class="bi bi-people-fill text-success fs-4"></i>
                         </div>
-                        
+
+                        <!-- TOTAL -->
                         <div class="py-2">
-                            <h1 class="display-3 fw-bold mb-0 counter" data-target="<?= $total_checkin ?>"><?= $total_checkin; ?></h1>
-                            <span class="opacity-50 fs-5">dari <?= $total_tiket; ?> Peserta</span>
+                            <h1 class="display-5 fw-bold mb-0"><?= $total_checkin ?></h1>
+                            <span class="text-muted small">dari <?= $total_tiket ?> peserta</span>
                         </div>
                     </div>
 
+                    <!-- PROGRESS -->
                     <div class="mt-4">
-                        <?php $persen = ($total_tiket > 0) ? ($total_checkin / $total_tiket) * 100 : 0; ?>
                         <div class="d-flex justify-content-between mb-2">
-                            <span class="small opacity-75">Okupansi Venue</span>
+                            <span class="small text-muted">Okupansi</span>
                             <span class="fw-bold small"><?= round($persen, 1) ?>%</span>
                         </div>
-                        <div class="progress progress-custom">
-                            <div class="progress-bar progress-bar-glow" style="width: <?= $persen ?>%"></div>
+
+                        <div class="progress rounded-pill" style="height: 10px;">
+                            <div class="progress-bar bg-success"
+                                style="width: <?= $persen ?>%">
+                            </div>
                         </div>
                     </div>
+
                 </div>
+
             </div>
         </div>
         
