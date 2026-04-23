@@ -63,29 +63,172 @@ $query_jelajah = mysqli_query($conn, "
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
-        
+
+        :root {
+            --primary: #1D1145;
+            --secondary: #0DB5BB;
+            --accent: #E66C8A;
+            --bg-soft: #f4f7fb;
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #f8fafc; 
+            background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+            color: #2b2d42;
+        }
+
+        * {
+            transition: all 0.25s ease;
         }
 
         .glass-nav {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(14px);
             border-bottom: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.04);
+        }
+
+        nav button {
+            position: relative;
+        }
+
+        nav button::after {
+            content: '';
+            position: absolute;
+            width: 0%;
+            height: 2px;
+            background: var(--accent);
+            bottom: -4px;
+            left: 0;
+            transition: 0.3s;
+        }
+
+        nav button:hover::after {
+            width: 100%;
+        }
+
+        .hero-overlay {
+            background: linear-gradient(
+                135deg,
+                rgba(29,17,69,0.95),
+                rgba(13,181,187,0.6)
+            );
+        }
+
+        .cta-gradient {
+            background: linear-gradient(135deg, #0DB5BB, #1D1145);
+            box-shadow: 0 10px 30px rgba(13,181,187,0.3);
+            color: white;
+            border-radius: 14px;
+            font-weight: bold;
+        }
+
+        .cta-gradient:hover {
+            transform: translateY(-2px) scale(1.03);
         }
 
         .event-card {
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .event-card:hover {
-            transform: translateY(-10px);
+            border-radius: 18px;
+            background: white;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.35s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05);
         }
 
-        .text-gradient {
-            background: linear-gradient(135deg, #1D1145 0%, #0DB5BB 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .event-card:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+        }
+
+        .event-card .card-header-custom {
+            background: linear-gradient(135deg, #1D1145, #2d1b6b);
+            color: white;
+            height: 160px;
+            padding: 16px;
+            position: relative;
+        }
+
+        .event-card .card-header-custom::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top right, rgba(255,255,255,0.15), transparent);
+        }
+
+        .line-clamp-1 {
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+
+        .card-fixed {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .card-fixed .card-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .display-title {
+            font-size: 1rem;
+            line-height: 1.4;
+            max-height: 2.8em;
+            overflow: hidden;
+        }
+
+        .price-tag {
+            color: var(--accent);
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+
+        .btn-book {
+            background: linear-gradient(135deg, #E66C8A, #cf2e2e);
+            color: white;
+            border: none;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            padding: 6px 16px;
+            box-shadow: 0 5px 15px rgba(230,108,138,0.3);
+        }
+
+        .btn-book:hover {
+            transform: scale(1.08);
+            box-shadow: 0 10px 25px rgba(230,108,138,0.4);
+        }
+
+        .card:hover i {
+            transform: scale(1.1);
+        }
+
+        button:hover {
+            transition: 0.2s ease;
+        }
+
+        /* MOBILE OPTIMIZATION */
+        @media (max-width: 768px) {
+            .event-card:hover {
+                transform: none;
+            }
+
+            .cta-gradient {
+                font-size: 14px;
+                padding: 10px 16px;
+            }
         }
     </style>
 </head>
@@ -97,7 +240,7 @@ $query_jelajah = mysqli_query($conn, "
 
             <!-- LOGO -->
             <button onclick="pindahMenu('beranda')" class="text-2xl lg:text-3xl font-extrabold text-[#1D1145]">
-                Event<span class="text-[#E66C8A]">Ku</span>
+                Event<span class="text-[#0DB5BB]">Ku</span>
             </button>
 
             <!-- MENU DESKTOP -->
@@ -381,7 +524,7 @@ $query_jelajah = mysqli_query($conn, "
             <!-- HEADER -->
             <div class="text-center max-w-3xl mx-auto mb-16">
                 <h2 class="text-4xl font-extrabold text-[#1D1145] mb-4">
-                    Tentang <span class="text-[#E66C8A]">EventKu</span>
+                    Tentang <span class="text-[#0DB5BB]">EventKu</span>
                 </h2>
                 <p class="text-gray-600 text-lg leading-relaxed">
                     EventKu adalah platform digital yang dirancang untuk memudahkan masyarakat dalam menemukan, 
@@ -584,7 +727,7 @@ $query_jelajah = mysqli_query($conn, "
                 <!-- Logo & Deskripsi -->
                 <div class="lg:col-span-1">
                     <a href="#" class="text-3xl md:text-4xl font-black bg-gradient-to-r from-white via-[#0DB5BB] to-[#E66C8A] bg-clip-text inline-block mb-6">
-                        Event<span class="text-[#E66C8A]">Ku</span>
+                        Event<span class="text-[#0DB5BB]">Ku</span>
                     </a>
                     <p class="text-gray-300 leading-relaxed mb-6">Platform tiket event #1 Indonesia. Aman, resmi, tanpa calo. Rasakan pengalaman event terbaik dengan kami.</p>
                     <div class="flex space-x-3">
@@ -672,132 +815,132 @@ $query_jelajah = mysqli_query($conn, "
     </footer>
     <!-- FOOTER END -->
 
-    <script>
-        // DATA DARI PHP KE JS
-        let isLogin = <?= isset($_SESSION['user']) ? 'true' : 'false'; ?>;
-        // Simpan data event ke array untuk digunakan di JS
-        let databaseEvent = <?= json_encode($data_event); ?>;
-        let kategoriAktif = "Semua";
-
-        // FORMAT DATA
-        databaseEvent = databaseEvent.map(e => ({
-            id: e.id_event,
-            nama: e.nama_event,
-            lokasi: e.nama_venue ?? "TBA",
-            tanggal: `${new Date(e.tanggal).getDate()} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][new Date(e.tanggal).getMonth()]} ${new Date(e.tanggal).getFullYear()}`,
-            jam: "19:00",
-            harga: e.harga_mulai ?? 0,
-            kategori: e.kategori_event ? e.kategori_event.split(",") : ["Umum"],
-            img: "https://source.unsplash.com/400x300/?concert,festival,party"        
-        }));
-        console.log(databaseEvent);
-
-        // TEMPLATE CARD
-        function buatTemplateCard(event) {
-            const harga = new Intl.NumberFormat('id-ID').format(event.harga);
-            return `
-            <div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden border border-gray-100 group">
-                <div class="relative bg-gradient-to-br from-[#1d1145] to-[#2d1b6b] text-white h-40 flex flex-col justify-between p-4">
-                    <span class="bg-[#0DB5BB] text-white text-xs font-bold px-3 py-1 rounded-full uppercase w-fit">
-                        Event
-                    </span>
-                    <div class="absolute right-3 bottom-2 opacity-10">
-                        <i class="bi bi-calendar-event" style="font-size: 4rem;"></i>
-                    </div>
-                    <div>
-                        <h6 class="font-bold text-white line-clamp-2">${event.nama}</h6>
-                        <small class="text-white/70">${event.tanggal}</small>
-                    </div>
-                </div>
-
-                <div class="p-4">
-                    <p class="text-sm text-gray-500 mb-1">
-                        <i class="bi bi-calendar-event me-2 text-[#0DB5BB]"></i> ${event.tanggal}
-                    </p>
-                    <p class="text-sm text-gray-500 mb-4">
-                        <i class="bi bi-geo-alt me-2 text-[#0DB5BB]"></i> ${event.lokasi}
-                    </p>
-
-                    <div class="flex justify-between items-center pt-4 border-t border-gray-50">
-                        <span class="text-[#e66c8a] font-bold">
-                            Rp ${harga}
-                        </span>
-                        <button onclick="beliEvent(${event.id})" 
-                            class="bg-[#1d1145] text-white px-4 py-1.5 rounded-lg text-sm hover:bg-[#e66c8a] transition shadow-md">
-                            Beli Tiket
-                        </button>
-                    </div>
-                </div>
-            </div>`;
-        }
-
-        // FILTER EVENT
-        function filterEvent() {
-            const grid = document.getElementById('eventGrid');
-            if (!grid) return;
-
-            const input = document.getElementById('searchInput');
-            const keyword = input ? input.value.toLowerCase() : "";
-
-            let hasil = databaseEvent.filter(e =>
-                (e.nama.toLowerCase().includes(keyword) || e.lokasi.toLowerCase().includes(keyword)) &&
-                (kategoriAktif === "Semua" || e.kategori.includes(kategoriAktif))
-            );
-
-            grid.innerHTML = hasil.length
-                ? hasil.map(e => buatTemplateCard(e)).join('')
-                : `<p class="text-center col-span-full text-gray-400">Tidak ada event</p>`;
-        }
-
-        // BELI EVENT
-        function beliEvent(id){
-            if(!isLogin){
-                alert("Silahkan masuk atau daftar terlebih dahulu untuk membeli tiket!");
-                window.location.href = "login.php";
-                return;
-            }
-
-            window.location.href = "detail_event.php?id=" + id;
-        }
-
-        // NAVIGATION + ACTIVE TAB
-        function pindahMenu(menu) {
-            const menus = ['beranda','jelajah','tentang','kontak'];
-
-            menus.forEach(m => {
-                const el = document.getElementById('menu-' + m);
-                const nav = document.getElementById('nav-' + m);
-
-                if(el) el.classList.add('hidden');
-
-                if(nav){
-                    nav.classList.remove('text-[#0DB5BB]', 'border-[#0DB5BB]');
-                    nav.classList.add('text-gray-700', 'border-transparent');
-                }
-            });
-
-            document.getElementById('menu-' + menu).classList.remove('hidden');
-
-            const navAktif = document.getElementById('nav-' + menu);
-            if(navAktif){
-                navAktif.classList.remove('text-gray-700','border-transparent');
-                navAktif.classList.add('text-[#0DB5BB]','border-[#0DB5BB]');
-            }
-
-            window.scrollTo(0,0);
-
-            if(menu === 'jelajah') filterEvent();
-        }
-
-        document.addEventListener("DOMContentLoaded", () => {
-            filterEvent();
-        });
-
-        // TOGGLE MOBILE MENU
-        function toggleMenu(){
-            document.getElementById('mobileMenu').classList.toggle('hidden');
-        }
-    </script>
-
 </body>
 </html>
+
+<script>
+    // DATA DARI PHP KE JS
+    let isLogin = <?= isset($_SESSION['user']) ? 'true' : 'false'; ?>;
+    // Simpan data event ke array untuk digunakan di JS
+    let databaseEvent = <?= json_encode($data_event); ?>;
+    let kategoriAktif = "Semua";
+
+    // FORMAT DATA
+    databaseEvent = databaseEvent.map(e => ({
+        id: e.id_event,
+        nama: e.nama_event,
+        lokasi: e.nama_venue ?? "TBA",
+        tanggal: `${new Date(e.tanggal).getDate()} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][new Date(e.tanggal).getMonth()]} ${new Date(e.tanggal).getFullYear()}`,
+        jam: "19:00",
+        harga: e.harga_mulai ?? 0,
+        kategori: e.kategori_event ? e.kategori_event.split(",") : ["Umum"],
+        img: "https://source.unsplash.com/400x300/?concert,festival,party"        
+    }));
+    console.log(databaseEvent);
+
+    // TEMPLATE CARD
+    function buatTemplateCard(event) {
+        const harga = new Intl.NumberFormat('id-ID').format(event.harga);
+        return `
+        <div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden border border-gray-100 group">
+            <div class="relative bg-gradient-to-br from-[#1d1145] to-[#2d1b6b] text-white h-40 flex flex-col justify-between p-4">
+                <span class="bg-[#0DB5BB] text-white text-xs font-bold px-3 py-1 rounded-full uppercase w-fit">
+                    Event
+                </span>
+                <div class="absolute right-3 bottom-2 opacity-10">
+                    <i class="bi bi-calendar-event" style="font-size: 4rem;"></i>
+                </div>
+                <div>
+                    <h6 class="font-bold text-white line-clamp-2">${event.nama}</h6>
+                    <small class="text-white/70">${event.tanggal}</small>
+                </div>
+            </div>
+
+            <div class="p-4">
+                <p class="text-sm text-gray-500 mb-1">
+                    <i class="bi bi-calendar-event me-2 text-[#0DB5BB]"></i> ${event.tanggal}
+                </p>
+                <p class="text-sm text-gray-500 mb-4">
+                    <i class="bi bi-geo-alt me-2 text-[#0DB5BB]"></i> ${event.lokasi}
+                </p>
+
+                <div class="flex justify-between items-center pt-4 border-t border-gray-50">
+                    <span class="text-[#e66c8a] font-bold">
+                        Rp ${harga}
+                    </span>
+                    <button onclick="beliEvent(${event.id})" 
+                        class="bg-[#1d1145] text-white px-4 py-1.5 rounded-lg text-sm hover:bg-[#e66c8a] transition shadow-md">
+                        Beli Tiket
+                    </button>
+                </div>
+            </div>
+        </div>`;
+    }
+
+    // FILTER EVENT
+    function filterEvent() {
+        const grid = document.getElementById('eventGrid');
+        if (!grid) return;
+
+        const input = document.getElementById('searchInput');
+        const keyword = input ? input.value.toLowerCase() : "";
+
+        let hasil = databaseEvent.filter(e =>
+            (e.nama.toLowerCase().includes(keyword) || e.lokasi.toLowerCase().includes(keyword)) &&
+            (kategoriAktif === "Semua" || e.kategori.includes(kategoriAktif))
+        );
+
+        grid.innerHTML = hasil.length
+            ? hasil.map(e => buatTemplateCard(e)).join('')
+            : `<p class="text-center col-span-full text-gray-400">Tidak ada event</p>`;
+    }
+
+    // BELI EVENT
+    function beliEvent(id){
+        if(!isLogin){
+            alert("Silahkan masuk atau daftar terlebih dahulu untuk membeli tiket!");
+            window.location.href = "login.php";
+            return;
+        }
+
+        window.location.href = "detail_event.php?id=" + id;
+    }
+
+    // NAVIGATION + ACTIVE TAB
+    function pindahMenu(menu) {
+        const menus = ['beranda','jelajah','tentang','kontak'];
+
+        menus.forEach(m => {
+            const el = document.getElementById('menu-' + m);
+            const nav = document.getElementById('nav-' + m);
+
+            if(el) el.classList.add('hidden');
+
+            if(nav){
+                nav.classList.remove('text-[#0DB5BB]', 'border-[#0DB5BB]');
+                nav.classList.add('text-gray-700', 'border-transparent');
+            }
+        });
+
+        document.getElementById('menu-' + menu).classList.remove('hidden');
+
+        const navAktif = document.getElementById('nav-' + menu);
+        if(navAktif){
+            navAktif.classList.remove('text-gray-700','border-transparent');
+            navAktif.classList.add('text-[#0DB5BB]','border-[#0DB5BB]');
+        }
+
+        window.scrollTo(0,0);
+
+        if(menu === 'jelajah') filterEvent();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        filterEvent();
+    });
+
+    // TOGGLE MOBILE MENU
+    function toggleMenu(){
+        document.getElementById('mobileMenu').classList.toggle('hidden');
+    }
+</script>

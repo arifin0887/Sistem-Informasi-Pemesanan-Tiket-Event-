@@ -9,9 +9,7 @@ $id_user  = $_SESSION['user']['id'];
 $id_event = (int)($_GET['id_event'] ?? 0);
 $id_tiket_selected = (int)($_GET['id_tiket'] ?? 0);
 
-// ==========================
 // AMBIL DATA EVENT
-// ==========================
 $query_event = $conn->prepare("
     SELECT e.nama_event, e.tanggal, v.nama_venue, e.max_beli
     FROM event e 
@@ -27,9 +25,7 @@ if (!$event) {
     return;
 }
 
-// ==========================
 // AMBIL SEMUA TIKET
-// ==========================
 $query_tickets = $conn->prepare("
     SELECT id_tiket, kategori_tiket, nama_tiket, harga, kuota 
     FROM tiket 
@@ -44,9 +40,7 @@ while($row = $result_tickets->fetch_assoc()) {
     $tickets_data[] = $row;
 }
 
-// ==========================
 // HITUNG SUDAH BELI
-// ==========================
 $stmt_total = $conn->prepare("
     SELECT SUM(od.qty) as total 
     FROM order_detail od
@@ -60,16 +54,12 @@ $stmt_total->bind_param("ii", $id_user, $id_event);
 $stmt_total->execute();
 $total_bought = (int)($stmt_total->get_result()->fetch_assoc()['total'] ?? 0);
 
-// ==========================
 // MAX LIMIT
-// ==========================
 $max_limit = (int)($event['max_beli'] ?? 0);
 if ($max_limit <= 0) $max_limit = 3;
 
 
-// ==========================
 // PROSES BELI
-// ==========================
 if (isset($_POST['proses_buy'])) {
 
     $id_tiket_final = (int)$_POST['id_tiket'];

@@ -15,7 +15,6 @@ body {
     font-family: 'Inter', sans-serif; 
 }
 
-/* Utility Classes */
 .text-navy { color: var(--primary-navy) !important; }
 .text-pink { color: var(--accent-pink) !important; }
 .text-primary-eventku { color: var(--primary-navy) !important; }
@@ -53,7 +52,6 @@ body {
     position: relative;
 }
 
-/* Lubang tiket di sisi kiri & kanan */
 .dashed-line::before, .dashed-line::after {
     content: "";
     position: absolute;

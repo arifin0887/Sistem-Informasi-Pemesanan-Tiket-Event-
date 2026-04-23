@@ -2,10 +2,8 @@
 session_start();
 require_once '../koneksi.php';
 
-// 🔥 WAJIB: header JSON
 header('Content-Type: application/json');
 
-// 🔥 MATIKAN ERROR HTML (BIAR GAK RUSAK JSON)
 error_reporting(0);
 ini_set('display_errors', 0);
 
@@ -114,7 +112,6 @@ try {
 
 } catch (Exception $e) {
 
-    // 🔥 HANDLE ERROR BIAR GAK KELUAR HTML
     echo json_encode([
         'allow' => false,
         'message' => 'Terjadi kesalahan server'

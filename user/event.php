@@ -85,49 +85,43 @@ $v = mysqli_fetch_assoc($query_voucher);
 <?php endif; ?>
 
 <style>
-    /* CARD FIX HEIGHT */
-.event-card {
-    border-radius: 18px;
-    height: 100%;
-    transition: 0.3s;
-}
+    .event-card {
+        border-radius: 18px;
+        height: 100%;
+        transition: 0.3s;
+    }
 
-.event-card:hover {
-    transform: translateY(-5px);
-}
+    .event-card:hover {
+        transform: translateY(-5px);
+    }
 
-/* BADGE */
-.badge-status-custom {
-    top: 15px;
-    right: 15px;
-    font-size: 0.7rem;
-}
+    .badge-status-custom {
+        top: 15px;
+        right: 15px;
+        font-size: 0.7rem;
+    }
 
-/* TITLE LIMIT (ANTI TINGGI BERBEDA) */
-.event-title-clamp {
-    display: -webkit-box;
-    -webkit-line-clamp: 2; /* max 2 baris */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    min-height: 42px; /* jaga tinggi tetap */
-}
+    .event-title-clamp {
+        display: -webkit-box;
+        -webkit-line-clamp: 2; 
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        min-height: 42px; 
+    }
 
-/* PRICE */
-.price-tag {
-    color: var(--event-accent);
-    font-size: 1rem;
-}
+    .price-tag {
+        color: var(--event-accent);
+        font-size: 1rem;
+    }
 
-/* DATE BOX */
-.event-date-badge {
-    text-align: center;
-    min-width: 50px;
-}
+    .event-date-badge {
+        text-align: center;
+        min-width: 50px;
+    }
 
-/* FLEX FIX */
-.card-body {
-    height: 100%;
-}
+    .card-body {
+        height: 100%;
+    }
 </style>
 
 <section class="section">
