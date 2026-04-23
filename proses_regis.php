@@ -4,21 +4,21 @@ include 'koneksi.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $nama     = mysqli_real_escape_string($conn, $_POST['full_name']);
-    $email    = mysqli_real_escape_string($conn, $_POST['email']);
-    $password = md5($_POST['password']); 
-    $role     = 'user'; 
+    $nama     = $_POST['nama'];
+    $email    = $_POST['email'];
+    $password = md5($_POST['password']);
+    $role     = 'user';
 
-    // VALIDASI
     if (empty($nama) || empty($email) || empty($_POST['password'])) {
-        echo "<script>alert('Data tidak boleh kosong!');window.location='regis.php';</script>";
+        $_SESSION['error'] = "Data tidak boleh kosong!";
+        header("Location: regis.php");
         exit;
     }
 
-    // CEK EMAIL
     $cek = mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
     if (mysqli_num_rows($cek) > 0) {
-        echo "<script>alert('Email sudah digunakan!');window.location='regis.php';</script>";
+        $_SESSION['error'] = "Email sudah digunakan!";
+        header("Location: regis.php");
         exit;
     }
 
@@ -28,23 +28,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     ");
 
     if ($insert) {
-
-        echo "
-        <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: 'Akun berhasil dibuat, silahkan login',
-                confirmButtonColor: '#E66C8A'
-            }).then(() => {
-                window.location = 'login.php';
-            });
-        </script>
-        ";
-
+        $_SESSION['success'] = "Akun berhasil dibuat!";
+        header("Location: login.php");
+        exit;
     } else {
-        echo "<script>alert('Registrasi gagal!');window.location='regis.php';</script>";
+        die("Error: " . mysqli_error($conn));
     }
 }
 ?>
