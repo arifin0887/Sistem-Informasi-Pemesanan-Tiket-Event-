@@ -42,65 +42,49 @@ $tikets = mysqli_query($conn, "
 $message = "";
 $type = "";
 
-// =======================
 // PROSES BAYAR
-// =======================
 if (isset($_POST['proses_bayar'])) {
 
-    mysqli_begin_transaction($conn);
+    $metode = $_POST['metode'];
 
-    try {
+    // UPLOAD FILE
+    $file = $_FILES['bukti'];
+    $nama_file = $file['name'];
+    $tmp = $file['tmp_name'];
 
-        // UPDATE STATUS ORDER
+    // VALIDASI FILE
+    $ext = strtolower(pathinfo($nama_file, PATHINFO_EXTENSION));
+    $allowed = ['jpg','jpeg','png'];
+
+    if (!in_array($ext, $allowed)) {
+        echo "<script>alert('Format file tidak valid!');</script>";
+        return;
+    }
+
+    // BUAT NAMA UNIK
+    $new_name = 'bukti_' . time() . '.' . $ext;
+
+    // FOLDER SIMPAN
+    $path = '../uploads/' . $new_name;
+
+    if (move_uploaded_file($tmp, $path)) {
+
+        // SIMPAN KE DATABASE (opsional)
         mysqli_query($conn, "
             UPDATE orders 
-            SET status = 'paid' 
-            WHERE id_order = $id_order
+            SET status='menunggu_verifikasi', 
+                metode_bayar='$metode',
+                bukti_transfer='$new_name'
+            WHERE id_order='$id_order'
         ");
 
-        // AMBIL DETAIL UNTUK GENERATE TIKET
-        $details = mysqli_query($conn, "
-            SELECT * FROM order_detail 
-            WHERE id_order = $id_order
-        ");
+        echo "<script>
+            alert('Bukti berhasil diupload, menunggu verifikasi admin');
+            window.location='index.php?page=riwayat';
+        </script>";
 
-        while ($d = mysqli_fetch_assoc($details)) {
-
-            // CEK APAKAH SUDAH ADA TIKET
-            $cek = mysqli_query($conn, "
-                SELECT id_attendee 
-                FROM attendee 
-                WHERE id_detail = {$d['id_detail']}
-            ");
-
-            if (mysqli_num_rows($cek) == 0) {
-
-                for ($i = 0; $i < $d['qty']; $i++) {
-
-                    $kode = "EVT-" . strtoupper(bin2hex(random_bytes(4)));
-
-                    mysqli_query($conn, "
-                        INSERT INTO attendee (id_detail, kode_tiket, status_checkin) 
-                        VALUES ({$d['id_detail']}, '$kode', 'belum')
-                    ");
-                }
-            }
-        }
-
-        mysqli_commit($conn);
-
-        $message = "✅ Pembayaran berhasil! Tiket sudah dibuat.";
-        $type = "success";
-
-        // REFRESH DATA ORDER
-        $order['status'] = 'paid';
-
-    } catch (Exception $e) {
-
-        mysqli_rollback($conn);
-
-        $message = "❌ Terjadi kesalahan saat pembayaran!";
-        $type = "danger";
+    } else {
+        echo "<script>alert('Upload gagal!');</script>";
     }
 }
 ?>
@@ -171,25 +155,33 @@ if (isset($_POST['proses_bayar'])) {
 
                         <hr>
 
-                        <!-- ===================== -->
                         <!-- BUTTON BAYAR -->
-                        <!-- ===================== -->
                         <?php if ($order['status'] == 'pending'): ?>
 
-                        <form method="POST">
+                        <form method="POST" enctype="multipart/form-data">
 
                             <div class="mb-3">
                                 <label class="fw-bold">Metode Pembayaran</label>
-
-                                <select name="metode" class="form-select" required>
-                                    <option value="qris">QRIS / E-Wallet</option>
+                                <select name="metode" id="metodeBayar" class="form-select" required onchange="showPaymentInfo()">
+                                    <option value="">-- Pilih Metode --</option>
+                                    <option value="qris">E-Wallet</option>
                                     <option value="bank">Transfer Bank</option>
                                 </select>
                             </div>
 
+                            <!-- INFO PEMBAYARAN -->
+                            <div id="infoPembayaran" class="mb-3" style="display:none;"></div>
+
+                            <!-- UPLOAD BUKTI -->
+                            <div class="mb-3">
+                                <label class="fw-bold">Upload Bukti Transfer</label>
+                                <input type="file" name="bukti" class="form-control" accept="image/*" required>
+                                <small class="text-muted">Format: JPG, PNG, JPEG</small>
+                            </div>
+
                             <button type="submit" name="proses_bayar" 
                                 class="btn btn-success w-100 btn-lg fw-bold">
-                                💳 Bayar Sekarang
+                                💳 Konfirmasi Pembayaran
                             </button>
 
                         </form>
@@ -213,3 +205,36 @@ if (isset($_POST['proses_bayar'])) {
         </div>
     </div>
 </section>
+
+<script>
+function showPaymentInfo() {
+    let metode = document.getElementById('metodeBayar').value;
+    let info = document.getElementById('infoPembayaran');
+
+    if (metode === 'bank') {
+        info.style.display = 'block';
+        info.innerHTML = `
+            <div class="alert alert-info text-center">
+                <b>Transfer ke: Bank BCA</b><br>
+                No Rek:
+                <b>1234567890</b><br>
+                A/N PT Edu Tech Development
+            </div>
+        `;
+    } 
+    else if (metode === 'qris') {
+        info.style.display = 'block';
+        info.innerHTML = `
+            <div class="alert alert-success text-center">
+                <b>E-Wallet:</b><br>
+                Kirim ke E Wallet berikut:<br>
+                <span class="fw-bold">081234567890 (OVO/DANA/LinkAja)</span><br>
+                <small class="text-muted">Pastikan memasukkan nomor yang benar</small>
+            </div>
+        `;
+    } 
+    else {
+        info.style.display = 'none';
+    }
+}
+</script>

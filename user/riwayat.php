@@ -124,7 +124,7 @@ $query = "SELECT
           JOIN event e ON t.id_event = e.id_event
           JOIN venue v ON e.id_venue = v.id_venue
           WHERE o.id_user = $id_user
-          AND o.status IN ('pending', 'paid')
+          AND o.status IN ('pending', 'paid', 'menunggu_verifikasi')
           AND o.tanggal_order >= NOW() - INTERVAL 30 DAY
           ORDER BY o.tanggal_order DESC";
 
@@ -229,6 +229,13 @@ while ($row = mysqli_fetch_assoc($result)) {
                                                 onclick="cancelTiket(<?= $id_order; ?>)">
                                             Batalkan Pesanan
                                         </button>
+
+                                    <?php elseif ($status == 'menunggu_verifikasi'): ?>
+                                        <button class="btn btn-outline-warning w-100 rounded-pill fw-bold" disabled>
+                                            <i class="bi bi-patch-check-fill me-2"></i>Menunggu Verifikasi  
+                                        </button>
+                                        <p class="text-muted small mt-2 text-center">Tim kami sedang memverifikasi pembayaran Anda.</p>
+                                        
 
                                     <?php elseif ($status == 'paid'): ?>
                                         <button class="btn btn-outline-success w-100 rounded-pill fw-bold" data-bs-toggle="modal" data-bs-target="#modalTiket<?= $id_order ?>">
