@@ -176,7 +176,7 @@ $ev = mysqli_fetch_assoc(mysqli_query($conn, "
                                     <div class="mb-4">
                                         <label class="form-label fw-bold text-primary">Kode Voucher <small class="text-muted">(Opsional)</small></label>
                                         <div class="input-group">
-                                            <input type="text" name="kode_voucher" class="form-control form-control-lg" placeholder="Masukkan kode voucher" value="<?= $cart['kode_voucher'] ?>">
+                                            <input type="text" name="kode_voucher" class="form-control form-control-lg" placeholder="Masukkan kode voucher" value="<?= $cart['kode_voucher'] ?? '' ?>"">
                                             <button type="submit" name="apply_voucher" class="btn btn-outline-secondary">
                                                 <i class="bi bi-tag me-1"></i>Gunakan
                                             </button>

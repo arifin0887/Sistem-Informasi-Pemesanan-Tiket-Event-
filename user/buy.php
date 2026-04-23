@@ -5,13 +5,15 @@ if (!isset($_SESSION['user']['id'])) {
     exit;
 }
 
-// AMBIL ID EVENT DARI URL
+$id_user  = $_SESSION['user']['id'];
 $id_event = (int)($_GET['id_event'] ?? 0);
-$id_tiket_selected = (int)($_GET['id_tiket'] ?? 0); // Tiket awal yang dipilih user
+$id_tiket_selected = (int)($_GET['id_tiket'] ?? 0);
 
-// 1. QUERY DETAIL EVENT & DAFTAR SEMUA TIKET DI EVENT TERSEBUT
+// ==========================
+// AMBIL DATA EVENT
+// ==========================
 $query_event = $conn->prepare("
-    SELECT e.nama_event, e.tanggal, v.nama_venue 
+    SELECT e.nama_event, e.tanggal, v.nama_venue, e.max_beli
     FROM event e 
     JOIN venue v ON e.id_venue = v.id_venue 
     WHERE e.id_event = ?
@@ -25,8 +27,14 @@ if (!$event) {
     return;
 }
 
-// 2. QUERY SEMUA KATEGORI TIKET UNTUK DROPDOWN
-$query_tickets = $conn->prepare("SELECT id_tiket, kategori_tiket, nama_tiket, harga, kuota FROM tiket WHERE id_event = ? AND kuota > 0");
+// ==========================
+// AMBIL SEMUA TIKET
+// ==========================
+$query_tickets = $conn->prepare("
+    SELECT id_tiket, kategori_tiket, nama_tiket, harga, kuota 
+    FROM tiket 
+    WHERE id_event = ? AND kuota > 0
+");
 $query_tickets->bind_param("i", $id_event);
 $query_tickets->execute();
 $result_tickets = $query_tickets->get_result();
@@ -36,38 +44,71 @@ while($row = $result_tickets->fetch_assoc()) {
     $tickets_data[] = $row;
 }
 
-// PROSES PEMBELIAN TIKET
+// ==========================
+// HITUNG SUDAH BELI
+// ==========================
+$stmt_total = $conn->prepare("
+    SELECT SUM(od.qty) as total 
+    FROM order_detail od
+    JOIN orders o ON od.id_order = o.id_order
+    JOIN tiket t ON od.id_tiket = t.id_tiket
+    WHERE o.id_user = ? 
+    AND t.id_event = ?
+    AND o.status IN ('pending','paid')
+");
+$stmt_total->bind_param("ii", $id_user, $id_event);
+$stmt_total->execute();
+$total_bought = (int)($stmt_total->get_result()->fetch_assoc()['total'] ?? 0);
+
+// ==========================
+// MAX LIMIT
+// ==========================
+$max_limit = (int)($event['max_beli'] ?? 0);
+if ($max_limit <= 0) $max_limit = 3;
+
+
+// ==========================
+// PROSES BELI
+// ==========================
 if (isset($_POST['proses_buy'])) {
+
     $id_tiket_final = (int)$_POST['id_tiket'];
     $jumlah = (int)$_POST['jumlah'];
 
-    // Ambil data tiket yang dipilih untuk validasi akhir
-    $check = $conn->prepare("SELECT * FROM tiket WHERE id_tiket = ?");
+    $check = $conn->prepare("
+        SELECT t.*, e.max_beli 
+        FROM tiket t
+        JOIN event e ON t.id_event = e.id_event
+        WHERE t.id_tiket = ?
+    ");
     $check->bind_param("i", $id_tiket_final);
     $check->execute();
     $t_data = $check->get_result()->fetch_assoc();
 
     if ($jumlah > $t_data['kuota']) {
-        echo "<script>alert('Jumlah melebihi kuota tersedia!');</script>";
-    } else if ($jumlah <= 0) {
-        echo "<script>alert('Jumlah minimal 1 tiket!');</script>";
-    } else {
+        echo "<script>alert('Jumlah melebihi kuota!');</script>";
+    }
+    else if ($jumlah <= 0) {
+        echo "<script>alert('Minimal 1 tiket!');</script>";
+    }
+    else if (($total_bought + $jumlah) > $max_limit) {
+        echo "<script>alert('Maksimal {$max_limit} tiket! Anda sudah beli {$total_bought}.');</script>";
+    }
+    else {
+
         $_SESSION['cart'] = [
             'id_event'     => $id_event,
             'id_tiket'     => $id_tiket_final,
             'nama_event'   => $event['nama_event'],
-            'nama_tiket'   => "[" . $t_data['kategori_tiket'] . "] " . $t_data['nama_tiket'],
+            'nama_tiket'   => $t_data['nama_tiket'],
             'harga_satuan' => $t_data['harga'],
             'jumlah'       => $jumlah,
             'subtotal'     => $t_data['harga'] * $jumlah,
-            'diskon'       => 0,
-            'total'        => $t_data['harga'] * $jumlah,
-            'id_voucher'   => null,
-            'kode_voucher' => ''
+            'total'        => $t_data['harga'] * $jumlah
         ];
 
         echo "<script>
-            alert('Tiket berhasil ditambahkan ke keranjang!');
+            alert('Berhasil ke checkout');
             window.location='index.php?page=checkout';
         </script>";
         exit;
@@ -115,10 +156,7 @@ if (isset($_POST['proses_buy'])) {
                                         <span class="text-muted">Subtotal</span>
                                         <span id="display_subtotal" class="fw-bold">Rp 0</span>
                                     </div>
-                                    <div class="d-flex justify-content-between mb-2">
-                                        <span class="text-muted">Potongan</span>
-                                        <span class="text-success fw-bold">- Rp 0</span>
-                                    </div>
+                                    
                                     <hr class="my-3">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <span class="fw-bold text-navy">Total Bayar</span>
@@ -130,7 +168,7 @@ if (isset($_POST['proses_buy'])) {
                             <div class="col-md-6 ps-md-4">
                                 <form method="POST" class="form-buy">
                                     <div class="mb-4">
-                                        <label class="form-label fw-bold text-navy">Pilih Kategori Tiket</label>
+                                        <label class="form-label fw-bold text-navy">Pilih Kelas Tiket</label>
                                         <select name="id_tiket" id="select_tiket" class="form-select form-select-lg" required onchange="updateTicketInfo()">
                                             <?php foreach($tickets_data as $t): ?>
                                                 <option value="<?= $t['id_tiket'] ?>" 
@@ -175,53 +213,55 @@ if (isset($_POST['proses_buy'])) {
 </section>
 
 <script>
+    let maxLimit = <?= $max_limit ?>;
+    let sudahBeli = <?= $total_bought ?>;
+
     function updateTicketInfo() {
         const select = document.getElementById('select_tiket');
-        const selectedOption = select.options[select.selectedIndex];
-        
-        const harga = parseInt(selectedOption.getAttribute('data-harga'));
-        const kuota = parseInt(selectedOption.getAttribute('data-kuota'));
-        const jumlahInput = document.getElementById('jumlah_tiket');
+        const opt = select.options[select.selectedIndex];
 
-        // Update tampilan info tiket
+        const harga = parseInt(opt.dataset.harga);
+        const kuota = parseInt(opt.dataset.kuota);
+
         document.getElementById('display_kuota').innerText = kuota;
-        document.getElementById('display_harga_satuan').innerText = new Intl.NumberFormat('id-ID').format(harga) + ' / tiket';
-        
-        // Pastikan jumlah tiket tidak melebihi kuota kategori baru
-        if(parseInt(jumlahInput.value) > kuota) {
-            jumlahInput.value = kuota;
-        }
+        document.getElementById('display_harga_satuan').innerText = "@ Rp " + harga.toLocaleString('id-ID');
 
         calculateTotal();
     }
 
     function changeQty(step) {
-        const select = document.getElementById('select_tiket');
-        const selectedOption = select.options[select.selectedIndex];
-        const maxQuota = parseInt(selectedOption.getAttribute('data-kuota'));
-        
         const input = document.getElementById('jumlah_tiket');
+        const select = document.getElementById('select_tiket');
+        const opt = select.options[select.selectedIndex];
+
+        const kuota = parseInt(opt.dataset.kuota);
         let newVal = parseInt(input.value) + step;
-        
-        if(newVal >= 1 && newVal <= maxQuota) {
+
+        let sisaLimit = maxLimit - sudahBeli;
+
+        if(newVal >= 1 && newVal <= kuota && newVal <= sisaLimit) {
             input.value = newVal;
             calculateTotal();
+        } else if(newVal > sisaLimit) {
+            alert("Sisa maksimal pembelian: " + sisaLimit);
         }
     }
 
     function calculateTotal() {
         const select = document.getElementById('select_tiket');
-        const selectedOption = select.options[select.selectedIndex];
-        const harga = parseInt(selectedOption.getAttribute('data-harga'));
+        const opt = select.options[select.selectedIndex];
+
+        const harga = parseInt(opt.dataset.harga);
         const jumlah = parseInt(document.getElementById('jumlah_tiket').value);
 
-        const total = harga * jumlah;
+        let total = harga * jumlah;
 
-        document.getElementById('display_subtotal').innerText = "Rp " + total.toLocaleString('id-ID');
-        document.getElementById('display_total').innerText = "Rp " + total.toLocaleString('id-ID');
+        document.getElementById('display_subtotal').innerText = 
+            "Rp " + total.toLocaleString('id-ID');
+
+        document.getElementById('display_total').innerText = 
+            "Rp " + total.toLocaleString('id-ID');
     }
 
-    // Jalankan saat halaman dibuka pertama kali
     document.addEventListener('DOMContentLoaded', updateTicketInfo);
-    
 </script>

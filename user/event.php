@@ -170,7 +170,7 @@ $v = mysqli_fetch_assoc($query_voucher);
             </div>
             <div class="modal-body p-4">
                 <div id="modalContent">
-                    </div>
+            </div>
             </div>
         </div>
     </div>
@@ -179,20 +179,36 @@ $v = mysqli_fetch_assoc($query_voucher);
 <script>
     async function showDetail(event) {
         const modalBody = document.getElementById('modalContent');
-        
-        // Show loading
-        modalBody.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">Memeriksa ketersediaan tiket...</p></div>';
-        
+
+        // Loading UI
+        modalBody.innerHTML = `
+            <div class="text-center py-4">
+                <div class="spinner-border text-primary"></div>
+                <p class="mt-2">Memeriksa ketersediaan tiket...</p>
+            </div>
+        `;
+
         try {
             const response = await fetch(`check_ticket_limit.php?id_event=${event.id_event}`);
-            const data = await response.json();
-            
+
+            // 🔥 CEK RESPONSE
+            if (!response.ok) {
+                throw new Error("HTTP error " + response.status);
+            }
+
+            // 🔥 AMBIL TEXT DULU (ANTI ERROR JSON)
+            const text = await response.text();
+            console.log("DEBUG RESPONSE:", text);
+
+            const data = JSON.parse(text);
+
             let tiketHtml = `
                 <div class="text-center mb-4">
                     <h4 class="fw-bold mb-1" style="color: var(--navy);">${event.nama_event}</h4>
                     <p class="text-muted"><i class="bi bi-geo-alt me-1"></i> ${event.nama_venue}</p>
                     <hr>
                 </div>
+
                 <div class="p-3 border rounded-4 bg-light mb-3">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
@@ -214,14 +230,15 @@ $v = mysqli_fetch_assoc($query_voucher);
             } else {
                 const mainTicket = event.tikets[0];
                 const isSoldOut = event.tikets.every(t => t.kuota <= 0);
-                
+
                 if (!data.allow) {
                     tiketHtml += `
-                        <div class="text-center py-4 ticket-limit-msg p-4">
+                        <div class="text-center py-4 p-4">
                             <i class="bi bi-exclamation-triangle-fill fs-1 text-danger mb-3"></i>
                             <h5 class="fw-bold text-danger mb-2">${data.message}</h5>
                             <p class="text-muted small mb-0">Hubungi admin jika ada kendala.</p>
                         </div>
+
                         <div class="d-grid mt-4">
                             <button class="btn btn-secondary btn-lg rounded-pill fw-bold" data-bs-dismiss="modal">
                                 Tutup
@@ -231,34 +248,54 @@ $v = mysqli_fetch_assoc($query_voucher);
                 } else if (isSoldOut) {
                     tiketHtml += `
                         <div class="d-grid mt-4">
-                            <button class="btn btn-danger btn-lg rounded-pill fw-bold" disabled>Maaf, Tiket Habis</button>
+                            <button class="btn btn-danger btn-lg rounded-pill fw-bold" disabled>
+                                Maaf, Tiket Habis
+                            </button>
                         </div>
                     `;
                 } else {
                     tiketHtml += `
                         <div class="d-grid mt-4">
                             <a href="index.php?page=buy&id_event=${event.id_event}&id_tiket=${mainTicket.id_tiket}" 
-                               class="btn btn-primary btn-lg rounded-pill fw-bold shadow-sm">
-                               Pesan Sekarang <i class="bi bi-arrow-right ms-2"></i>
+                            class="btn btn-primary btn-lg rounded-pill fw-bold shadow-sm">
+                            Pesan Sekarang <i class="bi bi-arrow-right ms-2"></i>
                             </a>
                         </div>
                     `;
                 }
-                
-                tiketHtml += `<p class="text-center mt-3 small text-muted">Harga mulai dari <span class="text-pink fw-bold">Rp ${parseInt(mainTicket.harga).toLocaleString('id-ID')}</span></p>`;
+
+                tiketHtml += `
+                    <p class="text-center mt-3 small text-muted">
+                        Harga mulai dari 
+                        <span class="text-pink fw-bold">
+                            Rp ${parseInt(mainTicket.harga).toLocaleString('id-ID')}
+                        </span>
+                    </p>
+                `;
             }
 
             modalBody.innerHTML = tiketHtml;
+
         } catch (error) {
+            console.error("ERROR:", error);
+
+            // 🔥 FIX RETRY BUTTON (PENTING)
             modalBody.innerHTML = `
                 <div class="text-center py-4">
                     <i class="bi bi-wifi-off fs-1 text-muted"></i>
                     <h5 class="mt-3 text-danger">Koneksi bermasalah</h5>
-                    <button class="btn btn-outline-primary mt-2" onclick="showDetail(${JSON.stringify(event).replace(/"/g, '"')})">Coba Lagi</button>
+                    <button class="btn btn-outline-primary mt-2" id="retryBtn">
+                        Coba Lagi
+                    </button>
                 </div>
             `;
+
+            // 🔥 EVENT LISTENER RETRY (AMAN)
+            document.getElementById('retryBtn').onclick = function() {
+                showDetail(event);
+            };
         }
-        
+
         new bootstrap.Modal(document.getElementById('eventModal')).show();
     }
 
