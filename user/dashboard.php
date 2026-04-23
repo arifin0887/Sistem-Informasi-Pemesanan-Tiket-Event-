@@ -159,7 +159,7 @@ $result = $stmt->get_result();
                                 $s = $row['status'];
                                 $badge_class = ($s == 'paid' || $s == 'success') 
                                     ? 'badge-success' 
-                                    : ($s == 'pending' ? 'badge-warning' : 'badge-danger');
+                                    : ($s == 'pending' || $s == 'menunggu_verifikasi' ? 'badge-warning' : 'badge-danger');
                             ?>
                             <span class="status-badge <?= $badge_class; ?>">
                                 <?= ucfirst($s); ?>

@@ -85,7 +85,9 @@ $res_transaksi = mysqli_query($conn, $sql_transaksi);
                                     </td>
                                     <td><span class="fw-bold">Rp <?= number_format($row['total'], 0, ',', '.'); ?></span></td>
                                     <td>
-                                        <?php if($row['status'] == 'paid'): ?>
+                                        <?php if($row['status'] == 'menunggu_verifikasi'): ?>
+                                            <span class="badge-status status-menunggu_verifikasi"><i class="bi bi-patch-check-fill me-1"></i> Menunggu Verifikasi</span>
+                                        <?php elseif($row['status'] == 'paid'): ?>
                                             <span class="badge-status status-paid"><i class="bi bi-patch-check-fill me-1"></i> Terbayar</span>
                                         <?php elseif($row['status'] == 'pending'): ?>
                                             <span class="badge-status status-pending"><i class="bi bi-clock-history me-1"></i> Menunggu</span>
