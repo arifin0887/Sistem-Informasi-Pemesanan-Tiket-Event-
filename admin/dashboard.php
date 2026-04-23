@@ -52,7 +52,7 @@ $res_recent = mysqli_query($conn, $sql_recent);
                   <i class="bi bi-ticket-perforated"></i>
                 </div>
                 <div class="ps-3">
-                  <h6><?= number_format($data_sales['total_terjual']); ?></h6>
+                  <h4 class="fw-bold"><?= number_format($data_sales['total_terjual']); ?></h4>
                   <span class="text-muted small fw-medium">Unit Terpesan</span>
                 </div>
               </div>
@@ -69,7 +69,7 @@ $res_recent = mysqli_query($conn, $sql_recent);
                   <i class="bi bi-wallet2"></i>
                 </div>
                 <div class="ps-3">
-                  <h6>Rp <?= number_format($data_rev['total_duit'], 0, ',', '.'); ?></h6>
+                  <h4 class="fw-bold">Rp <?= number_format($data_rev['total_duit'], 0, ',', '.'); ?></h4>
                   <span class="text-success small fw-bold"><i class="bi bi-check-circle-fill"></i> Selesai</span>
                 </div>
               </div>
@@ -86,7 +86,7 @@ $res_recent = mysqli_query($conn, $sql_recent);
                   <i class="bi bi-person-badge"></i>
                 </div>
                 <div class="ps-3">
-                  <h6><?= number_format($data_cust['total_user']); ?></h6>
+                  <h4 class="fw-bold"><?= number_format($data_cust['total_user']); ?></h4>
                   <span class="text-muted small fw-medium">Jiwa Bergabung</span>
                 </div>
               </div>

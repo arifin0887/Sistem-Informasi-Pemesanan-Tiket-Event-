@@ -5,99 +5,116 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Masuk ke Akun Anda | EventKu</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+        :root {
+            --primary: #1D1145;
+            --secondary: #0DB5BB;
+        }
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f0f4f8; 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(13, 181, 187, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(29, 17, 69, 0.05) 0px, transparent 50%);
         }
         .cta-gradient {
-            background-image: linear-gradient(to right, #E66C8A 0%, #CF2E2E 100%);
-            transition: all 0.3s ease;
+            background-image: linear-gradient(135deg, var(--primary) 0%, #2a1a5e 100%);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .cta-gradient:hover {
-            background-image: linear-gradient(to right, #CF2E2E 0%, #E66C8A 100%);
-            box-shadow: 0 10px 15px -3px rgba(230, 108, 138, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px -5px rgba(29, 17, 69, 0.3);
+            filter: brightness(1.2);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen text-gray-800 p-4">
+<body class="flex items-center justify-center min-h-screen p-4">
 
-    <div class="w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row border border-gray-100">
+    <div class="w-full max-w-4xl glass-card rounded-[32px] shadow-2xl overflow-hidden flex flex-col lg:flex-row">
         
-        <div class="w-full md:w-1/2 p-8 md:p-12 lg:p-14 flex flex-col justify-center">
+        <div class="w-full lg:w-1/2 p-6 lg:p-12 flex flex-col justify-center">
             
-            <div class="text-center md:text-left mb-8">
+            <div class="mb-10">
                 <a href="/" class="text-3xl font-extrabold text-[#1D1145] tracking-tight">
-                    Event<span class="text-[#E66C8A]">Ku</span>
+                    Event<span class="text-[#0DB5BB]">Ku</span>
                 </a>
-                <h2 class="text-2xl font-bold mt-4 text-gray-900">Selamat Datang Kembali</h2>
-                <p class="text-gray-500 text-sm mt-1">Masuk untuk melanjutkan pembelian tiket Anda.</p>
+                <h2 class="text-2xl font-bold mt-6 text-gray-900">Selamat Datang Kembali</h2>
+                <p class="text-gray-500 text-sm mt-2">Masuk untuk mengelola event dan tiket Anda.</p>
             </div>
 
-            <form action="proses_login.php" method="POST" class="space-y-5">
+            <form action="proses_login.php" method="POST" class="space-y-6">
 
                 <div>
-                    <label for="email" class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">Email</label>
+                    <label for="email" class="block text-xs font-bold text-[#1D1145] mb-2 uppercase tracking-widest">Email Address</label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v12a2 2 0 002 2z"></path></svg>
                         </span>
                         <input type="email" id="email" name="email" required 
-                               class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#E66C8A]/20 focus:border-[#E66C8A] focus:bg-white transition duration-200 text-sm outline-none"
-                               placeholder="Masukkan email Anda">
+                               class="w-full pl-12 pr-4 py-3.5 bg-white/50 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-[#0DB5BB]/10 focus:border-[#0DB5BB] transition-all duration-300 text-sm outline-none"
+                               placeholder="nama@email.com">
                     </div>
                 </div>
 
                 <div>
-                    <label for="password" class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">Password</label>
+                    <div class="flex justify-between mb-2">
+                        <label for="password" class="block text-xs font-bold text-[#1D1145] uppercase tracking-widest">Password</label>
+                    </div>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                         </span>
                         <input type="password" id="password" name="password" required 
-                               class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#E66C8A]/20 focus:border-[#E66C8A] focus:bg-white transition duration-200 text-sm outline-none"
-                               placeholder="Masukkan kata sandi Anda">
+                               class="w-full pl-12 pr-4 py-3.5 bg-white/50 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-[#0DB5BB]/10 focus:border-[#0DB5BB] transition-all duration-300 text-sm outline-none"
+                               placeholder="••••••••">
                     </div>
                 </div>
                 
-                <div class="flex items-center justify-between pt-1">
-                    <div class="flex items-center">
-                        <input id="remember_me" name="remember_me" type="checkbox" 
-                               class="h-4 w-4 text-[#E66C8A] border-gray-300 rounded focus:ring-[#E66C8A]">
-                        <label for="remember_me" class="ml-2 block text-xs text-gray-600 font-medium">
-                            Ingat Saya
-                        </label>
-                    </div>
-                    
-                    <a href="/forgot-password" class="text-xs font-bold text-[#0DB5BB] hover:text-[#1D1145] transition">
-                        Lupa Password?
-                    </a>
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-[#0DB5BB] focus:ring-[#0DB5BB]">
+                        <span class="ml-2 text-xs font-medium text-gray-600">Ingat saya</span>
+                    </label>
+                    <a href="#" class="text-xs font-bold text-[#0DB5BB] hover:underline">Lupa Password?</a>
                 </div>
 
-                <button type="submit" name="login" class="w-full cta-gradient text-white px-6 py-3.5 rounded-full font-bold text-sm shadow-lg transform hover:scale-[1.01] transition duration-300 uppercase tracking-wider mt-2">
-                    Masuk ke Akun
+                <button type="submit" name="login" class="w-full cta-gradient text-white py-4 rounded-2xl font-bold text-sm shadow-xl transform transition duration-300 uppercase tracking-widest">
+                    Masuk Sekarang
                 </button>
             </form>
 
-            <p class="mt-8 text-center text-gray-500 text-xs">
+            <p class="mt-10 text-center text-gray-500 text-xs">
                 Belum punya akun? 
-                <a href="regis.php" class="text-[#E66C8A] font-bold hover:text-[#CF2E2E] transition">Daftar sekarang</a>
+                <a href="regis.php" class="text-[#0DB5BB] font-bold hover:text-[#1D1145] transition decoration-2 underline-offset-4">Buat akun baru</a>
             </p>
         </div>
 
-        <div class="hidden md:flex md:w-1/2 bg-cover bg-center relative items-center" 
-             style="background-image: url('https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&w=800&q=80');">
-            <div class="absolute inset-0 bg-gradient-to-t from-[#1D1145]/90 via-[#1D1145]/70 to-[#1D1145]/40"></div>
+        <div class="hidden lg:flex lg:w-1/2 bg-cover bg-center relative items-center" 
+             style="background-image: url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80');">
+            <div class="absolute inset-0 bg-gradient-to-br from-[#1D1145]/95 to-[#1D1145]/60"></div>
             
-            <div class="relative z-10 p-12 text-white">
-                <span class="text-[#0DB5BB] text-sm font-bold uppercase tracking-widest">Selamat Datang Kembali</span>
-                <h1 class="text-4xl font-extrabold mt-2 mb-4 leading-tight">Amankan Tiket Konsermu!</h1>
-                <p class="text-gray-300 text-sm font-light leading-relaxed max-w-sm">
-                    Jangan sampai kehabisan. Masuk kembali untuk melanjutkan perburuan tiket event terpopuler Anda.
+            <div class="relative z-10 p-12 lg:p-16 text-white">
+                <div class="w-16 h-1 bg-[#0DB5BB] mb-8 rounded-full"></div>
+                <h1 class="text-4xl font-extrabold mb-6 leading-tight">Kelola Event Lebih Profesional.</h1>
+                <p class="text-gray-300 text-lg font-light leading-relaxed mb-10">
+                    Satu platform untuk semua kebutuhan ticketing, monitoring, dan validasi peserta secara real-time.
                 </p>
-                <div class="mt-8 flex items-center space-x-2 text-xs text-gray-400">
-                    <span class="bg-white/10 px-3 py-1.5 rounded-full">🛡️ Sistem Keamanan Berlapis</span>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-3 bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-md">
+                        <span class="text-xl">🚀</span>
+                        <span class="text-sm font-medium">Dashboard Monitor Real-time</span>
+                    </div>
+                    <div class="flex items-center space-x-3 bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-md">
+                        <span class="text-xl">🛡️</span>
+                        <span class="text-sm font-medium">Sistem Keamanan Data Terenkripsi</span>
+                    </div>
                 </div>
             </div>
         </div>

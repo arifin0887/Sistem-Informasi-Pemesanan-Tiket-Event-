@@ -5,144 +5,118 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daftar Akun Baru | EventKu</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+        :root {
+            --primary: #1D1145;
+            --secondary: #0DB5BB;
+        }
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f0f4f8; 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(13, 181, 187, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(29, 17, 69, 0.05) 0px, transparent 50%);
         }
         .cta-gradient {
-            background-image: linear-gradient(to right, #E66C8A 0%, #CF2E2E 100%);
-            transition: all 0.3s ease;
+            background-image: linear-gradient(135deg, var(--primary) 0%, #2a1a5e 100%);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .cta-gradient:hover {
-            background-image: linear-gradient(to right, #CF2E2E 0%, #E66C8A 100%);
-            box-shadow: 0 10px 15px -3px rgba(230, 108, 138, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px -5px rgba(29, 17, 69, 0.3);
+            filter: brightness(1.2);
         }
-        .text-gradient {
-            background-image: linear-gradient(to right, #1D1145, #0DB5BB);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
+        /* Custom scrollbar agar tetap estetik saat digulir */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--secondary); }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen bg-gray-100 px-4 py-8">
+<body class="flex items-center justify-center min-h-screen p-4 md:p-8">
 
-    <div class="w-full max-w-4xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-gray-100">
+    <div class="w-full max-w-4xl glass-card rounded-[32px] shadow-2xl overflow-hidden flex flex-col lg:flex-row">
         
-        <!-- SIDE IMAGE -->
-        <div class="hidden md:flex md:w-1/2 bg-cover bg-center relative items-center"
-             style="background-image: url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=800&q=80');">
-
-            <div class="absolute inset-0 bg-gradient-to-t from-[#1D1145]/90 via-[#1D1145]/70 to-[#1D1145]/40"></div>
-
-            <div class="relative z-10 p-10 text-white">
-                <span class="text-[#E66C8A] text-xs font-bold uppercase tracking-widest">
-                    Bergabunglah Sekarang
-                </span>
-
-                <h1 class="text-3xl font-extrabold mt-3 mb-4 leading-tight">
-                    Mulai Pengalaman Event Serumu!
-                </h1>
-
-                <p class="text-gray-300 text-sm leading-relaxed max-w-sm">
-                    Dapatkan akses instan ke ribuan tiket konser, seminar, dan festival pilihan tanpa antre.
-                </p>
-
-                <div class="mt-6 flex flex-wrap gap-2 text-xs text-gray-300">
-                    <span class="bg-white/10 px-3 py-1 rounded-full">🛡️ Tiket Resmi</span>
-                    <span class="bg-white/10 px-3 py-1 rounded-full">⚡ Transaksi Cepat</span>
-                </div>
+        <div class="w-full lg:w-1/2 p-6 lg:p-10 flex flex-col justify-center bg-white/40">
+            
+            <div class="mb-6">
+                <a href="/" class="text-2xl font-extrabold text-[#1D1145] tracking-tight">
+                    Event<span class="text-[#0DB5BB]">Ku</span>
+                </a>
+                <h2 class="text-xl font-bold mt-4 text-gray-900">Gabung Sekarang</h2>
+                <p class="text-gray-500 text-xs mt-1">Lengkapi data diri untuk mulai pengalaman baru.</p>
             </div>
+
+            <form action="proses_regis.php" method="POST" class="space-y-4">
+                <div>
+                    <label class="block text-[10px] font-bold text-[#1D1145] mb-1.5 uppercase tracking-widest">Nama Lengkap</label>
+                    <input type="text" name="nama" required 
+                           class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-4 focus:ring-[#0DB5BB]/10 focus:border-[#0DB5BB] transition-all text-sm outline-none"
+                           placeholder="John Doe">
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-bold text-[#1D1145] mb-1.5 uppercase tracking-widest">Email Address</label>
+                    <input type="email" name="email" required 
+                           class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-4 focus:ring-[#0DB5BB]/10 focus:border-[#0DB5BB] transition-all text-sm outline-none"
+                           placeholder="nama@email.com">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] font-bold text-[#1D1145] mb-1.5 uppercase tracking-widest">Password</label>
+                        <input type="password" name="password" required 
+                               class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-4 focus:ring-[#0DB5BB]/10 focus:border-[#0DB5BB] transition-all text-sm outline-none"
+                               placeholder="••••••••">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-[#1D1145] mb-1.5 uppercase tracking-widest">Konfirmasi</label>
+                        <input type="password" name="confirm_password" required 
+                               class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-4 focus:ring-[#0DB5BB]/10 focus:border-[#0DB5BB] transition-all text-sm outline-none"
+                               placeholder="••••••••">
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" name="register" class="w-full cta-gradient text-white py-3.5 rounded-xl font-bold text-xs shadow-xl transform transition duration-300 uppercase tracking-widest">
+                        Daftar Akun
+                    </button>
+                </div>
+            </form>
+
+            <p class="mt-8 text-center text-gray-500 text-[11px]">
+                Sudah punya akun? 
+                <a href="login.php" class="text-[#0DB5BB] font-bold hover:text-[#1D1145] transition underline underline-offset-4">Masuk di sini</a>
+            </p>
         </div>
 
-        <!-- FORM -->
-        <div class="w-full md:w-1/2 flex items-center justify-center px-6 py-10">
-            <div class="w-full max-w-md">
-
-                <!-- HEADER -->
-                <div class="text-center md:text-left mb-6">
-                    <a href="/" class="text-2xl font-extrabold text-[#1D1145]">
-                        Event<span class="text-[#E66C8A]">Ku</span>
-                    </a>
-
-                    <h2 class="text-xl font-bold mt-3 text-gray-900">
-                        Buat Akun Baru
-                    </h2>
-
-                    <p class="text-gray-500 text-sm">
-                        Daftar untuk mulai membeli tiket event favoritmu
-                    </p>
-                </div>
-
-                <!-- FORM -->
-                <form action="proses_regis.php" method="POST" class="space-y-4">
-
-                    <!-- NAMA -->
-                    <div>
-                        <label class="text-xs font-semibold text-gray-600 uppercase">Nama Lengkap</label>
-                        <div class="relative mt-1">
-                            <span class="absolute left-3 top-3 text-gray-400">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                            </span>
-                            <input type="text" name="full_name" required
-                                class="w-full pl-10 pr-3 py-2.5 text-sm border rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#E66C8A]/20 focus:border-[#E66C8A] outline-none"
-                                placeholder="Masukkan nama lengkap">
-                        </div>
-                    </div>
-
-                    <!-- EMAIL -->
-                    <div>
-                        <label class="text-xs font-semibold text-gray-600 uppercase">Email</label>
-                        <div class="relative mt-1">
-                            <span class="absolute left-3 top-3 text-gray-400">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v12a2 2 0 002 2z"></path></svg>
-                            </span>
-                            <input type="email" name="email" required
-                                class="w-full pl-10 pr-3 py-2.5 text-sm border rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#E66C8A]/20 focus:border-[#E66C8A] outline-none"
-                                placeholder="contoh@mail.com">
-                        </div>
-                    </div>
-
-                    <!-- PASSWORD -->
-                    <div>
-                        <label class="text-xs font-semibold text-gray-600 uppercase">Password</label>
-                        <div class="relative mt-1">
-                            <span class="absolute left-3 top-3 text-gray-400">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                            </span>
-                            <input type="password" name="password" required
-                                class="w-full pl-10 pr-3 py-2.5 text-sm border rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#E66C8A]/20 focus:border-[#E66C8A] outline-none"
-                                placeholder="Minimal 8 karakter">
-                        </div>
-                    </div>
-
-                    <!-- TERMS -->
-                    <div class="flex items-start text-xs text-gray-600">
-                        <input type="checkbox" required class="mt-1 mr-2">
-                        <span>
-                            Saya setuju dengan 
-                            <a href="#" class="text-[#1D1145] font-semibold hover:text-[#E66C8A]">Syarat & Ketentuan</a> 
-                            dan 
-                            <a href="#" class="text-[#1D1145] font-semibold hover:text-[#E66C8A]">Privasi</a>
-                        </span>
-                    </div>
-
-                    <!-- BUTTON -->
-                    <button type="submit"
-                        class="w-full bg-gradient-to-r from-[#E66C8A] to-[#CF2E2E] text-white py-2.5 rounded-full text-sm font-bold shadow-md hover:scale-[1.02] transition">
-                        Daftar Sekarang
-                    </button>
-                </form>
-
-                <!-- FOOTER -->
-                <p class="text-center text-xs text-gray-500 mt-6">
-                    Sudah punya akun?
-                    <a href="login.php" class="text-[#E66C8A] font-semibold hover:text-[#CF2E2E]">
-                        Masuk
-                    </a>
+        <div class="hidden lg:flex lg:w-1/2 bg-cover bg-center relative items-center" 
+             style="background-image: url('https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&w=1200&q=80');">
+            <div class="absolute inset-0 bg-gradient-to-br from-[#1D1145]/95 to-[#1D1145]/70"></div>
+            
+            <div class="relative z-10 p-10 lg:p-12 text-white">
+                <div class="w-12 h-1 bg-[#0DB5BB] mb-6 rounded-full"></div>
+                <h1 class="text-3xl font-extrabold mb-4 leading-tight">Mulai Petualangan Eventmu!</h1>
+                <p class="text-gray-300 text-sm font-light leading-relaxed mb-8">
+                    Bergabunglah dengan ribuan penikmat event lainnya. Dapatkan akses eksklusif ke tiket presale dan promo menarik setiap minggunya.
                 </p>
-
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white/5 p-4 rounded-xl border border-white/10 backdrop-blur-sm text-center">
+                        <span class="block text-xl mb-1">🎟️</span>
+                        <span class="text-[10px] font-bold uppercase tracking-tighter">Tiket Digital</span>
+                    </div>
+                    <div class="bg-white/5 p-4 rounded-xl border border-white/10 backdrop-blur-sm text-center">
+                        <span class="block text-xl mb-1">⚡</span>
+                        <span class="text-[10px] font-bold uppercase tracking-tighter">Fast Checkout</span>
+                    </div>
+                </div>
             </div>
         </div>
 
