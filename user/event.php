@@ -84,6 +84,52 @@ $v = mysqli_fetch_assoc($query_voucher);
 </div>
 <?php endif; ?>
 
+<style>
+    /* CARD FIX HEIGHT */
+.event-card {
+    border-radius: 18px;
+    height: 100%;
+    transition: 0.3s;
+}
+
+.event-card:hover {
+    transform: translateY(-5px);
+}
+
+/* BADGE */
+.badge-status-custom {
+    top: 15px;
+    right: 15px;
+    font-size: 0.7rem;
+}
+
+/* TITLE LIMIT (ANTI TINGGI BERBEDA) */
+.event-title-clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* max 2 baris */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 42px; /* jaga tinggi tetap */
+}
+
+/* PRICE */
+.price-tag {
+    color: var(--event-accent);
+    font-size: 1rem;
+}
+
+/* DATE BOX */
+.event-date-badge {
+    text-align: center;
+    min-width: 50px;
+}
+
+/* FLEX FIX */
+.card-body {
+    height: 100%;
+}
+</style>
+
 <section class="section">
     <div class="card search-card mb-4 shadow-sm">
         <div class="card-body p-4">
@@ -117,40 +163,55 @@ $v = mysqli_fetch_assoc($query_voucher);
                 $min_price = !empty($event['tikets']) ? min(array_column($event['tikets'], 'harga')) : 0;
                 $total_kuota = array_sum(array_column($event['tikets'], 'kuota'));
             ?>
-                <div class="col-xl-4 col-md-6 mb-4">
-                    <div class="card h-100 event-card shadow-sm border-0" style="border-radius: 20px;">
-                        <div class="card-body p-4 position-relative"> <span class="badge rounded-pill <?= $isExpired ? 'bg-secondary' : 'bg-success' ?> position-absolute" 
-                                style="top: 20px; right: 20px; font-size: 0.7rem; z-index: 10;">
+                <div class="col-xl-4 col-md-6 mb-4 d-flex">
+                    <div class="card event-card shadow-sm border-0 w-100">
+                        <div class="card-body d-flex flex-column p-4 position-relative">
+
+                            <span class="badge rounded-pill <?= $isExpired ? 'bg-secondary' : 'bg-success' ?> position-absolute badge-status-custom">
                                 <?= $isExpired ? 'Selesai' : 'Tersedia' ?>
                             </span>
 
-                            <div class="d-flex align-items-center mb-4 pe-5"> <div class="event-date-badge me-3">
-                                    <span class="d-block small text-uppercase fw-bold text-muted"><?= date('M', strtotime($event['tanggal'])) ?></span>
-                                    <span class="fs-2 d-block fw-bold my-minus-1" style="color: var(--event-navy);"><?= date('d', strtotime($event['tanggal'])) ?></span>
-                                    <span class="d-block small text-uppercase text-muted"><?= date('Y', strtotime($event['tanggal'])) ?></span>
+                            <div class="d-flex align-items-start mb-3 pe-5">
+                                <div class="event-date-badge me-3">
+                                    <span class="small text-uppercase fw-bold text-muted"><?= date('M', strtotime($event['tanggal'])) ?></span>
+                                    <span class="fs-3 fw-bold text-navy"><?= date('d', strtotime($event['tanggal'])) ?></span>
+                                    <span class="small text-muted"><?= date('Y', strtotime($event['tanggal'])) ?></span>
                                 </div>
-                                
+
                                 <div class="flex-grow-1">
-                                    <h2 class="fw-bold mb-0 display-title" onclick='showDetail(<?= json_encode($event) ?>)'>
+                                    <h6 class="fw-bold event-title-clamp mb-0"
+                                        onclick='showDetail(<?= json_encode($event) ?>)'>
                                         <?= htmlspecialchars($event['nama_event']) ?>
-                                    </h2>
+                                    </h6>
                                 </div>
                             </div>
 
-                            <div class="text-muted small mb-3 ps-1">
-                                <p class="mb-1"><i class="bi bi-geo-alt-fill text-pink me-2"></i><?= htmlspecialchars($event['nama_venue']) ?></p>
-                                <p class="mb-0"><i class="bi bi-clock-fill text-pink me-2"></i><?= date('H:i', strtotime($event['tanggal'])) ?> WIB</p>
+                            <div class="text-muted small mb-3">
+                                <p class="mb-1">
+                                    <i class="bi bi-geo-alt-fill text-pink me-2"></i>
+                                    <?= htmlspecialchars($event['nama_venue']) ?>
+                                </p>
+                                <p class="mb-0">
+                                    <i class="bi bi-clock-fill text-pink me-2"></i>
+                                    <?= date('H:i', strtotime($event['tanggal'])) ?> WIB
+                                </p>
                             </div>
 
-                            <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+                            <!-- PUSH FOOTER KE BAWAH -->
+                            <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
                                 <div>
-                                    <small class="text-muted d-block" style="font-size: 0.7rem;">Mulai dari</small>
-                                    <span class="price-tag fs-5 fw-bold" style="color: var(--event-accent);">Rp <?= number_format($min_price, 0, ',', '.') ?></span>
+                                    <small class="text-muted d-block">Mulai dari</small>
+                                    <span class="price-tag fw-bold">
+                                        Rp <?= number_format($min_price, 0, ',', '.') ?>
+                                    </span>
                                 </div>
-                                <button class="btn btn-book btn-sm shadow-sm px-4 rounded-pill fw-bold" onclick='showDetail(<?= json_encode($event) ?>)'>
-                                    Beli Tiket
+
+                                <button class="btn btn-book btn-sm px-4 rounded-pill fw-bold"
+                                        onclick='showDetail(<?= json_encode($event) ?>)'>
+                                    Beli
                                 </button>
                             </div>
+
                         </div>
                     </div>
                 </div>

@@ -252,12 +252,10 @@ body {
     font-weight: 600;
 }
 
-/* Status Colors */
 .bg-success-subtle { background-color: #e6fffa !important; color: #0694a2 !important; border: 1px solid #b2f5ea; }
 .bg-warning-subtle { background-color: #fffaf0 !important; color: #d97706 !important; border: 1px solid #feebc8; }
 .bg-danger-subtle { background-color: #fff5f5 !important; color: #e53e3e !important; border: 1px solid #feb2b2; }
 
-/* Form Controls */
 .form-control, .form-select {
     border-radius: 10px;
     padding: 12px 15px;
@@ -270,7 +268,6 @@ body {
     box-shadow: 0 0 0 4px rgba(13, 181, 187, 0.1);
 }
 
-/* Voucher Code Styling */
 .voucher-code {
     font-family: 'Monaco', 'Consolas', monospace;
     background: #eef2ff;
@@ -282,7 +279,6 @@ body {
     letter-spacing: 1px;
 }
 
-/* Gradients for Reports */
 .bg-gradient-tosca { background: linear-gradient(45deg, #0DB5BB, #0ca4aa); }
 .bg-gradient-purple { background: linear-gradient(45deg, #1D1145, #2a1a5e); }
 .bg-gradient-danger { background: linear-gradient(45deg, #dc3545, #b02a37); }
@@ -313,10 +309,9 @@ body {
     transition: all 0.3s;
     border-top: 1px solid rgba(0, 0, 0, 0.05);
     background: #fff;
-    margin-top: auto; /* Memastikan footer terdorong ke bawah */
+    margin-top: auto; 
 }
 
-/* Penyesuaian margin untuk layar besar (mengikuti sidebar) */
 @media (min-width: 1200px) {
     #footer {
         margin-left: 270px;

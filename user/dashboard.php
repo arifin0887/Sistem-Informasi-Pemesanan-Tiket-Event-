@@ -39,66 +39,187 @@ $result = $stmt->get_result();
 
 ?>
 
+<style>
+    .card-ticket {
+    background: #fff;
+    border-radius: 18px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid #eee;
+}
+
+.card-ticket:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+}
+
+/* HEADER */
+.ticket-header {
+    background: linear-gradient(135deg, #1D1145, #2a1a5e);
+    color: #fff;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.order-id {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+/* BADGE */
+.status-badge {
+    padding: 5px 12px;
+    border-radius: 50px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.badge-success {
+    background: #28a745;
+}
+
+.badge-warning {
+    background: #ffc107;
+    color: #000;
+}
+
+.badge-danger {
+    background: #dc3545;
+}
+
+/* BODY */
+.ticket-body {
+    padding: 18px;
+}
+
+.event-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1D1145;
+    margin-bottom: 4px;
+}
+
+.ticket-type {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-bottom: 12px;
+}
+
+/* INFO */
+.ticket-info {
+    font-size: 0.8rem;
+    color: #555;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 15px;
+}
+
+.ticket-info i {
+    color: #0DB5BB;
+    margin-right: 6px;
+}
+
+/* FOOTER */
+.ticket-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.qty-badge {
+    background: #f1f3f5;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* BUTTON */
+.btn-warning {
+    background: #ff9f1c;
+    border: none;
+}
+
+.btn-primary {
+    background: #0DB5BB;
+    border: none;
+}
+</style>
+
 <section class="section mt-4">
     <?php if ($result->num_rows > 0): ?>
         <div class="row g-4">
             <?php while ($row = $result->fetch_assoc()): ?>
-                <div class="col-xl-4 col-md-6">
-                    <div class="card-ticket shadow-sm hover-up">
-                        <div class="ticket-header d-flex justify-content-between align-items-center">
-                            <span class="small fw-bold opacity-75">ID #<?= $row['id_order']; ?></span>
+
+                <div class="col-xl-4 col-md-6 mb-4">
+                    <div class="card-ticket shadow-sm">
+
+                        <!-- HEADER -->
+                        <div class="ticket-header">
+                            <span class="order-id">Order #<?= $row['id_order']; ?></span>
+
                             <?php 
                                 $s = $row['status'];
-                                $badge_class = ($s == 'paid' || $s == 'success') ? 'bg-success' : ($s == 'pending' ? 'bg-warning text-dark' : 'bg-danger');
+                                $badge_class = ($s == 'paid' || $s == 'success') 
+                                    ? 'badge-success' 
+                                    : ($s == 'pending' ? 'badge-warning' : 'badge-danger');
                             ?>
-                            <span class="badge <?= $badge_class; ?> status-badge"><?= ucfirst($s); ?></span>
+                            <span class="status-badge <?= $badge_class; ?>">
+                                <?= ucfirst($s); ?>
+                            </span>
                         </div>
 
+                        <!-- BODY -->
                         <div class="ticket-body">
-                            <div class="mb-3">
-                                <small class="text-uppercase text-muted fw-bold" style="font-size: 0.65rem;">Event</small>
-                                <div class="event-title text-truncate"><?= htmlspecialchars($row['nama_event']); ?> - <?= htmlspecialchars($row['kategori_tiket']);?></div>
-                            </div>
 
-                            <div class="row mb-3">
-                                <div class="col-6 border-end">
-                                    <small class="text-muted d-block" style="font-size: 0.65rem;">Tanggal</small>
-                                    <span class="fw-bold small"><i class="bi bi-calendar-event text-pink me-1"></i><?= date('d M Y', strtotime($row['tanggal_event'])); ?></span>
-                                </div>
-                                <div class="col-6 ps-3">
-                                    <small class="text-muted d-block" style="font-size: 0.65rem;">Waktu</small>
-                                    <span class="fw-bold small"><i class="bi bi-clock text-pink me-1"></i><?= date('H:i', strtotime($row['tanggal_event'])); ?> WIB</span>
-                                </div>
-                            </div>
+                            <h5 class="event-title">
+                                <?= htmlspecialchars($row['nama_event']); ?>
+                            </h5>
 
-                            <div class="mb-3">
-                                <small class="text-muted d-block" style="font-size: 0.65rem;">Lokasi</small>
-                                <span class="small fw-semibold"><i class="bi bi-geo-alt text-pink me-1"></i><?= htmlspecialchars($row['nama_venue']); ?></span>
-                            </div>
+                            <p class="ticket-type">
+                                <?= htmlspecialchars($row['kategori_tiket']); ?> - <?= htmlspecialchars($row['nama_tiket']); ?>
+                            </p>
 
-                            <div class="dashed-line"></div>
-
-                            <div class="d-flex justify-content-between align-items-center">
+                            <div class="ticket-info">
                                 <div>
-                                    <span class="badge bg-light text-dark border fw-normal" style="font-size: 0.75rem;">
-                                        <?= $row['qty']; ?>x <?= htmlspecialchars($row['nama_tiket']); ?>
-                                    </span>
+                                    <i class="bi bi-calendar-event"></i>
+                                    <?= date('d M Y', strtotime($row['tanggal_event'])); ?>
                                 </div>
-                                <div class="text-end">
-                                    <?php if ($row['status'] == 'pending'): ?>
-                                        <a href="index.php?page=payment&id=<?= $row['id_order']; ?>" class="btn btn-warning btn-sm fw-bold px-3">
-                                            BAYAR SEKARANG
-                                        </a>
-                                    <?php else: ?>
-                                        <a href="index.php?page=e-tiket&id=<?= $row['id_order']; ?>" class="btn btn-outline-primary btn-sm px-3">
-                                            <i class="bi bi-qr-code me-1"></i> E-TIKET
-                                        </a>
-                                    <?php endif; ?>
+                                <div>
+                                    <i class="bi bi-clock"></i>
+                                    <?= date('H:i', strtotime($row['tanggal_event'])); ?> WIB
+                                </div>
+                                <div>
+                                    <i class="bi bi-geo-alt"></i>
+                                    <?= htmlspecialchars($row['nama_venue']); ?>
                                 </div>
                             </div>
+
+                            <div class="ticket-footer">
+                                <span class="qty-badge">
+                                    <?= $row['qty']; ?> Tiket
+                                </span>
+
+                                <?php if ($row['status'] == 'pending'): ?>
+                                    <a href="index.php?page=payment&id_order=<?= $row['id_order']; ?>" 
+                                        class="btn btn-warning btn-sm fw-bold">
+                                        Bayar
+                                    </a>
+                                <?php else: ?>
+                                    <a href="index.php?page=e-tiket&id=<?= $row['id_order']; ?>" 
+                                        class="btn btn-primary btn-sm">
+                                        E-Tiket
+                                    </a>
+                                <?php endif; ?>
+                            </div>
+
                         </div>
                     </div>
                 </div>
+
             <?php endwhile; ?>
         </div>
     <?php else: ?>
